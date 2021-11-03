@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<head>
+  <link rel="stylesheet" href="index.css">
+  <!--
+  <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap-grid.min.css" />
+-->
+</head>
+
+<body>
+<html>
+  <head><title>scuba diving calculation forms</title></head>
+  <body>
+    <p>select your form to calculate</p>
+  <div class="tab">
+    <button class="tablinks" onclick="openTab(event, 'MOD')">MOD</button>
+    <button class="tablinks" onclick="openTab(event, 'Blender')">Blender</button>
+    <button class="tablinks" onclick="openTab(event, 'Planner')">Planner</button>
+  </div>
+
+
+  <div id="MOD" class="tabcontent">
+    <h1>Calculate MOD</h1>
+    <p>
+      This form calculates 
+      <a href="https://en.wikipedia.org/wiki/Maximum_operating_depth" target="_blank">
+      Maximum Operating Depth</a> for a breathing gas, 
+      given the Oxygen percentage and maximum ppo2.
+    </p>
+      <table class="t1">
+        <tr>
+          <td>Standard gas:</td>
+          <td>
+            <select id ="ddl" name="ddl" class="ddl" onmousedown="this.value='';"" >
+              <option value='21'>air</option>
+              <option value='32'>Nitrox 32%</option>
+              <option value='50'>Nitrox 50%</option>
+              <option value='100'>Oxygen 100%</option>
+            </select>
+          </td>
+        </tr>
+        <tr>
+          <td>Oxygen (%)</td>
+          <td><input type="number" min=10 max=100 class="input" value="21"  id="o2_pct"/></td>
+        </tr>
+        <tr>
+          <td colspan="2">
+            <input type="range" id="o2range" name="o2range" class="slider" min="10" max="100" value="21">
+          </td>
+        </tr>
+        <tr>
+          <td>use case</td>
+          <td>
+            <div class="dropdown">
+              <button class="dropbtn" id="ucB">select</button>
+              <div class="dropdown-content">
+                <a href="#" onclick="ucButton(1.4)">normal use</a>
+                <a href="#" onclick="ucButton(1.6)">deco gas</a>
+                <a href="#" onclick="ucButton(1.2)">extended use</a>
+              </div>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td>ppO2 (bar/ATA)</td>
+          <td><input type="number" min=1.0 max=2.0 step=0.1 class="input" value="1.4" id="ppo2"/></td>
+        </tr>
+        <tr>
+
+        <tr>
+          <td> MOD result is </td>
+          <td> <b> <span id="mod_result">56.7</span></b> </td>
+        </tr>
+      
+      </table>
+  </div>
+
+  <div id="Blender" class="tabcontent">
+    <iframe src="blender.html" height="600px" width="600px" title="blender" id ="blender" style="border: none"></iframe>
+  </div>
+
+  <div id="Planner" class="tabcontent">
+    <h1>Dive Planner</h1>
+    <p>dive planner form is coming here really soon, maybe...</p>
+  </div>
+
+
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script>
+
+    var slider = document.getElementById("o2range");
+    slider.oninput = function(){
+      $("#o2_pct").val(this.value);
+      calculateMOD();
+    }
+
+    $('#o2_pct').change(function(){
+      $('#o2range').val(this.value);
+    });
+
+
+    function ucButton(btn){
+      alert(`recommended ppO2= ${btn}`);
+      //$("ucB").html("xxxx");
+      $("#ppo2").val(btn);
+      calculateMOD();
+    }
+
+    function openTab(evt, tabName) {
+      var i, tabcontent, tablinks;
+      tabcontent = document.getElementsByClassName("tabcontent");
+      for (i = 0; i < tabcontent.length; i++) {
+        tabcontent[i].style.display = "none";
+      }
+      tablinks = document.getElementsByClassName("tablinks");
+      for (i = 0; i < tablinks.length; i++) {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+      }
+      document.getElementById(tabName).style.display = "block";
+      evt.currentTarget.className += " active";
+    }
+
+    // calculate MOD and print result
+    function calculateMOD()
+    {
+      o2_pct = $("#o2_pct").val();
+      ppo2 = $('#ppo2').val();
+   
+      let mod_result = 10* ((ppo2 / (o2_pct / 100))-1);
+      console.log(`calculateMOD ${o2_pct} ${ppo2} ${mod_result}`);
+ 
+      $("#mod_result").text(mod_result.toFixed(1));
+  }
+  
+  // this is called when any class input element changes
+  $(function()
+  {
+      $(".input").on("change",calculateMOD)
+      // var slider = document.getElementById("o2range");
+      // slider.value = $("#o2_pct").val();
+    })
+  // var o2input = document.getElementById("o2_pct");
+
+
+  $("#ddl").change(function () {
+   //  alert($(this).val());
+   dropval = $(this).val()
+   //o2_pct_was = $("#o2_pct").val();
+   // $("#o2_pct").attr('value', dropval);
+   $("#o2_pct").val(dropval);
+   //o2_pct_new = $("#o2_pct").val();
+   $('#o2range').val(this.value);
+   //console.log(`ddl-changed ${dropval} ${o2_pct_was} ${o2_pct_new}`);
+
+   calculateMOD();
+  });
+</script>
+
+</html>
+</body>
