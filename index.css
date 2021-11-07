@@ -1,16 +1,19 @@
 body {font-family: Arial;}
 .t1 {
   font-family: Arial, Helvetica, sans-serif;
+  font-size: 12px;
   border-collapse: collapse;
 
 }
+.t1 tr {height: 10px;}
 .t1 td, th {
   border: 1px solid #ddd;
-  padding: 8px;
+  padding: 2px;
+  height: 10px;
 }
 .t1 th {
-  padding-top: 12px;
-  padding-bottom: 12px;
+  padding-top: 2px;
+  padding-bottom: 2px;
   text-align: left;
   background-color: #04AA6D;
   color: white;
@@ -20,8 +23,8 @@ body {font-family: Arial;}
 .t1 tr:hover {background-color: #ddd;}
 
 .t2 {
-  border=1; 
-  rules=none;
+  border: 1; 
+  rules: none;
 }
 
 .ddl {font-family: Arial;}
@@ -37,22 +40,23 @@ body {font-family: Arial;}
 .tab button {
   background-color: inherit;
   float: left;
-  border: none;
-  outline: none;
+  border: 1;
+  border-radius: 5px;
+  outline: 1;
   cursor: pointer;
-  padding: 14px 16px;
-  transition: 0.3s;
-  font-size: 17px;
+  padding: 4px 4px;
+  transition: 0.5s;
+  font-size: 14px;
 }
 
 /* Change background color of buttons on hover */
 .tab button:hover {
-  background-color: #ddd;
+  background-color: green;
 }
 
 /* Create an active/current tablink class */
 .tab button.active {
-  background-color: #ccc;
+  background-color:  greenyellow;
 }
 
 /* Style the tab content */

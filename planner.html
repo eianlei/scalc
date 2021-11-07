@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<link rel="stylesheet" href="index.css">
+
+<h1>Dive Planner Prototype (not suitable for real dives)</h1>
+<p>
+  This form calculates a dive plan for a simple profile. 
+  It is an experimental implementation for educational use only. 
+  Do not use for planning real dives!
+</p>
+<h4> Dive bottom time and depth, Gradient Factors</h4>
+<table class="t1">
+    <tr>
+        <td>depth (m)</td>
+        <td><input type="number" min=6 max=100 class="input3" value="50"  id="dive_depth"/></td>
+        <td>time (min)</td>
+        <td><input type="number" min=6 max=100 class="input3" value="30"  id="dive_bottom_time"/></td>
+    </tr>
+    <tr>
+        <td>GF low (%)</td>
+        <td><input type="number" min=6 max=100 class="input3" value="30"  id="gf_low"/></td>
+        <td>GF high (%)</td>
+        <td><input type="number" min=6 max=100 class="input3" value="80"  id="gf_high"/></td>
+    </tr>
+</table>
+<h4>Specify your tanks and gases for the dive</h4>
+<table class="t1">
+    <tr>
+        <th>tank</th>
+        <th>used</th>
+        <th>O2%</th>
+        <th>He%</th>
+        <th>start bar</th>
+        <th>liters</th>
+        <th>switch (m)</th>
+        <th>SAC (l/min)</th>
+    </tr>
+    <tr>
+        <td>bottom</td>
+        <td>-</td>
+        <td><input type="number" min=10 max=100 class="input3" value="21"  id="bottom_O2"/></td>
+        <td><input type="number" min=0 max=90 class="input3" value="30"  id="bottom_He"/></td>
+        <td><input type="number" min=100 max=300 class="input3" value="200"  id="bottom_bar"/></td>
+        <td><input type="number" min=7 max=36 class="input3" value="24"  id="bottom_liters"/></td>
+        <td>-</td>
+        <td><input type="number" min=5 max=50 class="input3" value="15"  id="bottom_SAC"/></td>
+    </tr>
+    <tr>
+        <td>deco 1</td>
+        <td><input type="checkbox" id="tank_deco1" class="input3" name="tank_deco1" checked></td>
+        <td><input type="number" min=10 max=100 class="input3" value="50"  id="deco1_O2"/></td>
+        <td><input type="number" min=0 max=90 class="input3" value="0"  id="deco1_He"/></td>
+        <td><input type="number" min=100 max=300 class="input3" value="200"  id="deco1_bar"/></td>
+        <td><input type="number" min=7 max=36 class="input3" value="11"  id="deco1_liters"/></td>
+        <td><input type="number" min=0 max=90 class="input3" value="21"  id="deco1_switch"/></td>
+        <td><input type="number" min=5 max=50 class="input3" value="15"  id="deco1_SAC"/></td>
+    </tr>
+    <tr>
+        <td>deco 2</td>
+        <td><input type="checkbox" id="tank_deco2" class="input3" name="tank_deco2" checked></td>
+        <td><input type="number" min=10 max=100 class="input3" value="100"  id="deco2_O2"/></td>
+        <td><input type="number" min=0 max=90 class="input3" value="0"  id="deco2_He"/></td>
+        <td><input type="number" min=100 max=300 class="input3" value="200"  id="deco2_bar"/></td>
+        <td><input type="number" min=7 max=36 class="input3" value="7"  id="deco2_liters"/></td>
+        <td><input type="number" min=0 max=90 class="input3" value="6"  id="deco2_switch"/></td>
+        <td><input type="number" min=5 max=50 class="input3" value="15"  id="deco2_SAC"/></td>
+    </tr>
+    <tr>
+        <td><button onclick="runPlan()">calculate</button></td>        
+    </tr>
+</table>
+<!-- <button onclick="runPlan()">calculate</button> -->
+<div>
+<textarea id="planner_textout" name="planner_textout" cols="80" rows="40" >
+    Hello this is where the calculation output prints 
+</textarea>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script src="./gradient_factor.js"> </script>
+<script src="./ZHL16c.js"> </script>
+<script src="./model.js"> </script>
+<script src="./tanks.js"> </script>
+<script src="./profile_point.js"> </script>
+<script src="./plan_txt.js"> </script>
+<script src="./calculate_plan.js"> </script>
+
+<script>
+$(function()
+{
+    $(".input3").on("change",runPlan)
+})    
+
+//let myDP = new Diveplan();
+
+
+function runPlan()
+{
+    let deco1_use = $("#tank_deco1").prop("checked");
+    let deco2_use = $("#tank_deco2").prop("checked");
+
+    const myTanks = [
+    { label : "BOTTOM", name: "B", use: true, 
+        o2: parseInt($("#bottom_O2").val()), 
+        he: parseInt($("#bottom_He").val()), 
+        SAC: 15, ppo2max: 1.4, liters: 24.0, 
+        bar: 200.0, pressure: 200.0, useFromTime: 0, useUntilTime: 0, 
+        type: "bottom", useOrder: 1, color: "Magenta" },
+    { label: "deco1", name: "D1", 
+        use: deco1_use,
+        o2: parseInt($("#deco1_O2").val()), 
+        he: parseInt($("#deco1_He").val()), 
+        changeDepth: 21.0, SAC: 13, ppo2max: 1.6, liters: 7.0, 
+        bar: 200.0, pressure: 200.0, useFromTime: 0, useUntilTime: 0, 
+        type: "deco", useOrder: 2, color: "Cyan"},
+    { label: "deco2", name: "D2", 
+        use: deco2_use,
+        o2: parseInt($("#deco2_O2").val()),  
+        he: parseInt($("#deco2_He").val()),  
+        changeDepth: 6.0, SAC: 13, ppo2max: 1.6, liters: 7.0, 
+        bar: 200.0, pressure: 200.0, useFromTime: 0, useUntilTime: 0, 
+        type: "deco", useOrder: 3, color: "LightGray"},
+    { label: "travel1", name: "T1", use: false, 
+        o2: 21, he: 25, changeDepth: 40.0, SAC: 16, ppo2max: 1.4, liters: 11.0, 
+        bar: 200.0, pressure: 200.0, useFromTime: 0, useUntilTime: 0, useFromTime2: 0, useUntilTime2: 0, 
+        type: "travel", useOrder: 0, color: "Yellow"}
+    ];
+
+    
+    const myDP = new Object();
+       myDP.bottomDepth =   parseInt($("#dive_depth").val());
+       myDP.bottomTime =    parseInt($("#dive_bottom_time").val()) * 60.0; // CONVERT TO SECONDS!!!!
+       myDP.descTime = 3 / 60;
+       myDP.ascRateToDeco = 1;
+       myDP.ascRateAtDeco = 1;
+       myDP.ascRateToSurface = 1;
+       myDP.GFlow = parseInt($("#gf_low").val()) / 100.0; // 0.30;  //<=== fraction, not percentage!
+       myDP.GFhigh = parseInt($("#gf_high").val()) / 100.0; //  0.85; //<=== fraction, not percentage!
+       myDP.modelUsed = "ZHL16c";
+       myDP.decoStopsCalculated = [];
+       myDP.wayPoints = [];
+       myDP.maxPPoxygen = 0;
+       myDP.maxPPhelium = 0;
+       myDP.maxPPnitrogen = 0;
+       myDP.maxTCnitrogen = 0;
+       myDP.maxTChelium = 0;
+       myDP.ascentBegins = 0;
+       myDP.changeDepth = 0;
+
+       myDP.tankList = myTanks;
+       myDP.currentTank = myTanks[0];
+       myDP.nextTank = null;
+
+       myDP.maxTCnitrogen = 0;
+       myDP.maxTChelium = 0;
+       myDP.profileSampled = [];
+       myDP.model = [];
+       
+       calculatePlan(myDP);
+       txt = plan_txt(myDP.decoStopsCalculated, myDP.wayPoints);
+       $("#planner_textout").val(txt);
+}
+
+</script>
