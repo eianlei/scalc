@@ -25,13 +25,13 @@ const DivePhase = {
     DESCENDING : "DES",
     BOTTOM : "BOT",
     ASCENDING : "ASC",
-    STOP_DECO : "STOP deco",
-    DECO_END : "end deco",
+    STOP_DECO : "deco",
+    DECO_END : "end",
     SURFACE : "SUR",
     DESC_T : "DEt",
-    ASC_T : "ascending, tank change ahead",
+    ASC_T : "ASCtc",
     STOP_DESC_T : "SDt",
-    STOP_ASC_T : "STOP tank change",
+    STOP_ASC_T : "tank",
     ERROR : "ERROR",
     NULL : "NULL",
 };
@@ -304,6 +304,7 @@ function calculatePlan(diveplan) {
             if (LOG_catd)  console.log(`     catd ${beginDepth}, ${endDepth}, ${intervalMinutes} ${heliumFraction} ${nitrogenFraction} ${gfCurrent}`);  
             if (LOG_MODOUT) console.log(`    MO stop=${model.leadCeilingStop.toFixed(0)} c=${model.leadCeilingMeters.toFixed(1)} tc=${model.leadTissue}`)
             ///////////////////////////////////////////////////////    
+            newPoint.ceiling = model.leadCeilingMeters;
 
             // search and record max N2, He TC pressures
             diveplan.maxTCnitrogen = Math.max(diveplan.maxTCnitrogen, model.maxNitrogenPressure);

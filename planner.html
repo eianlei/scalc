@@ -65,83 +65,88 @@
     
 <div id="main">
 
-<h1>Dive Planner Prototype (not suitable for real dives)</h1>
-<p>
-  This form calculates a dive plan for a simple profile using the 
-  <a href="https://en.wikipedia.org/wiki/B%C3%BChlmann_decompression_algorithm" target="_blank">Bühlmann algorithm</a> ZHL-16C
-  with configurable <a href="https://gue.com/blog/gradient-factors-in-a-post-deep-stops-world/" target="_blank">gradient factors</a>. 
-  This is an experimental implementation for educational use only. 
-  <b>Do not use for planning real dives!</b>
-</p>
-<h4> Dive bottom time and depth, Gradient Factors</h4>
-<table class="t1">
-    <tr>
-        <td>depth (m)</td>
-        <td><input type="number" min=6 max=100 class="input3" value="50"  id="dive_depth"/></td>
-        <td>time (min)</td>
-        <td><input type="number" min=6 max=100 class="input3" value="30"  id="dive_bottom_time"/></td>
-    </tr>
-    <tr>
-        <td>GF low (%)</td>
-        <td><input type="number" min=6 max=100 class="input3" value="30"  id="gf_low"/></td>
-        <td>GF high (%)</td>
-        <td><input type="number" min=6 max=100 class="input3" value="80"  id="gf_high"/></td>
-    </tr>
-</table>
-<h4>Specify your tanks and gases for the dive</h4>
-<table class="t1">
-    <tr>
-        <th>tank</th>
-        <th>used</th>
-        <th>O2%</th>
-        <th>He%</th>
-        <th>start bar</th>
-        <th>liters</th>
-        <th>switch (m)</th>
-        <th>SAC (l/min)</th>
-    </tr>
-    <tr>
-        <td>bottom</td>
-        <td>-</td>
-        <td><input type="number" min=10 max=100 class="input3" value="21"  id="bottom_O2"/></td>
-        <td><input type="number" min=0 max=90 class="input3" value="30"  id="bottom_He"/></td>
-        <td><input type="number" min=100 max=300 class="input3" value="200"  id="bottom_bar"/></td>
-        <td><input type="number" min=7 max=36 class="input3" value="24"  id="bottom_liters"/></td>
-        <td>-</td>
-        <td><input type="number" min=5 max=50 class="input3" value="15"  id="bottom_SAC"/></td>
-    </tr>
-    <tr>
-        <td>deco 1</td>
-        <td><input type="checkbox" id="tank_deco1" class="input3" name="tank_deco1" checked></td>
-        <td><input type="number" min=10 max=100 class="input3" value="50"  id="deco1_O2"/></td>
-        <td><input type="number" min=0 max=90 class="input3" value="0"  id="deco1_He"/></td>
-        <td><input type="number" min=100 max=300 class="input3" value="200"  id="deco1_bar"/></td>
-        <td><input type="number" min=7 max=36 class="input3" value="11"  id="deco1_liters"/></td>
-        <td><input type="number" min=0 max=90 class="input3" value="21"  id="deco1_switch"/></td>
-        <td><input type="number" min=5 max=50 class="input3" value="15"  id="deco1_SAC"/></td>
-    </tr>
-    <tr>
-        <td>deco 2</td>
-        <td><input type="checkbox" id="tank_deco2" class="input3" name="tank_deco2" checked></td>
-        <td><input type="number" min=10 max=100 class="input3" value="100"  id="deco2_O2"/></td>
-        <td><input type="number" min=0 max=90 class="input3" value="0"  id="deco2_He"/></td>
-        <td><input type="number" min=100 max=300 class="input3" value="200"  id="deco2_bar"/></td>
-        <td><input type="number" min=7 max=36 class="input3" value="7"  id="deco2_liters"/></td>
-        <td><input type="number" min=0 max=90 class="input3" value="6"  id="deco2_switch"/></td>
-        <td><input type="number" min=5 max=50 class="input3" value="15"  id="deco2_SAC"/></td>
-    </tr>
-    <tr>
-        <td><button onclick="openNav()">panels</button></td>
-        <td><button onclick="runPlan()">calculate</button></td>  
-        <td><button onclick="openTable()">table</button></td>          
-    </tr>
-</table>
-<!-- <button onclick="runPlan()">calculate</button> -->
-<div>
-<textarea id="planner_textout" name="planner_textout" cols="80" rows="30" >
-    Hello this is where the calculation output prints 
-</textarea>
-</div>
+    <h1>Dive Planner Prototype (not suitable for real dives)</h1>
+    <p>
+    This form calculates a dive plan for a simple profile using the 
+    <a href="https://en.wikipedia.org/wiki/B%C3%BChlmann_decompression_algorithm" target="_blank">Bühlmann algorithm</a> ZHL-16C
+    with configurable <a href="https://gue.com/blog/gradient-factors-in-a-post-deep-stops-world/" target="_blank">gradient factors</a>. 
+    This is an experimental implementation for educational use only. 
+    <b>Do not use for planning real dives!</b>
+    </p>
+    <h4> Dive bottom time and depth, Gradient Factors</h4>
+    <table class="t1">
+        <tr>
+            <td>depth (m)</td>
+            <td><input type="number" min=6 max=100 class="input3" value="50"  id="dive_depth"/></td>
+            <td>time (min)</td>
+            <td><input type="number" min=6 max=100 class="input3" value="30"  id="dive_bottom_time"/></td>
+        </tr>
+        <tr>
+            <td>GF low (%)</td>
+            <td><input type="number" min=6 max=100 class="input3" value="30"  id="gf_low"/></td>
+            <td>GF high (%)</td>
+            <td><input type="number" min=6 max=100 class="input3" value="80"  id="gf_high"/></td>
+        </tr>
+    </table>
+    <h4>Specify your tanks and gases for the dive</h4>
+    <table class="t1">
+        <tr>
+            <th>tank</th>
+            <th>used</th>
+            <th>O2%</th>
+            <th>He%</th>
+            <th>start bar</th>
+            <th>liters</th>
+            <th>switch (m)</th>
+            <th>SAC (l/min)</th>
+        </tr>
+        <tr>
+            <td>bottom</td>
+            <td>-</td>
+            <td><input type="number" min=10 max=100 class="input3" value="21"  id="bottom_O2"/></td>
+            <td><input type="number" min=0 max=90 class="input3" value="30"  id="bottom_He"/></td>
+            <td><input type="number" min=100 max=300 class="input3" value="200"  id="bottom_bar"/></td>
+            <td><input type="number" min=7 max=36 class="input3" value="24"  id="bottom_liters"/></td>
+            <td>-</td>
+            <td><input type="number" min=5 max=50 class="input3" value="15"  id="bottom_SAC"/></td>
+        </tr>
+        <tr>
+            <td>deco 1</td>
+            <td><input type="checkbox" id="tank_deco1" class="input3" name="tank_deco1" checked></td>
+            <td><input type="number" min=10 max=100 class="input3" value="50"  id="deco1_O2"/></td>
+            <td><input type="number" min=0 max=90 class="input3" value="0"  id="deco1_He"/></td>
+            <td><input type="number" min=100 max=300 class="input3" value="200"  id="deco1_bar"/></td>
+            <td><input type="number" min=7 max=36 class="input3" value="11"  id="deco1_liters"/></td>
+            <td><input type="number" min=0 max=90 class="input3" value="21"  id="deco1_switch"/></td>
+            <td><input type="number" min=5 max=50 class="input3" value="15"  id="deco1_SAC"/></td>
+        </tr>
+        <tr>
+            <td>deco 2</td>
+            <td><input type="checkbox" id="tank_deco2" class="input3" name="tank_deco2" checked></td>
+            <td><input type="number" min=10 max=100 class="input3" value="100"  id="deco2_O2"/></td>
+            <td><input type="number" min=0 max=90 class="input3" value="0"  id="deco2_He"/></td>
+            <td><input type="number" min=100 max=300 class="input3" value="200"  id="deco2_bar"/></td>
+            <td><input type="number" min=7 max=36 class="input3" value="7"  id="deco2_liters"/></td>
+            <td><input type="number" min=0 max=90 class="input3" value="6"  id="deco2_switch"/></td>
+            <td><input type="number" min=5 max=50 class="input3" value="15"  id="deco2_SAC"/></td>
+        </tr>
+        <tr>
+            <td><button onclick="openNav()">panels</button></td>
+            <td><button onclick="runPlan()">calculate</button></td>  
+            <td><button onclick="openTable()">table</button></td>          
+        </tr>
+    </table>
+    <!-- <button onclick="runPlan()">calculate</button> -->
+    <div>
+    <textarea id="planner_textout" name="planner_textout" cols="80" rows="30" >
+        Hello this is where the calculation output prints 
+    </textarea>
+    </div>
+</div> <!-- main -->
+<div id="table_panel" style="display: none;">
+    <h1>Dive planner: table output </h1>
+    <button onclick="showMain()">BACK</button>
+    <div id ="planner_table"></div>
 </div>
 
 
@@ -157,7 +162,10 @@
 <script src="./calculate_plan.js"> </script>
 
 <script>
-
+function showMain(){
+    document.getElementById("table_panel").style.display = "none";
+    document.getElementById("main").style.display = "block";
+}
 
 function openNav() {
   document.getElementById("mySidenav").style.width = "150px";
@@ -176,7 +184,7 @@ $(function()
 
 //let myDP = new Diveplan();
 
-let globalDP;
+var globalDP;
 
 function runPlan()
 {
@@ -248,13 +256,22 @@ function runPlan()
 }      
 
 function openTable(){
-    var pTable = "<table><tr>";
-    window.open ("planner_table.html","_blank");
+    document.getElementById("table_panel").style.display = "block";
+    document.getElementById("main").style.display = "none";
+
+
+    //window.open ("planner_table.html","_blank");
+
+    var pTable = "<table> <th>idx</th> <th>min</th> <th>m</th> <th>phase</th> <th>T</th> <th>bar</th> <tr>";
     for(i=0; i< globalDP.profileSampled.length; i++){
         point = globalDP.profileSampled[i];
         pTable += `<td>${i}</td>`;
-        pTable += `<td>${point.time}</td>`;
-        pTable += `<td>${point.depth}</td>`;
+        pTable += `<td>${(point.time/60).toFixed(1)}</td>`;
+        pTable += `<td>${point.depth.toFixed(1)}</td>`;
+        pTable += `<td>${point.divephase}</td>`;
+        pTable += `<td>${point.tank.name}</td>`;    
+        pTable += `<td>${point.tankPressure.toFixed(0)}</td>`;
+        pTable += `<td>${point.ceiling.toFixed(0)}</td>`;
         pTable += "</tr><tr>"
     }
     pTable += "</tr></table>"
