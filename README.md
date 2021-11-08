@@ -6,7 +6,7 @@ It is currently work in progress and under active development.
 The existing and planned calculation tools include:
 - MOD calculation: working 
 - gas blending: working, needs improvement
-- dive planner: not yet available, coming soon
+- dive planner: very primitive prototype, has many bugs and issues
 
 # scalc at scalc.leiman.fi
 There is a working sample of the tool running at: http://scalc.leiman.fi/
@@ -39,24 +39,29 @@ Use this application at your own risk, the author provides no guarantees about t
 * In no event should you consider scuba diving with mixed gases without proper training!
 * Ignoring these warnings can cause your **death** or **serious and permanent injuries**!
 
-# Development roadmap
+# Development history & roadmap
 - 2021-11-03 published to github a quickly hacked up demo, that needs lot of TLC
+- 2021-11-08 added the dive planner prototype
 
 todo short term:
 - some cleanup, proper structuring and commentting to the sources
 - make UI mobile friendly (CSS)
 - do a proper favicon
 - add user documentation
-- to Blender bring up all the same functionality that exists in [FillCalcWin](https://github.com/eianlei/FillCalcWin)
+- to Blender: bring up all the same functionality that exists in [FillCalcWin](https://github.com/eianlei/FillCalcWin)
   - std gas dropdown
   - cost calculation
   - VanDerWaals
+  - and something new: temperature compensations
 - Planner implementation, 
-  - Bühlmann: needs transpiling Python code to Javascript from [pydplan](https://github.com/eianlei/pydplan)
-  - need to develop a new web UI
+  - Bühlmann: have manually transpiled Python code to Javascript from [pydplan](https://github.com/eianlei/pydplan), 
+  but there are many issues to be fixed
+  - need to develop a new graphical web UI
 
 long term plans:
-- publish a desktop version that will run on electron and include Windows installer
+- re-target the HTML, CSS, JS implementation across all platforms
+- desktop version will run on [electron](https://www.electronjs.org/) and include Windows installer
+- Android and iOS mobile versions using [Cordova](https://cordova.apache.org/)
 
 
   

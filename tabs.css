@@ -1,0 +1,25 @@
+@import url('http://fonts.googleapis.com/css?family=Open+Sans:400,600,700');
+ 
+*, *:before, *:after {margin: 0; padding: 0; box-sizing: border-box;}
+body {background: #2F2556; color: #B9B5C7; font: 14px 'Open Sans', sans-serif;}
+
+h1 {padding: 100px 0; font-weight: 400; text-align: center;}
+p {margin: 0 0 20px; line-height: 1.5;}
+
+.main {margin: 0 auto; min-width: 320px; max-width: 100%;text-align:left;}
+.content {background: #fff; color: #373737;text-align:left;}
+.content > div {display: none; padding: 5px 5px 5px;}
+
+input {display: none;}
+label {display: inline-block; padding: 15px 25px; font-weight: 600; text-align: center;border-left: 1px solid green;border-right: 1px solid green;border-top: 1px solid green;border-top-left-radius: 3px;border-top-right-radius: 3px;}
+label:hover {color: #fff; cursor: pointer;}
+input:checked + label {background: #ed5a6a; color: #fff;}
+
+#tab_ABOUT:checked ~ .content #content_ABOUT,
+#tab_MOD:checked ~ .content #content_MOD,
+#tab_Blender:checked ~ .content #content_Blender,
+#tab_Planner:checked ~ .content #content_Planner {
+  display: block;
+}
+
+@media screen and (max-width: 1000px) { label {padding: 15px 10px;} }

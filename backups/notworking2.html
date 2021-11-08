@@ -1,0 +1,31 @@
+<script type="application/javascript">
+ 
+    window.addEventListener('DOMContentLoaded', function(e) {
+    
+      var iFrame = document.getElementById('content_ABOUT');
+      resizeIFrameToFitContent(iFrame);
+      /*
+        var iFrames = document.getElementsByClassName( 'iframe' );
+        for( var i = 0; i < iFrames.length; i++) {
+          console.log(iFrames[i]);
+          resizeIFrameToFitContent( iFrames[i] );
+        }
+      */
+    
+        /* or, to resize all iframes:
+        var iframes = document.querySelectorAll("iframe");
+        for( var i = 0; i < iframes.length; i++) {
+            resizeIFrameToFitContent( iframes[i] );
+        }
+        */
+    } );
+    
+    function resizeIFrameToFitContent( iFrame ) {
+    
+    console.log(iFrame);
+      // iFrame.width  = iFrame.contentWindow.document.body.scrollWidth;
+      var sh = iFrame.contentWindow.document.body.scrollHeight
+      iFrame.height = sh;
+  }
+
+    </script>

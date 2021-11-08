@@ -10,7 +10,7 @@ const DecoStop = {
  * 
  * @param {[]} decoStops 
  */
-function plan_txt(decoStops, waypoints){
+function plan_txt(decoStops, waypoints, tankList){
 
     let txt = 'deco planner result:\n';
 
@@ -18,8 +18,19 @@ function plan_txt(decoStops, waypoints){
         txt += waypoints[idx];
         txt += "\n";
     }
-    txt += "\n deco stops:\n";
+    txt += "\ngas usage:\n";    
+    let tanktxt = "";
+    for(idx=0; idx < tankList.length; idx++){
+        if (tankList[idx].use){
+            let t = tankList[idx];
+            tanktxt = `${t.label} (${t.o2}/${t.he}) ${t.pressure.toFixed(0)} bar at end\n`;
+            txt += tanktxt;
+        }
 
+    }
+
+
+    txt += "\ndeco stops:\n";
     let stopTxt = ' :-(';
     for(idx=0; idx < decoStops.length; idx++){
         if (decoStops[idx] ){

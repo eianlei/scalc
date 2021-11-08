@@ -1,11 +1,77 @@
 <!DOCTYPE html>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="stylesheet" href="index.css">
+
+<style>
+    body {
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 12px;
+    }
+    
+    .sidenav {
+      height: 100%;
+      width: 0;
+      position: fixed;
+      z-index: 1;
+      top: 0;
+      left: 0;
+      background-color: #111;
+      overflow-x: hidden;
+      transition: 0.5s;
+      padding-top: 60px;
+    }
+    
+    .sidenav a {
+      padding: 8px 8px 8px 32px;
+      text-decoration: none;
+      font-size: 14px;
+      color: #818181;
+      display: block;
+      transition: 0.3s;
+    }
+    
+    .sidenav a:hover {
+      color: #f1f1f1;
+    }
+    
+    .sidenav .closebtn {
+      position: absolute;
+      top: 0;
+      right: 25px;
+      font-size: 36px;
+      margin-left: 50px;
+    }
+    
+    #main {
+      transition: margin-left .5s;
+      padding: 16px;
+    }
+    
+    @media screen and (max-height: 450px) {
+      .sidenav {padding-top: 15px;}
+      .sidenav a {font-size: 18px;}
+    }
+</style>
+</head>
+<body>
+    
+    <div id="mySidenav" class="sidenav">
+      <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+      <a href="#">Controls</a>
+      <a href="#">Profile</a>
+      <a href="planner_table.html" target="_blank">Table</a>
+      <a href="#">Debug</a>
+    </div>
+    
+<div id="main">
 
 <h1>Dive Planner Prototype (not suitable for real dives)</h1>
 <p>
-  This form calculates a dive plan for a simple profile. 
-  It is an experimental implementation for educational use only. 
-  Do not use for planning real dives!
+  This form calculates a dive plan for a simple profile using the 
+  <a href="https://en.wikipedia.org/wiki/B%C3%BChlmann_decompression_algorithm" target="_blank">Bühlmann algorithm</a> ZHL-16C
+  with configurable <a href="https://gue.com/blog/gradient-factors-in-a-post-deep-stops-world/" target="_blank">gradient factors</a>. 
+  This is an experimental implementation for educational use only. 
+  <b>Do not use for planning real dives!</b>
 </p>
 <h4> Dive bottom time and depth, Gradient Factors</h4>
 <table class="t1">
@@ -65,15 +131,20 @@
         <td><input type="number" min=5 max=50 class="input3" value="15"  id="deco2_SAC"/></td>
     </tr>
     <tr>
-        <td><button onclick="runPlan()">calculate</button></td>        
+        <td><button onclick="openNav()">panels</button></td>
+        <td><button onclick="runPlan()">calculate</button></td>  
+        <td><button onclick="openTable()">table</button></td>          
     </tr>
 </table>
 <!-- <button onclick="runPlan()">calculate</button> -->
 <div>
-<textarea id="planner_textout" name="planner_textout" cols="80" rows="40" >
+<textarea id="planner_textout" name="planner_textout" cols="80" rows="30" >
     Hello this is where the calculation output prints 
 </textarea>
 </div>
+</div>
+
+
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
@@ -86,6 +157,18 @@
 <script src="./calculate_plan.js"> </script>
 
 <script>
+
+
+function openNav() {
+  document.getElementById("mySidenav").style.width = "150px";
+  document.getElementById("main").style.marginLeft = "150px";
+}
+
+function closeNav() {
+  document.getElementById("mySidenav").style.width = "0";
+  document.getElementById("main").style.marginLeft= "0";
+}
+
 $(function()
 {
     $(".input3").on("change",runPlan)
@@ -93,6 +176,7 @@ $(function()
 
 //let myDP = new Diveplan();
 
+let globalDP;
 
 function runPlan()
 {
@@ -157,8 +241,26 @@ function runPlan()
        myDP.model = [];
        
        calculatePlan(myDP);
-       txt = plan_txt(myDP.decoStopsCalculated, myDP.wayPoints);
+       txt = plan_txt(myDP.decoStopsCalculated, myDP.wayPoints, myDP.tankList);
        $("#planner_textout").val(txt);
+    
+       globalDP = myDP;
+}      
+
+function openTable(){
+    var pTable = "<table><tr>";
+    window.open ("planner_table.html","_blank");
+    for(i=0; i< globalDP.profileSampled.length; i++){
+        point = globalDP.profileSampled[i];
+        pTable += `<td>${i}</td>`;
+        pTable += `<td>${point.time}</td>`;
+        pTable += `<td>${point.depth}</td>`;
+        pTable += "</tr><tr>"
+    }
+    pTable += "</tr></table>"
+    document.getElementById("planner_table").innerHTML = pTable;
 }
+
+
 
 </script>

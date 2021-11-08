@@ -1,5 +1,6 @@
 /*
-
+2021-11-08 Ian Leiman
+calculate_plan.js
 */
 /*
 //*** not  currently supported on all browsers ***
@@ -17,7 +18,7 @@ const LOG_ASC = false;
 const LOG_catd = false;
 const LOG_MODOUT = false;
 
-//const diveplan = new Diveplan;
+// phases of dive
 const DivePhase = {
     INIT_TANKS: "inT",
     STARTING : "STA",
@@ -35,13 +36,7 @@ const DivePhase = {
     NULL : "NULL",
 };
 
-function test_X1(myDP)
-{
-    let txt = `bottomDepth ${myDP.bottomDepth} time ${myDP.bottomTime}`;
-    console.log(txt)
-    myDP.bottomDepth += 111;
-    myDP.bottomTime += 222;
-};
+
 
 /** 
  * @param {Diveplan} diveplan
@@ -59,17 +54,17 @@ function calculatePlan(diveplan) {
     let intervalMinutes;
 
     /**
-     * 
+     * calculates how mnay meters to ascend on next interval of minutes
      * @param {Diveplan} DP 
-     * @param {number} depth 
+     * @param {number} depth in meters from where the ascent is to be made
      * @param {number} interval in minutes
-     * @returns {number}
+     * @returns {number} meters to ascend during the interval
      */
     function calculateStepAscend (DP, depth, interval)  {
         // return 1;
         let rate = 1; // DP.ascRateToDeco;
         if (depth > 22) {
-            rate = 9;
+            rate = 9; // 9 m/min up to 22 m
         } else if (depth >= 6) {
             rate = 6;
         } else if (depth >= 3) {
@@ -77,6 +72,19 @@ function calculatePlan(diveplan) {
         } else {
             rate = 1;
         }
+        return rate * interval; // meters to ascend on {interval} of minutes
+    };
+
+    /**
+     * 
+     * @param {*} DP 
+     * @param {*} depth 
+     * @param {*} interval 
+     * @returns 
+     */
+    function calculateStepDescend (DP, depth, interval)  {
+        // return 1;
+        let rate = 10;
         return rate * interval;
     };
 
@@ -97,7 +105,7 @@ function calculatePlan(diveplan) {
     diveplan.maxTChelium = 0.0;
 
     let intervalDescent = 30; //--> diveplan.descTime / 5.0;
-    let stepDescent = diveplan.bottomDepth / 5.0;
+    let stepDescent = calculateStepDescend(diveplan, diveplan.bottomDepth, intervalDescent/60.0) // diveplan.bottomDepth / 5.0;
     let intervalBottom = 60; //--> diveplan.bottomTime / 20.0;
     let intervalAscent = 20;
     let intervalDeco = 60.0;

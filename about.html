@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="stylesheet" href="index.css">
 
 <h1>SCALC Application</h1>
@@ -10,9 +11,14 @@
     <ul>
     <li>MOD: MOD calculation: working </li> 
     <li>Blender: gas blending: working, needs improvement</li>
-    <li>Planner: dive planner: not yet available, coming soon</li>
+    <li>Planner: very primitive prototype, has many bugs and issues</li>
     </ul>
 </p>
+<p>
+    The calculation is done by javascript running on your browser and therefore this tool
+    requires that your browser supports javascript and has it enabled.
+</p>
+<p id="jsversion">your </p>
 <h2>GITHUB</h2>
 <p>
     This github project is located at:
@@ -23,3 +29,21 @@
 <p>
     (c) 2021 Ian Leiman
 </p>
+<noscript>your browser does not support javascript </noscript>
+<script type="text/javascript">
+	var version = 1.0;
+</script>
+
+<script language="Javascript1.1"> version = 1.1; </script>
+<script language="Javascript1.2"> version = 1.2; </script>
+<script language="Javascript1.3"> version = 1.3; </script>
+<script language="Javascript1.4"> version = 1.4; </script>
+<script language="Javascript1.5"> version = 1.5; </script>
+<script language="Javascript1.6"> version = 1.6; </script>
+<script language="Javascript1.7"> version = 1.7; </script>
+<script language="Javascript1.8"> version = 1.8; </script>
+<script language="Javascript1.9"> version = 1.9; </script>
+
+<script type="text/javascript">
+  document.getElementById("jsversion").innerHTML = `Your browser is running javascript version ${version}`;
+</script>
