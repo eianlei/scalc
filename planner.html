@@ -50,7 +50,11 @@
     @media screen and (max-height: 450px) {
       .sidenav {padding-top: 15px;}
       .sidenav a {font-size: 18px;}
+
+
     }
+    .pTable tr:nth-child(even) {background-color: #f2f2f2;}
+    .pTable tr:hover {background-color: #ddd;}
 </style>
 </head>
 <body>
@@ -137,6 +141,12 @@
         </tr>
     </table>
     <!-- <button onclick="runPlan()">calculate</button> -->
+
+    <div>
+    <canvas id="profileCanvas" width="600" height="200" style="border:1px solid #000000;">
+    </canvas>
+    </div>
+
     <div>
     <textarea id="planner_textout" name="planner_textout" cols="80" rows="30" >
         Hello this is where the calculation output prints 
@@ -148,7 +158,11 @@
     <button onclick="showMain()">BACK</button>
     <div id ="planner_table"></div>
 </div>
-
+<div id="profile" style="display: none;">
+    <h1>Dive planner: profile display </h1>
+    <button onclick="showMain()">BACK</button>
+    <div id ="profile_big"></div>
+</div>
 
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -176,6 +190,106 @@ function closeNav() {
   document.getElementById("mySidenav").style.width = "0";
   document.getElementById("main").style.marginLeft= "0";
 }
+
+function drawSmallProfile(dp){
+    var c = document.getElementById("profileCanvas");
+    let pw = c.width -50;
+    let ph = c.height -15
+    var ctx = c.getContext("2d");
+    let prof = dp.profileSampled;
+    let profLastIndex = prof.length -1;
+    let totalTime = prof[profLastIndex].time;
+    let maxDepth = dp.bottomDepth;
+
+    // draw the depth profile, fill with blue gradient
+    ctx.clearRect(0,0, c.width, c.height);
+    ctx.beginPath();
+    ctx.moveTo(0, 0);
+    for (var i =0; i< prof.length; i++){
+        point = prof[i];
+        var x = (point.time / totalTime) * pw;
+        var y = (point.depth / maxDepth ) * ph;
+        ctx.lineTo(x, y);
+    }
+    ctx.lineTo(0, 0);
+    ctx.closePath();
+    ctx.lineWidth = 1;
+    // ctx.fillStyle = "#8ED6FF";
+    var grd = ctx.createLinearGradient(0,0, 0, ph);
+    grd.addColorStop(0, "lightBlue");
+    grd.addColorStop(1, "Blue");
+    ctx.fillStyle = grd;
+    ctx.fill();
+    ctx.strokeStyle = "blue";
+    ctx.stroke();
+    ctx.closePath();
+
+    // draw time axis
+    for (var tt=0; tt < totalTime; tt += 60){
+        var x = tt / totalTime * pw;
+        ctx.beginPath();
+        ctx.moveTo(x, ph);
+        ctx.lineTo(x, ph+5);
+        ctx.strokeStyle = "black";
+        ctx.stroke();
+    } // time ticks every 1 min
+    for (var tt=300; tt < totalTime; tt += 300){
+        var x = tt / totalTime * pw;
+        ctx.beginPath();
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x, ph-1);
+        ctx.strokeStyle = "Grey";
+        ctx.stroke();
+        ctx.font = '8pt Arial';
+        ctx.fillStyle = "black";
+        ctx.fillText(`${tt / 60}`, x-5, ph+14);
+    } // time gridlines every 5 min and minutes text
+
+    // draw depth grid
+    for (var dd=0; dd < maxDepth; dd += 5){
+        var y = dd / maxDepth * ph;
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(pw, y);
+        ctx.strokeStyle = "Orange";
+        ctx.stroke();
+        ctx.font = '8pt Arial';
+        ctx.fillStyle = "blue";
+        ctx.fillText(`${dd}`, pw+1, y+5);
+    }
+    ctx.stroke();
+
+    // draw tank pressures
+    var previousTank = null;
+    var lastPressure = null;
+    ctx.strokeStyle = "Red";
+    ctx.fillStyle = "red"
+    ctx.font = '10pt Arial';
+    var x1 = 0;
+    var y1 = (1.0 - prof[0].tankPressure /300.0) * ph;
+    for (var i =0; i< prof.length; i++){
+        point = prof[i];
+        var thisTank = point.tank;
+        var x = point.time / totalTime * pw;
+        var y = (1.0 - point.tankPressure /300.0) * ph;
+        if (thisTank != previousTank){
+            if (lastPressure) {
+                ctx.fillText(`${lastPressure.toFixed(0)}`, x-5, y1);
+            }
+            //ctx.strokeStyle = thisTank.color;
+            ctx.fillText(`${point.tankPressure.toFixed(0)}`, x+5, y)
+            y1 = y;
+        }
+        ctx.moveTo(x1, y1);
+        ctx.lineTo(x, y);
+        ctx.stroke();
+        x1 = x; y1 = y;
+        previousTank = thisTank;
+        lastPressure = point.tankPressure;
+    } // draw tank pressures
+    ctx.fillText(`${lastPressure.toFixed(0)}`, x-20, y-10);
+
+} // drawSmallProfile()
 
 $(function()
 {
@@ -247,37 +361,76 @@ function runPlan()
        myDP.maxTChelium = 0;
        myDP.profileSampled = [];
        myDP.model = [];
+       myDP.tableIsGenerated = false; // controls openTable()
        
        calculatePlan(myDP);
        txt = plan_txt(myDP.decoStopsCalculated, myDP.wayPoints, myDP.tankList);
        $("#planner_textout").val(txt);
     
        globalDP = myDP;
+       drawSmallProfile(myDP);
 }      
 
 function openTable(){
     document.getElementById("table_panel").style.display = "block";
     document.getElementById("main").style.display = "none";
 
+    if (globalDP.tableIsGenerated == false) {
+        // generate the table only once after calculatePlan()
+        var pTable = "<table class= 'pTable'>"+
+            "<th title='iteration index'>idx</th>"+
+            "<th title='runtime in minutes'>min</th>"+
+            "<th title='dive depth in meters'>m</th>"+
+            "<th title='dive phase'>phase</th>"+
+            "<th title='tank name'>T</th>"+
+            "<th title='Oxygen/Helium %'>O2/He</th>"+
+            "<th title='tank pressure in bar'>bar</th>"+
+            "<th title='partial pressure of Oxygen'>ppO2</th>"+
+            "<th title='Gradient Factor % at this depth'>GF</th>"+
+            "<th title='Ceiling in 3 meter step'>C3m</th>"+
+            "<th title='ceiling in meters'>Ceil</th>"+
+            "<th title='margin from current depth to ceiling in meters'>marg</th>"+
+            "<th title='leading tissue compartment number'>lead</th>";
+        for (i=0; i<16; i++) {    
+            pTable += `<th title='tissue compartment #${i} ceiling in meters'>TC${i}</th>`;
+        }
+        pTable += "<tr>";
+        let bg_col = "white";
+        for(i=0; i< globalDP.profileSampled.length; i++){
+            point = globalDP.profileSampled[i];
+            pTable += `<td>${i}</td>`;
+            pTable += `<td>${(point.time/60).toFixed(1)}</td>`;
+            pTable += `<td>${point.depth.toFixed(1)}</td>`;
+            pTable += `<td>${point.divephase}</td>`;
+            pTable += `<td>${point.tank.name}</td>`;    
+            pTable += `<td>${point.tank.o2}/${point.tank.he}</td>`;    
+            pTable += `<td>${point.tankPressure.toFixed(0)}</td>`;
+            pTable += `<td>${point.ppOxygen.toFixed(2)}</td>`;
+            pTable += `<td>${point.gfNow.toFixed(2)}</td>`;            
+            pTable += `<td>${point.ceiling3m.toFixed(0)}</td>`;
+            pTable += `<td>${point.ceiling.toFixed(1)}</td>`;
+            pTable += `<td>${point.margin.toFixed(1)}</td>`;
+            pTable += `<td>${point.leadTC}</td>`;
+            for(tc=0; tc < point.TCm.length; tc++){
+                //if (tc == point.leadTC) bg_col = "red"; else bg_col ="white";
+                if (tc == point.leadTC) {
+                    pTable += `<td bgcolor='red'>${point.TCm[tc].toFixed(1)}</td>`;
+                }else {
+                    pTable += `<td>${point.TCm[tc].toFixed(1)}</td>`;
+                }
+            }
+            pTable += "</tr><tr>"
+        }
+        pTable += "</tr></table>"
 
-    //window.open ("planner_table.html","_blank");
-
-    var pTable = "<table> <th>idx</th> <th>min</th> <th>m</th> <th>phase</th> <th>T</th> <th>bar</th> <tr>";
-    for(i=0; i< globalDP.profileSampled.length; i++){
-        point = globalDP.profileSampled[i];
-        pTable += `<td>${i}</td>`;
-        pTable += `<td>${(point.time/60).toFixed(1)}</td>`;
-        pTable += `<td>${point.depth.toFixed(1)}</td>`;
-        pTable += `<td>${point.divephase}</td>`;
-        pTable += `<td>${point.tank.name}</td>`;    
-        pTable += `<td>${point.tankPressure.toFixed(0)}</td>`;
-        pTable += `<td>${point.ceiling.toFixed(0)}</td>`;
-        pTable += "</tr><tr>"
-    }
-    pTable += "</tr></table>"
-
-    document.getElementById("planner_table").innerHTML = pTable;
-    document.getElementById("planner_table").style.border = "3";
+        document.getElementById("planner_table").innerHTML = pTable;
+        var tableElement = document.getElementById("planner_table").childNodes[0];
+        tableElement.border = "1";
+        tableElement.style.borderCollapse="collapse";
+        tableElement.style.textAlign="right" ;
+        //tableElement.style.
+        globalDP.tableIsGenerated = true; // don't do it again
+    }// if (globalDP.tableIsGenerated) 
 }
 
 

@@ -22,7 +22,7 @@ const LOG_MODOUT = false;
 const DivePhase = {
     INIT_TANKS: "inT",
     STARTING : "STA",
-    DESCENDING : "DES",
+    DESCENDING : "DESC",
     BOTTOM : "BOT",
     ASCENDING : "ASC",
     STOP_DECO : "deco",
@@ -275,6 +275,7 @@ function calculatePlan(diveplan) {
             newPoint.depth = endDepth;
             newPoint.pressure = depth2absolutePressure(endDepth);
             newPoint.tank = tank;
+            // newPoint.tankO2 = 
             newPoint.divephase = divephase;
             newPoint.gfSet = gfObject.gfSetFlag;
             newPoint.ascending = ascending;
@@ -305,6 +306,15 @@ function calculatePlan(diveplan) {
             if (LOG_MODOUT) console.log(`    MO stop=${model.leadCeilingStop.toFixed(0)} c=${model.leadCeilingMeters.toFixed(1)} tc=${model.leadTissue}`)
             ///////////////////////////////////////////////////////    
             newPoint.ceiling = model.leadCeilingMeters;
+            newPoint.ceiling3m = model.leadCeilingStop;
+            newPoint.margin = newPoint.depth - model.leadCeilingMeters;
+            newPoint.leadTC = model.leadTissue;
+            // then DEEP copy the ceiling values from model
+            newPoint.TCm = Array(16);
+            for (i=0; i < model.ceilings.length; i++){
+                var copy = model.ceilings[i];
+                newPoint.TCm[i] = copy;
+            };
 
             // search and record max N2, He TC pressures
             diveplan.maxTCnitrogen = Math.max(diveplan.maxTCnitrogen, model.maxNitrogenPressure);
