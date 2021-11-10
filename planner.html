@@ -251,22 +251,23 @@ function drawSmallProfile(dp){
         ctx.beginPath();
         ctx.moveTo(0, y);
         ctx.lineTo(pw, y);
-        ctx.strokeStyle = "Orange";
+        ctx.strokeStyle = "Green";
         ctx.stroke();
         ctx.font = '8pt Arial';
         ctx.fillStyle = "blue";
-        ctx.fillText(`${dd}`, pw+1, y+5);
+        ctx.fillText(`${dd} m`, pw+1, y+5);
     }
     ctx.stroke();
 
     // draw tank pressures
     var previousTank = null;
     var lastPressure = null;
-    ctx.strokeStyle = "Red";
+    ctx.strokeStyle = "Orange";
     ctx.fillStyle = "red"
-    ctx.font = '10pt Arial';
+    ctx.font = '9pt Arial';
     var x1 = 0;
     var y1 = (1.0 - prof[0].tankPressure /300.0) * ph;
+    ctx.beginPath();
     for (var i =0; i< prof.length; i++){
         point = prof[i];
         var thisTank = point.tank;
@@ -274,22 +275,70 @@ function drawSmallProfile(dp){
         var y = (1.0 - point.tankPressure /300.0) * ph;
         if (thisTank != previousTank){
             if (lastPressure) {
-                ctx.fillText(`${lastPressure.toFixed(0)}`, x-5, y1);
+                // tank/gas change at this point
+                ctx.fillText(`${lastPressure.toFixed(0)} bar`, x-5, y1);
+                ctx.fillText(`${previousTank.name}> ${thisTank.name}`, x-5, y1+10);
+                ctx.beginPath();
+                ctx.moveTo(x1, y1+5);
+                ctx.lineTo(x1, y-5);
+                ctx.lineWidth =4;
+                ctx.strokeStyle = "red";
+                ctx.stroke();
+                //ctx.closePath();
             }
-            //ctx.strokeStyle = thisTank.color;
-            ctx.fillText(`${point.tankPressure.toFixed(0)}`, x+5, y)
+            ///////////ctx.strokeStyle = thisTank.color;
+            // starting with new tank
+            ctx.fillText(`${point.tankPressure.toFixed(0)} bar`, x+5, y)
             y1 = y;
         }
+        // plot the pressure of the current tank
+        ctx.strokeStyle = "Orange";
+        ctx.lineWidth =1;
         ctx.moveTo(x1, y1);
         ctx.lineTo(x, y);
         ctx.stroke();
         x1 = x; y1 = y;
         previousTank = thisTank;
         lastPressure = point.tankPressure;
-    } // draw tank pressures
+    } // draw tank pressures loop
+    ctx.closePath();
+    // print the end pressure of the last tank
     ctx.fillText(`${lastPressure.toFixed(0)}`, x-20, y-10);
 
+    // track mouse over canvas
+    c.addEventListener('mousemove', function(e){
+        with(ctx) {
+            ctx.font = '8pt Arial';
+
+            // erase the previous text
+            ctx.fillStyle = "white";
+            ctx.fillText("XX", this.xt2, this.yt2);
+            ctx.stroke();
+            
+
+            ctx.fillStyle = "black";
+            //** the following lines give you absolute x, y of the display
+            // var xt = e.pageX;
+            // var yt = e.pageY
+            //** the following function gets you canvas relative x, y
+            var [xt, yt] = getCursorPosition(c, e);
+            ctx.fillText("XX", xt, yt);
+            ctx.stroke();
+            this.xt2 = xt; 
+            this.yt2 = yt;
+            // console.log (`mouse ${xt} ${yt}`);
+        }
+    } ,0);
+
 } // drawSmallProfile()
+
+function getCursorPosition(canvas, event) {
+    const rect = canvas.getBoundingClientRect()
+    const x = event.clientX - rect.left
+    const y = event.clientY - rect.top
+    // console.log("x: " + x + " y: " + y)
+    return [x, y];
+} // from https://stackoverflow.com/questions/55677/how-do-i-get-the-coordinates-of-a-mouse-click-on-a-canvas-element/18053642#18053642
 
 $(function()
 {
