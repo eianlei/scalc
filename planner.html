@@ -55,6 +55,18 @@
     }
     .pTable tr:nth-child(even) {background-color: #f2f2f2;}
     .pTable tr:hover {background-color: #ddd;}
+
+    /* this will align the main and animated text layers canvases over each other */
+    .profile2 {
+        position: relative;
+        width: 600px;
+        height: 200px;
+    }
+    .profile2 canvas {
+        position: absolute;
+        top: 0;
+        left: 0;
+    }
 </style>
 </head>
 <body>
@@ -142,9 +154,10 @@
     </table>
     <!-- <button onclick="runPlan()">calculate</button> -->
 
-    <div>
-    <canvas id="profileCanvas" width="600" height="200" style="border:1px solid #000000;">
-    </canvas>
+    <div class="profile2">
+
+        <canvas id="profileCanvas" width="600" height="200" style="border:1px solid #000000;"></canvas>
+        <canvas id="profileCanvas_txt" width="600" height="200" style="border:1px solid #000000;"></canvas>
     </div>
 
     <div>
@@ -193,9 +206,11 @@ function closeNav() {
 
 function drawSmallProfile(dp){
     var c = document.getElementById("profileCanvas");
+    var cTXT = document.getElementById("profileCanvas_txt");
     let pw = c.width -50;
     let ph = c.height -15
     var ctx = c.getContext("2d");
+    var ctxTXT = cTXT.getContext("2d");
     let prof = dp.profileSampled;
     let profLastIndex = prof.length -1;
     let totalTime = prof[profLastIndex].time;
@@ -305,25 +320,44 @@ function drawSmallProfile(dp){
     // print the end pressure of the last tank
     ctx.fillText(`${lastPressure.toFixed(0)}`, x-20, y-10);
 
-    // track mouse over canvas
-    c.addEventListener('mousemove', function(e){
-        with(ctx) {
-            ctx.font = '8pt Arial';
+    function getPointText (xMouse){
+        if (xMouse > pw) {
+            return ["", 0];
+        }
+        var mouseTime = xMouse * totalTime /pw;
+        for (idx = 0; idx < prof.length; idx++){
+            if (prof[idx].time >= mouseTime) break;
+        }
+        var pointIdx = idx;
+        var mousePoint = prof[pointIdx];
+        var pointTxt = `${mousePoint.depth.toFixed(0)} m, ${(mouseTime/60).toFixed(0)} min`;
+        var depthY = mousePoint.depth / maxDepth * ph ;
+        return [pointTxt, depthY];
+    }
 
-            // erase the previous text
-            ctx.fillStyle = "white";
-            ctx.fillText("XX", this.xt2, this.yt2);
-            ctx.stroke();
-            
-
-            ctx.fillStyle = "black";
-            //** the following lines give you absolute x, y of the display
-            // var xt = e.pageX;
-            // var yt = e.pageY
+    // track mouse over the topmost canvas c = "profileCanvas"
+    cTXT.addEventListener('mousemove', function(e){
+        with(ctxTXT) {
+            ctxTXT.clearRect(0,0, ctxTXT.canvas.width, ctxTXT.canvas.height);
+            ctxTXT.beginPath();
+            ctxTXT.font = '8pt Arial';
+            ctxTXT.fillStyle = "black";
+            ctxTXT.strokeStyle = "black";
+            ctx.lineWidth = 1;
             //** the following function gets you canvas relative x, y
             var [xt, yt] = getCursorPosition(c, e);
-            ctx.fillText("XX", xt, yt);
-            ctx.stroke();
+            // ctxTXT.fillText(`mouse ${xt} ${yt.toFixed(1)}`, xt+2, yt);
+            var pointTxt;
+            var depthY;
+            [pointTxt, depthY] = getPointText(xt);
+            ctxTXT.fillText(pointTxt, xt+2, yt);
+            ctxTXT.moveTo(xt, 0);
+            ctxTXT.lineTo(xt, ctxTXT.canvas.height);
+            ctxTXT.closePath();
+            ctxTXT.moveTo(0, depthY);
+            ctxTXT.lineTo(ctxTXT.canvas.width, depthY);
+            ctxTXT.stroke();
+            ctxTXT.closePath();
             this.xt2 = xt; 
             this.yt2 = yt;
             // console.log (`mouse ${xt} ${yt}`);
