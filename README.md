@@ -17,7 +17,7 @@ Note that the site leiman.fi does not have an SSL-certificate, so there is no HT
 But you can safely ignore the warnings. 
 
 # Installation
-This is a web application so it needs to be served by a web server to a web browser. You can either install it to a "real" web server (such Apache, nginx, node.js) or use some local development solution such as VS Code Live Server extension.
+This is a web application so it needs to be served by a web server to a web browser. You can either install it to a "real" web server (such Apache, nginx) or use some local development solution such as VS Code Live Server extension.
 ## web server
 Just copy all the files in source folder to a web site server root. 
 The web server will serve index.html, which will call out all the modules. 
@@ -38,11 +38,11 @@ jQuery
 
 # Background
 The Javascript used in calculations is refactored (manually transpiled) from following Python and C# projects that I have published previously:
-- https://github.com/eianlei/pydplan/blob/master/doc/fillcalc2.md
+- https://github.com/eianlei/pydplan 
 - https://github.com/eianlei/FillCalcWin 
-- https://github.com/eianlei/pydplan
+- 
 
-The UI is a web (HTML5, CSS, JS) implementation of the respective GUIs done in Qt5 and WPF/.NET 4.8/XAML.
+The UI is a web (HTML5, CSS, JS) implementation of the respective GUIs done previously in Qt5 or WPF/.NET 4.8/XAML.
 
 # Target users
 The application is intended for certified technical divers and [Trimix](https://en.wikipedia.org/wiki/Trimix_(breathing_gas)) gas blenders, who [blend gases](https://en.wikipedia.org/wiki/Gas_blending_for_scuba_diving) and make plans for [technical scuba diving](https://en.wikipedia.org/wiki/Technical_diving).
