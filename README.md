@@ -16,10 +16,25 @@ There is a working sample of the tool running at: http://scalc.leiman.fi/
 Note that the site leiman.fi does not have an SSL-certificate, so there is no HTTPS and therefore most browsers will give you warnings. 
 But you can safely ignore the warnings. 
 
+# Installation
+This is a web application so it needs to be served by a web server to a web browser. You can either install it to a "real" web server (such Apache, nginx, node.js) or use some local development solution such as VS Code Live Server extension.
+## web server
+Just copy all the files in source folder to a web site server root. 
+The web server will serve index.html, which will call out all the modules. 
+Usually a web browser will cache the entire application as it so small. 
+## VS code & Live Server
+If you have Visual Studio Code installed, then it is really easy to run any web app using the Live Server extension.
+
+In Visual Studio Code clone this repository.
+Install "Live Server" extension. Now you can launch the app from editor to your browser using a local server with live reload.
+## node.js
+
 # Technology
 **scalc** is made from plain vanilla HTML, CSS, Javascript and does not use any fancy JS frameworks (such as Angular, React, Vue, Svelte etc...).
 The UI uses plain HTML5 elements and canvas.
 Calculations are done by pure and simple Javascript functions running on your browser. There is no back-end, nothing is calculated at the server end.
+## dependencies
+jQuery
 
 # Background
 The Javascript used in calculations is refactored (manually transpiled) from following Python and C# projects that I have published previously:
