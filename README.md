@@ -17,8 +17,8 @@ Note that the site leiman.fi does not have an SSL-certificate, so there is no HT
 But you can safely ignore the warnings. 
 
 # Technology
-**scalc** is a plain vanilla HTML, CSS, Javascript and does not use any fancy JS frameworks (such as Angular, React, Vue, Svelte etc...).
-The UI uses plain HTML5 elements.
+**scalc** is made from plain vanilla HTML, CSS, Javascript and does not use any fancy JS frameworks (such as Angular, React, Vue, Svelte etc...).
+The UI uses plain HTML5 elements and canvas.
 Calculations are done by pure and simple Javascript functions running on your browser. There is no back-end, nothing is calculated at the server end.
 
 # Background
@@ -65,5 +65,18 @@ long term plans:
 - desktop version will run on [electron](https://www.electronjs.org/) and include Windows installer
 - Android and iOS mobile versions using [Cordova](https://cordova.apache.org/)
 
+# License
+Copyright (C) 2021 Ian Leiman
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, version 3 of the License.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+    
+See https://www.gnu.org/licenses/gpl-3.0.html</a>.
 
   
