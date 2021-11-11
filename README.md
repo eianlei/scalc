@@ -1,12 +1,14 @@
 # scalc
 **scalc** is a Web tool for interactive calculations needed for planning technical scuba dives.
-![mainwin-shorturl](https://github.com/eianlei/scalc/blob/master/scalc-blender.jpg?raw=true)
 
-It is currently work in progress and under active development.
+![mainwin-shorturl](https://github.com/eianlei/scalc/blob/master/scalc-planner.jpg?raw=true)
+
+
+SCALC is currently work in progress and under active development.
 The existing and planned calculation tools include:
 - MOD calculation: working 
 - gas blending: working, needs improvement
-- dive planner: very primitive prototype, has many bugs and issues
+- dive planner: simple prototype, has many bugs and issues
 
 # scalc at scalc.leiman.fi
 There is a working sample of the tool running at: http://scalc.leiman.fi/
@@ -56,7 +58,7 @@ todo short term:
 - Planner implementation, 
   - Bühlmann: have manually transpiled Python code to Javascript from [pydplan](https://github.com/eianlei/pydplan), 
   but there are many issues to be fixed
-  - need to develop a new graphical web UI
+  - improvements on graphical web UI
 
 long term plans:
 - re-target the HTML, CSS, JS implementation across all platforms
