@@ -67,6 +67,62 @@
         top: 0;
         left: 0;
     }
+    /* Popup container - can be anything you want */
+.popup {
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+/* The actual popup */
+.popup .popuptext {
+  visibility: hidden;
+  width: 160px;
+  background-color: #555;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 8px 0;
+  position: absolute;
+  z-index: 1;
+  bottom: 125%;
+  left: 50%;
+  margin-left: -80px;
+}
+
+/* Popup arrow */
+.popup .popuptext::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: #555 transparent transparent transparent;
+}
+
+/* Toggle this class - hide and show the popup */
+.popup .show {
+  visibility: visible;
+  -webkit-animation: fadeIn 1s;
+  animation: fadeIn 1s;
+}
+
+/* Add animation (fade in the popup) */
+@-webkit-keyframes fadeIn {
+  from {opacity: 0;} 
+  to {opacity: 1;}
+}
+
+@keyframes fadeIn {
+  from {opacity: 0;}
+  to {opacity:1 ;}
+}
 </style>
 </head>
 <body>
@@ -86,17 +142,29 @@
     This form calculates a dive plan for a simple profile using the 
     <a href="https://en.wikipedia.org/wiki/B%C3%BChlmann_decompression_algorithm" target="_blank">Bühlmann algorithm</a> ZHL-16C
     with configurable <a href="https://gue.com/blog/gradient-factors-in-a-post-deep-stops-world/" target="_blank">gradient factors</a>. 
+    </p>
+    <p>
     This is an experimental implementation for educational use only. 
     <b>Do not use for planning real dives!</b>
     </p>
-    <h4> Dive bottom time and depth, Gradient Factors</h4>
+    <h2> Dive bottom time and depth, Gradient Factors</h2>
     <table class="t1">
         <tr>
             <td>depth (m)</td>
             <td title="bottom depth of dive in meters"><input type="number" min=6 max=70 class="input3" value="50"  id="dive_depth"/></td>
             <td>time (min)</td>
             <td title="bottom time in minutes"><input type="number" min=6 max=100 class="input3" value="30"  id="dive_bottom_time"/></td>
+            <td>
+                <div class="popup">
+                    <button onclick="popupHowto()">How to use?</button>
+                    <span class="popuptext" id="howtoPopup">
+                    Use the input controls to configure the dive.
+                    Anytime you change a value, a new dive plan is calculated.
+                    </span>
+                </div>
+            </td>
         </tr>
+              
         <tr>
             <td>GF low (%)</td>
             <td title="Gradient Factor LOW"><input type="number" min=6 max=100 class="input3" value="30"  id="gf_low"/></td>
@@ -113,7 +181,7 @@
             </td>
         </tr>
     </table>
-    <h4>Specify your tanks and gases for the dive</h4>
+    <h3>Specify your tanks and gases for the dive</h3>
     <table class="t1">
         <tr>
             <th title="configure the tanks/gases for the dive">tank</th>
@@ -214,7 +282,14 @@
 <script src="./calculate_plan.js"> </script>
 
 <script>
+// run the plan automatically for the 1st time with defaults
+runPlan();
 
+// When the user clicks on div, open the popup
+function popupHowto() {
+  var popup = document.getElementById("howtoPopup");
+  popup.classList.toggle("show");
+}
 
 function showMain(){
     document.getElementById("table_panel").style.display = "none";
@@ -426,15 +501,37 @@ $("#dd_bGas").change(function () {
 
 var globalDP;
 
+/** runPlan() gets the inputs from GUI and then calls calculatePlan
+ * @
+*/
 function runPlan()
 {
+    // are deco tanks in use, get checkbox status
     let deco1_use = $("#tank_deco1").prop("checked");
     let deco2_use = $("#tank_deco2").prop("checked");
 
+    // check that input values are sane
+    var bottom_O2_in = parseInt($("#bottom_O2").val());
+    var bottom_He_in = parseInt($("#bottom_He").val());
+    if (bottom_O2_in > 100 || bottom_O2_in <18){
+        alert(`invalid bottom O2% = ${bottom_O2_in}\nreverting to 21%`);
+        bottom_O2_in = 21;
+        $("#bottom_O2").val(21);
+    }
+    if ((bottom_O2_in + bottom_He_in > 100) || bottom_He_in > 82 ){
+        alert(`invalid bottom O2/He% = ${bottom_O2_in}/${bottom_He_in} \n`+
+        "reverting to 21/35%");
+        bottom_O2_in = 21;
+        bottom_He_in = 35;
+        $("#bottom_O2").val(21);
+        $("#bottom_He").val(35);
+    }
+
+    // get input for the tank configuration
     const myTanks = [
     { label : "BOTTOM", name: "B", use: true, 
-        o2: parseInt($("#bottom_O2").val()), 
-        he: parseInt($("#bottom_He").val()), 
+        o2: bottom_O2_in, 
+        he: bottom_He_in, 
         SAC: parseInt($("#bottom_SAC").val()), 
         ppo2max: 1.4, 
         liters: parseInt($("#bottom_liters").val()), 
@@ -469,7 +566,7 @@ function runPlan()
         type: "travel", useOrder: 0, color: "Yellow"}
     ];
 
-    
+    // configure all inputs for the calculatePlan()
     const myDP = new Object();
        myDP.bottomDepth =   parseInt($("#dive_depth").val());
        myDP.bottomTime =    parseInt($("#dive_bottom_time").val()) * 60.0; // CONVERT TO SECONDS!!!!
@@ -500,10 +597,21 @@ function runPlan()
        myDP.model = [];
        myDP.tableIsGenerated = false; // controls openTable()
        
+       // now finally call the actual work horse
+    try {
        calculatePlan(myDP);
+    }
+    catch(err) {
+        alert(`calculatePlan() exception: ${err}\n`+
+        "aborted, press F12 to see console.log");
+        return;
+    }
+       
+       // output the text from calculatePlan()
        txt = plan_txt(myDP.decoStopsCalculated, myDP.wayPoints, myDP.tankList);
        $("#planner_textout").val(txt);
     
+       // draw the profile canvas
        globalDP = myDP;
        drawSmallProfile(myDP);
 }      

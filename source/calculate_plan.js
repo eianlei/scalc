@@ -137,7 +137,7 @@ function calculatePlan(diveplan) {
             throw "over 500 iterations, aborting";
         }
         if (divephase == DivePhase.STARTING) {
-            runtime = 0.0;
+            runtime = 0.0 ;
             // fixme: this should be zero?
             intervalMinutes = 0.01;
             beginDepth = 0.0;
@@ -266,6 +266,7 @@ function calculatePlan(diveplan) {
             break;
         } else {
             console.log("calculatePlan: slipped through the loop");
+            throw "error 101";
             break;
         }
 

@@ -19,90 +19,119 @@
 
 
 <h1>Gas Blender</h1>
-<p>calculate gas blending</p>
-<table class="t2">
-    <tr>
-        <td><b>Current tank mix</b></td>
-        <td>
-            <select id ="dd_startGas" name="dd_wantedGas" class="ddl" onmousedown="this.value='';"" >
-                <option value='21/0'>air</option>
-                <option value='28/0'>EAN 28%</option>
-                <option value='32/0'>EAN 32%</option>
-                <option value='30/30'>TMX 30/30</option>
-                <option value='21/35' selected="selected">TMX 21/35</option>
-                <option value='18/45'>TMX 18/45</option>
-                <option value='15/55'>TMX 15/55</option> 
-                <option value='12/65'>TMX 12/65</option>
-                <option value='10/70'>TMX 10/70</option> 
-                <option value='50/0'>EAN 50%</option>
-                <option value='100/0'>EAN 100%</option>
-              </select>          
-        </td>
-    </tr>
-    <tr>
-        <td>Current tank pressure (bar)</td>
-        <td><input type="number" min=1 max=300 step=1 class="input2" value="100" id="start_bar"/></td>
-        <td><button>EMPTY</button></td>
-    </tr>
-    <tr>
-        <td>Current Oxygen (%)</td>
-        <td><input type="number" min=10 max=100 step=1 class="input2" value="21" id="start_o2_pct"/></td>
-    </tr>
-    <tr>
-        <td>Current Helium (%)</td>
-        <td><input type="number" min=0 max=100 step=1 class="input2" value="35" id="start_he_pct"/></td>
-    </tr>
-</table>
-<hr>
-<table class="t2">
-    <tr>
-        <td><b>Wanted tank mix</b></td>
-        <td>
-            <select id ="dd_wantedGas" name="dd_wantedGas" class="ddl" onmousedown="this.value='';"" >
-                <option value='21/0'>air</option>
-                <option value='28/0'>EAN 28%</option>
-                <option value='32/0'>EAN 32%</option>
-                <option value='30/30'>TMX 30/30</option>
-                <option value='21/35' selected="selected">TMX 21/35</option>
-                <option value='18/45'>TMX 18/45</option>
-                <option value='15/55'>TMX 15/55</option> 
-                <option value='12/65'>TMX 12/65</option>
-                <option value='10/70'>TMX 10/70</option> 
-                <option value='50/0'>EAN 50%</option>
-                <option value='100/0'>EAN 100%</option>
-              </select>          
-        </td>
-    </tr>
-    <tr>
-        <td>Wanted tank pressure (bar)</td>
-        <td><input type="number" min=1 max=300 step=1 class="input2" value="200" id="end_bar"/></td>
-        <td>
-            <select id ="dd_startGas" name="dd_wantedGas" class="ddl" onmousedown="this.value='';"" >
-                <option value='200' selected="selected">200</option>
-                <option value='232'>232</option>
-                <option value='300'>300</option>
-            </select>
-        </td>
-    </tr>
-    <tr>
-        <td>Wanted Oxygen (%)</td>
-        <td><input type="number" min=10 max=100 step=1 class="input2" value="21" id="end_o2_pct"/></td>
-    </tr>
-    <tr>
-        <td>Wanted Helium (%)</td>
-        <td><input type="number" min=0 max=100 step=1 class="input2" value="35" id="end_he_pct"/></td>
-    </tr>
-</table>
-<div class="wrap-flex">
-    <p><b>Blending method selection: </b></p>
+<div id="blender_main">
+    <p>calculate gas blending</p>
+    <table class="t2">
+        <tr>
+            <td><b>Current tank mix</b></td>
+            <td>
+                <select id ="dd_startGas" name="dd_wantedGas" class="ddl" onmousedown="this.value='';"" >
+                    <option value='21/0'>air</option>
+                    <option value='28/0'>EAN 28%</option>
+                    <option value='32/0'>EAN 32%</option>
+                    <option value='30/30'>TMX 30/30</option>
+                    <option value='21/35' selected="selected">TMX 21/35</option>
+                    <option value='18/45'>TMX 18/45</option>
+                    <option value='15/55'>TMX 15/55</option> 
+                    <option value='12/65'>TMX 12/65</option>
+                    <option value='10/70'>TMX 10/70</option> 
+                    <option value='50/0'>EAN 50%</option>
+                    <option value='100/0'>EAN 100%</option>
+                </select>          
+            </td>
+        </tr>
+        <tr>
+            <td>Current tank pressure (bar)</td>
+            <td><input type="number" min=1 max=300 step=1 class="input2" value="100" id="start_bar"/></td>
+            <td><button onclick="emptyTank()">EMPTY</button></td>
+        </tr>
+        <tr>
+            <td>Current Oxygen (%)</td>
+            <td><input type="number" min=10 max=100 step=1 class="input2" value="21" id="start_o2_pct"/></td>
+        </tr>
+        <tr>
+            <td>Current Helium (%)</td>
+            <td><input type="number" min=0 max=100 step=1 class="input2" value="35" id="start_he_pct"/></td>
+        </tr>
+    </table>
+    <hr>
+    <table class="t2">
+        <tr>
+            <td><b>Wanted tank mix</b></td>
+            <td>
+                <select id ="dd_wantedGas" name="dd_wantedGas" class="ddl" onmousedown="this.value='';"" >
+                    <option value='21/0'>air</option>
+                    <option value='28/0'>EAN 28%</option>
+                    <option value='32/0'>EAN 32%</option>
+                    <option value='30/30'>TMX 30/30</option>
+                    <option value='21/35' selected="selected">TMX 21/35</option>
+                    <option value='18/45'>TMX 18/45</option>
+                    <option value='15/55'>TMX 15/55</option> 
+                    <option value='12/65'>TMX 12/65</option>
+                    <option value='10/70'>TMX 10/70</option> 
+                    <option value='50/0'>EAN 50%</option>
+                    <option value='100/0'>Oxygen</option>
+                </select>          
+            </td>
+        </tr>
+        <tr>
+            <td>Wanted tank pressure (bar)</td>
+            <td><input type="number" min=1 max=300 step=1 class="input2" value="200" id="end_bar"/></td>
+            <td>
+                <select id ="dd_end_bar" name="dd_end_bar" class="ddl" onmousedown="this.value='';"" >
+                    <option value='200' selected="selected">200</option>
+                    <option value='232'>232</option>
+                    <option value='300'>300</option>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td>Wanted Oxygen (%)</td>
+            <td><input type="number" min=10 max=100 step=1 class="input2" value="21" id="end_o2_pct"/></td>
+        </tr>
+        <tr>
+            <td>Wanted Helium (%)</td>
+            <td><input type="number" min=0 max=100 step=1 class="input2" value="35" id="end_he_pct"/></td>
+        </tr>
+    </table>
+    <div class="wrap-flex">
+        <p><b>Blending method selection: </b></p>
 
-    <select id ="ddl_ft" name="ddl_ft" class="ddl" onmousedown="this.value='';"" value="air">
-    <option value='air'>plain air fill</option>
-    <option value='nx'>Nitrox CFM</option>
-    <option value='tmx'>Trimix CFM</option>
-    <option value='pp'>Partial Pressure</option>
-    <option value='cfm'>Helium + Nitrox CFM</option>
-    </select>
+        <select id ="ddl_ft" name="ddl_ft" class="ddl" onmousedown="this.value='';"" value="air">
+        <option value='air'>plain air fill</option>
+        <option value='nx'>Nitrox CFM</option>
+        <option value='tmx'>Trimix CFM</option>
+        <option value='pp'>Partial Pressure</option>
+        <option value='cfm'>Helium + Nitrox CFM</option>
+        </select>
+    </div>
+    <div>
+        <button onclick="openCost()">Cost of this fill</button>
+    </div>
+</div> <!-- main-->
+
+<!-- cost calculation panel -->
+<div id="blender_cost" style="display: none;">
+    <h2>Cost calculation of the gas fill</h2>
+    <button onclick="back2blender()">BACK</button>
+    <table class="t2">
+        <tr>
+            <td>tank size (liters) </td>
+            <td><input type="number" min=1 max=50 step=1 class="in_cost" value="24" id="tank_liters"/></td>
+        </tr>
+        <tr>
+            <td>Oxygen price (EUR/m<sup>3</sup>) </td>
+            <td><input type="number" min=1 max=50 step=0.1 class="in_cost" value="4.6" id="o2_price"/></td>
+        </tr>
+        <tr>
+            <td>Helium price (EUR/m<sup>3</sup></td>
+            <td><input type="number" min=10 max=200 step=0.1 class="in_cost" value="35" id="he_price"/></td>
+        </tr>
+        <tr>
+            <td>compressor run (&euro;) </td>
+            <td><input type="number" min=1 max=50 step=1 class="in_cost" value="6" id="c_price"/></td>
+        </tr>
+    </table>
 </div>
 
 <textarea id="text_output" name="text_output" cols="60" rows="10" >
@@ -115,24 +144,50 @@ this is where the calculation output prints
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="./tmxcalc.js"></script>
 <script>
+    let global_result;
+
+    function openCost(){
+        document.getElementById("blender_cost").style.display = "block";
+        document.getElementById("blender_main").style.display = "none";
+        doCost();
+    };
+    function doCost(){
+        let liters = parseInt($("#tank_liters").val());
+        let o2_price_eur = parseInt($("#o2_price").val());
+        let he_price_eur = parseInt($("#he_price").val());
+        let fill_price_eur = parseInt($("#c_price").val());
+        let txt;
+        let total_cost;
+        [total_cost, txt] = calculateCost(liters, 
+        fill_bar = parseInt($('#end_bar').val()), 
+        global_result.add_o2, 
+        global_result.add_he, 
+        o2_price_eur, he_price_eur, fill_price_eur);
+        $("#text_output").val(txt);    
+    };
+    function back2blender(){
+        document.getElementById("blender_cost").style.display = "none";
+        document.getElementById("blender_main").style.display = "block";
+    };
+
     var filltype = "pp";
     function calculateBlend()
     {
-        start_bar =    parseInt($("#start_bar").val());
-        end_bar =      parseInt($('#end_bar').val());
-        start_o2_pct = parseInt($('#start_o2_pct').val());
-        start_he_pct = parseInt($('#start_he_pct').val());
-        end_o2_pct =   parseInt($('#end_o2_pct').val());
-        end_he_pct =   parseInt($('#end_he_pct').val());
+        let start_bar =    parseInt($("#start_bar").val());
+        let end_bar =      parseInt($('#end_bar').val());
+        let start_o2_pct = parseInt($('#start_o2_pct').val());
+        let start_he_pct = parseInt($('#start_he_pct').val());
+        let end_o2_pct =   parseInt($('#end_o2_pct').val());
+        let end_he_pct =   parseInt($('#end_he_pct').val());
         // filltype = "pp";
         // filltype = $("#ddl_ft").val;
    
-        deb_txt =  `calculateBlend ${start_bar} ${end_bar} ${start_o2_pct} ${start_he_pct} ${end_o2_pct} ${end_he_pct}`;
+        let deb_txt =  `calculateBlend ${start_bar} ${end_bar} ${start_o2_pct} ${start_he_pct} ${end_o2_pct} ${end_he_pct}`;
         console.log(filltype);
         // $("#text_output").val(deb_txt);
-        result = tmxcalc_num(filltype, start_bar, start_o2_pct, start_he_pct, 
+        let result = tmxcalc_num(filltype, start_bar, start_o2_pct, start_he_pct, 
                 end_bar, end_o2_pct, end_he_pct, false, false);
-
+        global_result = result;
         if (result.status_code == 0) {
            result_txt = tmxcalc_text(filltype, start_bar, start_o2_pct, start_he_pct,
                 result.mix_o2_pct, result.mix_he_pct, result.mix_n_pct,
@@ -154,13 +209,70 @@ this is where the calculation output prints
       $(".input2").on("change",calculateBlend)
   })
 
-  $("#ddl_ft").change(function () {
+  $(function()
+  {
+      $(".in_cost").on("change",doCost)
+  })
 
-   dropval = $(this).val()
+  // dropdown menu for ft filltype selection
+  $("#ddl_ft").change(function () {
+   dropval = $(this).val();
    console.log(`ddl_ft ${dropval} `);
    filltype = dropval;
-
    calculateBlend();
   });
 
+  // dropdown menu for start gas  
+  $("#dd_startGas").change(function () {
+    var dropTxt = $(this).val();
+    var gases = dropTxt.split('/');
+    $("#start_o2_pct").val(gases[0]);
+    $("#start_he_pct").val(gases[1]);
+    calculateBlend();
+  });
+
+    // dropdown menu for wanted gas  
+    $("#dd_wantedGas").change(function () {
+    var dropTxt = $(this).val();
+    var gases = dropTxt.split('/');
+    $("#end_o2_pct").val(gases[0]);
+    $("#end_he_pct").val(gases[1]);
+    calculateBlend();
+  });
+
+    // dropdown menu for end_bar  
+    $("#dd_end_bar").change(function () {
+    var dropTxt = $(this).val();
+    $("#end_bar").val(parseInt(dropTxt) );
+
+    calculateBlend();
+  });
+
+  // from button EMPTY tank
+  function emptyTank(){
+    $("#start_bar").val(1);
+    $("#start_o2_pct").val(21);
+    $("#start_he_pct").val(0);
+    $("#dd_startGas").val("21/0");
+    calculateBlend();
+  };
+
+  function calculateCost(
+    liters, fill_bar, add_o2, add_he, o2_cost_eur, he_cost_eur, fill_cost_eur)
+    {
+        // cost calculation
+        let o2_lit = liters * fill_bar * (add_o2 / fill_bar);
+        let he_lit = liters * fill_bar * (add_he / fill_bar);
+        let o2_eur = o2_lit * o2_cost_eur / 1000;
+        let he_eur = he_lit * he_cost_eur / 1000;
+        let total_cost = fill_cost_eur + o2_eur + he_eur;
+        let txt = 
+            "Total cost of the fill is:\n"+
+            `${total_cost.toFixed(2)} EUR\n`+
+            `- ${o2_lit.toFixed(0)} liters Oxygen costing ${o2_eur.toFixed(2)} EUR\n`+
+            `- ${he_lit.toFixed(0)} liters Helium costing ${he_eur.toFixed(2)} EUR\n`+ 
+            `- cfm/air fill costing ${fill_cost_eur.toFixed(2)} EUR\n`;
+        // return the results
+        return [total_cost, txt];
+    }
 </script>
