@@ -93,22 +93,31 @@
     <table class="t1">
         <tr>
             <td>depth (m)</td>
-            <td><input type="number" min=6 max=100 class="input3" value="50"  id="dive_depth"/></td>
+            <td title="bottom depth of dive in meters"><input type="number" min=6 max=70 class="input3" value="50"  id="dive_depth"/></td>
             <td>time (min)</td>
-            <td><input type="number" min=6 max=100 class="input3" value="30"  id="dive_bottom_time"/></td>
+            <td title="bottom time in minutes"><input type="number" min=6 max=100 class="input3" value="30"  id="dive_bottom_time"/></td>
         </tr>
         <tr>
             <td>GF low (%)</td>
-            <td><input type="number" min=6 max=100 class="input3" value="30"  id="gf_low"/></td>
+            <td title="Gradient Factor LOW"><input type="number" min=6 max=100 class="input3" value="30"  id="gf_low"/></td>
             <td>GF high (%)</td>
-            <td><input type="number" min=6 max=100 class="input3" value="80"  id="gf_high"/></td>
+            <td title="Gradient Factor HIGH"><input type="number" min=6 max=100 class="input3" value="80"  id="gf_high"/></td>
+            <td title="common GF settings">
+                <select id ="dd_gf" name="dd_gf" class="ddl" onmousedown="this.value='';"" >
+                    <option value='30/85'>30/85</option>
+                    <option value='35/75'>35/75</option>
+                    <option value='40/85'>40/85</option>
+                    <option value='45/75'>45/75</option>
+                    <option value='100/100'>100/100</option>
+                </select>
+            </td>
         </tr>
     </table>
     <h4>Specify your tanks and gases for the dive</h4>
     <table class="t1">
         <tr>
-            <th>tank</th>
-            <th>used</th>
+            <th title="configure the tanks/gases for the dive">tank</th>
+            <th title="select which deco tanks to use or not">used</th>
             <th>O2%</th>
             <th>He%</th>
             <th>start bar</th>
@@ -117,39 +126,53 @@
             <th>SAC (l/min)</th>
         </tr>
         <tr>
-            <td>bottom</td>
+            <td title="bottom gas">bottom</td>
+            <td title="select a standard gas from dropdown list">
+                <select id ="dd_bGas" name="dd_bGas" class="ddl" onmousedown="this.value='';"" >
+                    <option value='21/0'>air</option>
+                    <option value='28/0'>EAN 28%</option>
+                    <option value='32/0'>EAN 32%</option>
+                    <option value='30/30'>TMX 30/30</option>
+                    <option value='21/35'>TMX 21/35</option>
+                    <option value='18/45'>TMX 18/45</option>
+            <!--        <option value='15/55'>TMX 15/55</option>  // HYPOXIC GASES NOT SUPPORTED
+                    <option value='12/65'>TMX 12/65</option>
+                    <option value='10/70'>TMX 10/70</option> -->
+                    <option value='50/0'>EAN 50%</option>
+                    <option value='100/0'>EAN 100%</option>
+                  </select>
+            </td>
+            <td title="bottom tank Oxygen %"><input type="number" min=18 max=100 class="input3" value="21"  id="bottom_O2"/></td>
+            <td title="bottom tank Helium %"><input type="number" min=0 max=45 class="input3" value="35"  id="bottom_He"/></td>
+            <td title="bottom tank pressure at start"><input type="number" min=100 max=300 class="input3" value="200"  id="bottom_bar"/></td>
+            <td title="bottom tank size in liters"><input type="number" min=7 max=36 class="input3" value="24"  id="bottom_liters"/></td>
             <td>-</td>
-            <td><input type="number" min=10 max=100 class="input3" value="21"  id="bottom_O2"/></td>
-            <td><input type="number" min=0 max=90 class="input3" value="30"  id="bottom_He"/></td>
-            <td><input type="number" min=100 max=300 class="input3" value="200"  id="bottom_bar"/></td>
-            <td><input type="number" min=7 max=36 class="input3" value="24"  id="bottom_liters"/></td>
-            <td>-</td>
-            <td><input type="number" min=5 max=50 class="input3" value="15"  id="bottom_SAC"/></td>
+            <td title="Surface Air Consumption in surface liters per minute"><input type="number" min=5 max=50 class="input3" value="15"  id="bottom_SAC"/></td>
         </tr>
         <tr>
-            <td>deco 1</td>
-            <td><input type="checkbox" id="tank_deco1" class="input3" name="tank_deco1" checked></td>
-            <td><input type="number" min=10 max=100 class="input3" value="50"  id="deco1_O2"/></td>
-            <td><input type="number" min=0 max=90 class="input3" value="0"  id="deco1_He"/></td>
+            <td title="1st deco tank to deploy on ascent">deco 1</td>
+            <td title="check to enable this tank"><input type="checkbox" id="tank_deco1" class="input3" name="tank_deco1" checked></td>
+            <td><input type="number" min=18 max=100 class="input3" value="50"  id="deco1_O2"/></td>
+            <td><input type="number" min=0 max=45 class="input3" value="0"  id="deco1_He"/></td>
             <td><input type="number" min=100 max=300 class="input3" value="200"  id="deco1_bar"/></td>
             <td><input type="number" min=7 max=36 class="input3" value="11"  id="deco1_liters"/></td>
-            <td><input type="number" min=0 max=90 class="input3" value="21"  id="deco1_switch"/></td>
+            <td title="depth where tank change is done"><input type="number" min=0 max=90 class="input3" value="21"  id="deco1_switch"/></td>
             <td><input type="number" min=5 max=50 class="input3" value="15"  id="deco1_SAC"/></td>
         </tr>
         <tr>
-            <td>deco 2</td>
+            <td title="2nd deco tank to deploy on ascent">deco 2</td>
             <td><input type="checkbox" id="tank_deco2" class="input3" name="tank_deco2" checked></td>
-            <td><input type="number" min=10 max=100 class="input3" value="100"  id="deco2_O2"/></td>
-            <td><input type="number" min=0 max=90 class="input3" value="0"  id="deco2_He"/></td>
+            <td><input type="number" min=18 max=100 class="input3" value="100"  id="deco2_O2"/></td>
+            <td><input type="number" min=0 max=45 class="input3" value="0"  id="deco2_He"/></td>
             <td><input type="number" min=100 max=300 class="input3" value="200"  id="deco2_bar"/></td>
             <td><input type="number" min=7 max=36 class="input3" value="7"  id="deco2_liters"/></td>
             <td><input type="number" min=0 max=90 class="input3" value="6"  id="deco2_switch"/></td>
             <td><input type="number" min=5 max=50 class="input3" value="15"  id="deco2_SAC"/></td>
         </tr>
         <tr>
-            <td><button onclick="openNav()">panels</button></td>
-            <td><button onclick="runPlan()">calculate</button></td>  
-            <td><button onclick="openTable()">table</button></td>          
+            <!-- <td><button onclick="openNav()">panels</button></td> -->
+            <td title="click to force calculation"><button onclick="runPlan()">calculate</button></td>  
+            <td title="click to show tabular output of the calculation"><button onclick="openTable()">table</button></td>          
         </tr>
     </table>
     <!-- <button onclick="runPlan()">calculate</button> -->
@@ -162,7 +185,9 @@
 
     <div>
     <textarea id="planner_textout" name="planner_textout" cols="80" rows="30" >
-        Hello this is where the calculation output prints 
+        This is where the calculation output prints in text, after you have
+        configured the dive parameters above. The results appear after changing any input value,
+        or by clicking the <b>CALCULATE</b> button.
     </textarea>
     </div>
 </div> <!-- main -->
@@ -189,6 +214,8 @@
 <script src="./calculate_plan.js"> </script>
 
 <script>
+
+
 function showMain(){
     document.getElementById("table_panel").style.display = "none";
     document.getElementById("main").style.display = "block";
@@ -377,7 +404,23 @@ function getCursorPosition(canvas, event) {
 $(function()
 {
     $(".input3").on("change",runPlan)
-})    
+})   
+
+$("#dd_bGas").change(function () {
+    var dropTxt = $(this).val()
+    var gases = dropTxt.split('/');
+    $("#bottom_O2").val(gases[0]);
+    $("#bottom_He").val(gases[1]);
+    runPlan();
+  });
+
+  $("#dd_gf").change(function () {
+    var dropTxt = $(this).val()
+    var gfs = dropTxt.split('/');
+    $("#gf_low").val(gfs[0]);
+    $("#gf_high").val(gfs[1]);
+    runPlan();
+  });
 
 //let myDP = new Diveplan();
 
@@ -392,22 +435,33 @@ function runPlan()
     { label : "BOTTOM", name: "B", use: true, 
         o2: parseInt($("#bottom_O2").val()), 
         he: parseInt($("#bottom_He").val()), 
-        SAC: 15, ppo2max: 1.4, liters: 24.0, 
-        bar: 200.0, pressure: 200.0, useFromTime: 0, useUntilTime: 0, 
+        SAC: parseInt($("#bottom_SAC").val()), 
+        ppo2max: 1.4, 
+        liters: parseInt($("#bottom_liters").val()), 
+        bar: parseInt($("#bottom_bar").val()), 
+        pressure: 200.0, useFromTime: 0, useUntilTime: 0, 
         type: "bottom", useOrder: 1, color: "Magenta" },
     { label: "deco1", name: "D1", 
         use: deco1_use,
         o2: parseInt($("#deco1_O2").val()), 
         he: parseInt($("#deco1_He").val()), 
-        changeDepth: 21.0, SAC: 13, ppo2max: 1.6, liters: 7.0, 
-        bar: 200.0, pressure: 200.0, useFromTime: 0, useUntilTime: 0, 
+        changeDepth: parseInt($("#deco1_switch").val()), 
+        SAC: parseInt($("#deco1_SAC").val()), 
+        ppo2max: 1.6, 
+        liters: parseInt($("#deco1_liters").val()), 
+        bar: parseInt($("#deco1_bar").val()), 
+        pressure: 200.0, useFromTime: 0, useUntilTime: 0, 
         type: "deco", useOrder: 2, color: "Cyan"},
     { label: "deco2", name: "D2", 
         use: deco2_use,
         o2: parseInt($("#deco2_O2").val()),  
         he: parseInt($("#deco2_He").val()),  
-        changeDepth: 6.0, SAC: 13, ppo2max: 1.6, liters: 7.0, 
-        bar: 200.0, pressure: 200.0, useFromTime: 0, useUntilTime: 0, 
+        changeDepth: parseInt($("#deco2_switch").val()), 
+        SAC: parseInt($("#deco2_SAC").val()), 
+        ppo2max: 1.6, 
+        liters: parseInt($("#deco2_liters").val()), 
+        bar: parseInt($("#deco2_bar").val()), 
+        pressure: 200.0, useFromTime: 0, useUntilTime: 0, 
         type: "deco", useOrder: 3, color: "LightGray"},
     { label: "travel1", name: "T1", use: false, 
         o2: 21, he: 25, changeDepth: 40.0, SAC: 16, ppo2max: 1.4, liters: 11.0, 

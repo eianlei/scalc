@@ -1,15 +1,48 @@
 <!DOCTYPE html>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="stylesheet" href="index.css">
-
+<style>
+    /* (A1) FLEXIBLE CONTAINER */
+    .wrap-flex {
+      display: flex;
+      width: 100%;
+      /* OPTIONAL ALIGNMENT: flex-start | flex-end | center | baseline | stretch */
+      align-items: baseline;
+    }
+     
+    /* (A2) NOT IMPORTANT, JUST TO BETTER SHOW HOW ALIGN-ITEMS WORK 
+    .wrap-flex > * {
+      border: 1px solid red;
+      width: 33%; 
+    } */
+</style>
 
 
 <h1>Gas Blender</h1>
-<p>Current tank mix</p>
+<p>calculate gas blending</p>
 <table class="t2">
+    <tr>
+        <td><b>Current tank mix</b></td>
+        <td>
+            <select id ="dd_startGas" name="dd_wantedGas" class="ddl" onmousedown="this.value='';"" >
+                <option value='21/0'>air</option>
+                <option value='28/0'>EAN 28%</option>
+                <option value='32/0'>EAN 32%</option>
+                <option value='30/30'>TMX 30/30</option>
+                <option value='21/35' selected="selected">TMX 21/35</option>
+                <option value='18/45'>TMX 18/45</option>
+                <option value='15/55'>TMX 15/55</option> 
+                <option value='12/65'>TMX 12/65</option>
+                <option value='10/70'>TMX 10/70</option> 
+                <option value='50/0'>EAN 50%</option>
+                <option value='100/0'>EAN 100%</option>
+              </select>          
+        </td>
+    </tr>
     <tr>
         <td>Current tank pressure (bar)</td>
         <td><input type="number" min=1 max=300 step=1 class="input2" value="100" id="start_bar"/></td>
+        <td><button>EMPTY</button></td>
     </tr>
     <tr>
         <td>Current Oxygen (%)</td>
@@ -20,11 +53,36 @@
         <td><input type="number" min=0 max=100 step=1 class="input2" value="35" id="start_he_pct"/></td>
     </tr>
 </table>
-<p>Wanted tank mix</p>
+<hr>
 <table class="t2">
+    <tr>
+        <td><b>Wanted tank mix</b></td>
+        <td>
+            <select id ="dd_wantedGas" name="dd_wantedGas" class="ddl" onmousedown="this.value='';"" >
+                <option value='21/0'>air</option>
+                <option value='28/0'>EAN 28%</option>
+                <option value='32/0'>EAN 32%</option>
+                <option value='30/30'>TMX 30/30</option>
+                <option value='21/35' selected="selected">TMX 21/35</option>
+                <option value='18/45'>TMX 18/45</option>
+                <option value='15/55'>TMX 15/55</option> 
+                <option value='12/65'>TMX 12/65</option>
+                <option value='10/70'>TMX 10/70</option> 
+                <option value='50/0'>EAN 50%</option>
+                <option value='100/0'>EAN 100%</option>
+              </select>          
+        </td>
+    </tr>
     <tr>
         <td>Wanted tank pressure (bar)</td>
         <td><input type="number" min=1 max=300 step=1 class="input2" value="200" id="end_bar"/></td>
+        <td>
+            <select id ="dd_startGas" name="dd_wantedGas" class="ddl" onmousedown="this.value='';"" >
+                <option value='200' selected="selected">200</option>
+                <option value='232'>232</option>
+                <option value='300'>300</option>
+            </select>
+        </td>
     </tr>
     <tr>
         <td>Wanted Oxygen (%)</td>
@@ -34,19 +92,19 @@
         <td>Wanted Helium (%)</td>
         <td><input type="number" min=0 max=100 step=1 class="input2" value="35" id="end_he_pct"/></td>
     </tr>
-    <tr>
-        <td>Blending methods</td>
-        <td>
-          <select id ="ddl_ft" name="ddl_ft" class="ddl" onmousedown="this.value='';"" value="air">
-            <option value='air'>plain air fill</option>
-            <option value='nx'>Nitrox CFM</option>
-            <option value='tmx'>Trimix CFM</option>
-            <option value='pp'>Partial Pressure</option>
-            <option value='cfm'>Helium + Nitrox CFM</option>
-          </select>
-        </td>
-      </tr>
 </table>
+<div class="wrap-flex">
+    <p><b>Blending method selection: </b></p>
+
+    <select id ="ddl_ft" name="ddl_ft" class="ddl" onmousedown="this.value='';"" value="air">
+    <option value='air'>plain air fill</option>
+    <option value='nx'>Nitrox CFM</option>
+    <option value='tmx'>Trimix CFM</option>
+    <option value='pp'>Partial Pressure</option>
+    <option value='cfm'>Helium + Nitrox CFM</option>
+    </select>
+</div>
+
 <textarea id="text_output" name="text_output" cols="60" rows="10" >
 this is where the calculation output prints
 </textarea>
