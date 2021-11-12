@@ -1,4 +1,6 @@
-
+/**
+ * 
+ */
 
 const DiveProfilePoint = {
     time : 0,
