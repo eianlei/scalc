@@ -318,10 +318,12 @@ function drawSmallProfile(dp){
     let totalTime = prof[profLastIndex].time;
     let maxDepth = dp.bottomDepth;
 
-    // draw the depth profile, fill with blue gradient
+    // clear out previous plots
     ctx.clearRect(0,0, c.width, c.height);
     ctx.beginPath();
     ctx.moveTo(0, 0);
+
+    // draw the depth profile, fill with blue gradient
     for (var i =0; i< prof.length; i++){
         point = prof[i];
         var x = (point.time / totalTime) * pw;
@@ -334,12 +336,35 @@ function drawSmallProfile(dp){
     // ctx.fillStyle = "#8ED6FF";
     var grd = ctx.createLinearGradient(0,0, 0, ph);
     grd.addColorStop(0, "lightBlue");
-    grd.addColorStop(1, "Blue");
+    grd.addColorStop(1, "darkBlue");
     ctx.fillStyle = grd;
     ctx.fill();
     ctx.strokeStyle = "blue";
     ctx.stroke();
     ctx.closePath();
+
+    ctx.beginPath();
+    ctx.lineTo(0, 0);
+    //*** CEILING profile, fill with green gradient
+    for (var i =0; i< prof.length; i++){
+        point = prof[i];
+        var x = (point.time / totalTime) * pw;
+        var y = (point.ceiling / maxDepth ) * ph;
+        ctx.lineTo(x, y);
+    }
+    ctx.lineTo(0, 0);
+    ctx.closePath();
+    ctx.lineWidth = 1;
+    // ctx.fillStyle = "Green";
+    var grd = ctx.createLinearGradient(0,0, 0, ph);
+    grd.addColorStop(0, "lightGreen");
+    grd.addColorStop(1, "Green");
+    ctx.fillStyle = grd;
+    ctx.fill();
+    ctx.strokeStyle = "darkGreen";
+    ctx.stroke();
+    ctx.closePath();
+    //*** end of CEILING
 
     // draw time axis
     for (var tt=0; tt < totalTime; tt += 60){
