@@ -42,7 +42,7 @@ jQuery
 The Javascript used in calculations is refactored (manually transpiled) from following Python and C# projects that I have published previously:
 - https://github.com/eianlei/pydplan 
 - https://github.com/eianlei/FillCalcWin 
-- 
+ 
 
 The UI is a web (HTML5, CSS, JS) implementation of the respective GUIs done previously in Qt5 or WPF/.NET 4.8/XAML.
 
@@ -61,6 +61,7 @@ Use this application at your own risk, the author provides no guarantees about t
 # Development history & roadmap
 - 2021-11-03 published to github a quickly hacked up demo, that needs lot of TLC
 - 2021-11-08 added the dive planner prototype
+- 2021-11-12 most of essential functionality in place
 
 todo short term:
 - some cleanup, proper structuring and commentting to the sources
@@ -68,8 +69,6 @@ todo short term:
 - do a proper favicon
 - add user documentation
 - to Blender: bring up all the same functionality that exists in [FillCalcWin](https://github.com/eianlei/FillCalcWin)
-  - std gas dropdown
-  - cost calculation
   - VanDerWaals
   - and something new: temperature compensations
 - Planner implementation, 
@@ -78,7 +77,6 @@ todo short term:
   - improvements on graphical web UI
 
 long term plans:
-- re-target the HTML, CSS, JS implementation across all platforms
 - desktop version will run on [electron](https://www.electronjs.org/) and include Windows installer
 - Android and iOS mobile versions using [Cordova](https://cordova.apache.org/)
 
