@@ -1,6 +1,8 @@
 # scalc
 **scalc** is a Web tool for interactive calculations needed for planning technical scuba dives.
 
+[You can open the application here at GitHub pages by clicking this line](https://eianlei.github.io/scalc/source/index.html)
+
 ![mainwin-shorturl](https://github.com/eianlei/scalc/blob/master/scalc-planner.jpg?raw=true)
 
 
