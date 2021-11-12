@@ -2,12 +2,16 @@
 2021-11-04 Ian Leiman
 converted from Python source to javascript
 pydplan_buhlmann.py to model.js, at https://github.com/eianlei/pydplan
-this is the Buhlmann ZHL16c model implemented in JavaScript
+this is the Buhlmann ZH-L16c model implemented in JavaScript
 */
 
+// newest javascript engines would know what this is, older ones do not :-(
 // import { ZHL16c } from "./ZHL16c.js"; // model coefficients for ZHL16c
 
-const COMPS = 16;
+/**
+ * some useful constants
+ */
+const COMPS = 16;  // number of tissue compartments
 const WaterVaporSurface = 0.0627;
 const surfacePressure = 1.01325;
 const surfaceTemperature = 20;
@@ -18,16 +22,31 @@ const AirArgon = 0.00934;
 const AirInertGasFraction = AirHelium + AirNitrogen + AirArgon;
 const initN2 = 0.745;
 
+/**
+ * 
+ * @param {*} depth 
+ * @returns 
+ */
 function depth2pressure(depth){
     pressure =  (depth / 10.0);
     return pressure;
 }
 
+/**
+ * 
+ * @param {*} pressure 
+ * @returns 
+ */
 function pressure2depth(pressure){
     depth = (pressure * 10.0);
     return depth;
 }
 
+/**
+ * 
+ * @param {*} depth 
+ * @returns 
+ */
 function depth2absolutePressure(depth){
     pressure = surfacePressure + (depth / 10.0);
     return pressure;
@@ -144,6 +163,15 @@ class ModelPoint {
         }
     }//calculateAllTissues
     
+    /**
+     * 
+     * @param {*} beginDepth 
+     * @param {*} endDepth 
+     * @param {*} intervalMinutes 
+     * @param {*} heliumFraction 
+     * @param {*} nitrogenFraction 
+     * @param {*} gfNow 
+     */
     calculateAllTissuesDepth(beginDepth, endDepth,
                             intervalMinutes, 
                             heliumFraction, nitrogenFraction, gfNow)
@@ -155,7 +183,11 @@ class ModelPoint {
         this.calculateAllTissues(beginPressure, endPressure, intervalMinutes, heliumFraction, nitrogenFraction, gfNow);
     } //calculateAllTissuesDepth
 
-    /*** these methods might be obsolete and no longer needed ? */
+    /**
+     * 
+     * @param {*} gradient 
+     * @returns 
+     */
     control_compartment(gradient){
         var control_compartment_number = 0;
         var max_pressure = 0.0;
@@ -169,6 +201,11 @@ class ModelPoint {
         return control_compartment_number + 1;
     }//control_compartment
 
+    /**
+     * 
+     * @param {*} gradient 
+     * @returns 
+     */
     ceiling(gradient){
         var pressure = 0.0;
         for (let index = 0; index < COMPS; index++ )  {
@@ -182,6 +219,11 @@ class ModelPoint {
         return pressure2depth(pressure);
     }//ceiling
 
+    /**
+     * 
+     * @param {*} gradient 
+     * @returns 
+     */
     ceiling_in_pabs(gradient){
         var pressure = 0.0;
         for (let index = 0; index < COMPS; index++ )  {
@@ -195,6 +237,11 @@ class ModelPoint {
         return pressure;
     }//ceiling_in_pabs
 
+    /**
+     * 
+     * @param {*} pressure 
+     * @returns 
+     */
     m_value(pressure){
         var p_absolute = pressure + surfacePressure;
         var compartment_mv = 0.0;
@@ -212,6 +259,9 @@ class ModelPoint {
 
 
 /******************************************************************************** */
+/** this implements on tissue compartment and methods to update that
+ * 
+ */
 class Compartment {
         constructor(index){
             this.index = index;
@@ -226,7 +276,12 @@ class Compartment {
             this.old_k_he = null;
             this.old_seg_time = null;  
         }
-        
+    /**
+     * 
+     * @param {*} coefficient 
+     * @param {*} heliumPressure 
+     * @param {*} nitrogenPressure 
+     */    
     setNewPressures(coefficient, heliumPressure, nitrogenPressure){
         this.heliumPressure = heliumPressure;
         this.nitrogenPressure = nitrogenPressure;
@@ -235,6 +290,15 @@ class Compartment {
         this.mv = this.get_mv(surfacePressure);
     }
 
+    /**
+     * 
+     * @param {*} coefficient 
+     * @param {*} heliumInspired 
+     * @param {*} nitrogenInspired 
+     * @param {*} heliumRate 
+     * @param {*} nitrogenRate 
+     * @param {*} minutes 
+     */
     calculateCompartment(
         coefficient, heliumInspired, nitrogenInspired,
         heliumRate, nitrogenRate, minutes)
@@ -262,6 +326,15 @@ class Compartment {
         this.setNewPressures(coefficient, heliumNewPressure, nitrogenNewPressure);
     }
 
+    /**
+     * 
+     * @param {*} oldPressure 
+     * @param {*} constK 
+     * @param {*} gasInspired 
+     * @param {*} gasRate 
+     * @param {*} minutes 
+     * @returns 
+     */
     newPressureSchreiner(
         oldPressure,
         constK,
@@ -273,16 +346,31 @@ class Compartment {
         return pressure;
     }
 
+    /**
+     * 
+     * @param {*} pressure 
+     * @returns 
+     */
     ambientToleratedPressure(pressure){
         let m_value = (pressure) / (this.HeliumNitrogenB + this.HeliumNitrogenA);
         return m_value;
     }
 
+    /**
+     * 
+     * @param {*} gf 
+     * @returns 
+     */
     get_max_amb(gf){
         let maxAmb = (this.heliumPressure + this.nitrogenPressure - this.HeliumNitrogenA * gf) / (gf / this.HeliumNitrogenB - gf + 1.0);
         return maxAmb;
     }
 
+    /**
+     * 
+     * @param {*} p_amb 
+     * @returns 
+     */
     get_mv(p_amb){
         let mv = (this.heliumPressure + this.nitrogenPressure) / (p_amb / (this.HeliumNitrogenB + this.HeliumNitrogenA));
         return mv;

@@ -1,3 +1,7 @@
+/** 2021-11-12 Ian Leiman
+ *  Buhlmann decompression model ZH-L16c coefficients for 16 tissue compartments
+ *  javascript array of objects to use with model.js
+ */
 const ZHL16c =
 [
     { name: "1", NitrogenHT: 5.0, HeliumHT: 1.88, NitrogenA: 1.1696, NitrogenB: 0.5578, HeliumA: 1.6189, HeliumB: 0.477},
