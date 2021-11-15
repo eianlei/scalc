@@ -312,12 +312,55 @@ function drawFillProfile(result){
     var ctx = c.getContext("2d");
     var ctxTXT = cTXT.getContext("2d");
     ctx.font = '9px Arial';
+    ctx.fillStyle = "black";
         
     // clear out previous plots
     ctx.clearRect(0,0, c.width, c.height);
+    if (result.status_code > 0){
+        ctx.font = '20px Arial';
+        ctx.fillStyle = "red";
+        ctx.fillText(`ERROR`, 50, 100);
+        return;
+    }
 
-    var tx =     [ 0 , 40, 80,120,170,210,270,320,320]; 
-    var b1 = [ 80, 80,100,100,140,140,200,200];
+    var tx = [ 0 , 40, 80,120,170,210,270,320,320]; 
+    switch (result.filltype_in){
+        case "air":
+            ctx.fillText(`plain air fill`, tx[1]+2, 15);
+            var steps = [0, 3];
+            var divs = [tx[1], tx[6]];
+            break;
+        case "nx":
+            ctx.fillText(`CFM fill with Nitrox`, tx[1]+2, 15);
+            var steps = [0, 3];
+            var divs = [tx[1], tx[6]];
+            break;
+        case "tmx":
+            ctx.fillText(`CFM fill with Trimix`, tx[1]+2, 15);
+            var steps = [0, 3];
+            var divs = [tx[1], tx[6]];
+            break;
+        case "cfm":
+            ctx.fillText(`add He`, tx[1]+2, 15);
+            ctx.fillText(`${result.add_he.toFixed(1)} bar`, tx[1]+2, 25);
+            ctx.fillText(`CFM fill with Nitrox`, tx[2]+2, 15);
+            var steps = [0, 1, 3];
+            var divs = [tx[1], tx[2], tx[6]];
+            break;
+        default:    
+
+            var steps = [0, 1, 2, 3];
+            var divs = tx;
+
+            // print how much gas added in each stage
+            [[1, "He", result.add_he], 
+            [3, "O2", result.add_o2], 
+            [5, "air", result.add_air]].forEach( i => {
+                ctx.fillText(`add ${i[1]}`, tx[i[0]]+2, 15);
+                ctx.fillText(`${i[2].toFixed(1)}`, tx[i[0]]+2, 25);
+            });
+
+    };
 
     // total pressures at different fill phases
     var b1Bar = [result.start_bar_in, result.tbar_2, result.tbar_3, result.stop_bar_in];
@@ -346,47 +389,45 @@ function drawFillProfile(result){
 
     // draw gas fill plot
     // first the total, with Helium color fill
-    drawRamp(ctx, "Coral", tx, b1Bar);
-    //var b2 = b1.map(function(e){return e * 0.8;});
+    drawRamp(ctx, "Coral", tx, b1Bar, steps);
+
     // then Nitrogen
-    drawRamp(ctx, "LightBlue", tx, bHeBar);
+    drawRamp(ctx, "LightBlue", tx, bHeBar, steps);
+
     // finally Oxygen
-    //var b3 = b1.map(function(e){return e * 0.2;});
-    drawRamp(ctx, "cyan", tx, bO2Bar);
+    drawRamp(ctx, "cyan", tx, bO2Bar, steps);
     
-    drawVertLines(ctx, tx);
+    drawVertLines(ctx, divs);
 
     ctx.beginPath();
     ctx.fillStyle = "black";
+
     // print stable pressures at begin/end of each fill stage
-    for ( i=0; i < b1Bar.length; i++)  {
+    for ( s=0; s < steps.length; s++)  {
+        i = steps[s];
         ctx.fillText(`${b1Bar[i].toFixed(0)} bar`, tx[i*2]+2, 208-b1Bar[i]);
-        ctx.fillText(`${bHePct[i].toFixed(0)} % He`, tx[i*2]+2, 218-b1Bar[i]);
+        if (bHePct[i] > 0)
+            ctx.fillText(`${bHePct[i].toFixed(0)} % He`, tx[i*2]+2, 218-b1Bar[i]);
+
         ctx.fillText(`${bO2Pct[i].toFixed(0)} % O2`, tx[i*2]+2, 218-bO2Bar[i]);
         ctx.fillText(`${bN2Pct[i].toFixed(0)} % N2`, tx[i*2]+2, 218-bHeBar[i]);    
     };
 
 
 
-    // print how much gas added in each stage
-    [[1, "He", result.add_he], 
-     [3, "O2", result.add_o2], 
-     [5, "air", result.add_air]].forEach( i => {
-        ctx.fillText(`add ${i[1]}`, tx[i[0]]+2, 15);
-        ctx.fillText(`${i[2].toFixed(1)}`, tx[i[0]]+2, 25);
-    });
 
     
 
     ctx.stroke();
 }    
 
-function drawRamp(ctx, color, tx, bar_arr){
+function drawRamp(ctx, color, tx, bar_arr, steps){
     var x = 0 ;
     var y = 0;
     ctx.beginPath();
     ctx.moveTo(0, 0);
-    for (var i=0; i< bar_arr.length; i++){
+    for (var s=0; s< steps.length; s++){
+        i = steps[s];
         if (bar_arr[i] == null) break;
         x  = tx[i*2];
         x2 = tx[i*2 +1] 
@@ -407,7 +448,7 @@ function drawRamp(ctx, color, tx, bar_arr){
     ctx.closePath();
 }
 
-function drawVertLines(ctx, tx){
+function drawVertLines(ctx, divs){
     var x = 0 ;
     var y = 0;
     ctx.beginPath();
@@ -415,8 +456,8 @@ function drawVertLines(ctx, tx){
     ctx.lineWidth = 1;
     ctx.strokeStyle = "black";
 
-    for (var i=0; i< tx.length; i++){
-        x = tx[i];
+    for (var s=0; s< divs.length; s++){
+        x = divs[s];
         ctx.moveTo(x, 0);
         ctx.lineTo(x, 210);
         ctx.stroke();
