@@ -4,6 +4,8 @@
 // split the orginal function into two parts, this one doing just the math
 // the other one to generate text output from the results
 
+var BlenderState = null;
+
 /**
  * 
  * @param {string} filltype ["air", "nx", "tmx", "pp", "cfm" ]
@@ -53,6 +55,7 @@ function tmxcalc_num(filltype, start_bar, start_o2, start_he,
         t2_n2_pct : 0, // tbar_2 mix N2 %
 
     }
+    tmxResult.start_n2_in = 100 - start_o2 - start_he;
     // error checking for input values, anything wrong and we return an error & skip calculations
     const filltypes = new Set(["air", "nx", "tmx", "pp", "cfm" ]);
     if (filltypes.has(filltype) == false) {
@@ -351,11 +354,11 @@ function tmxcalc_text(result )
         var tmx_fill = " - no Trimix added";
     }
     // start mix string
-    if (result.start_bar > 0)
+    if (result.start_bar_in > 0)
     {
-        result.start_n2 = 100 - result.start_o2 - result.start_he;
-        var start_mix = `Starting from ${result.start_bar} bar with mix `+
-        `${result.start_o2.toFixed(1)}/${result.start_he}/${result.start_n2.toFixed(0)} (O2/He/N).`;
+        result.start_n2_in = 100 - result.start_o2_in - result.start_he_in;
+        var start_mix = `Starting from ${result.start_bar_in} bar with mix `+
+        `${result.start_o2_in.toFixed(0)}/${result.start_he_in.toFixed(0)}/${result.start_n2_in.toFixed(0)} (O2/He/N).`;
     }
     else
         var start_mix = "Starting from EMPTY TANK ";
