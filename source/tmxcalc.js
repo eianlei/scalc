@@ -7,17 +7,20 @@
 // the other one to generate text output from the results
 
 const BlenderState = {
-    "status_code" : 99,
+    // status code and error message
+    "status_code" : 99, // return 0 for ok, anything else is an error
     "status_txt" : "FATAL ERROR\n",
 
-    filltype_in : "pp",
-    start_bar_in : 70, 
-    start_o2_in : 21, 
-    start_he_in : 35, 
-    stop_bar_in : 200, 
+    // inputs to any calculation
+    filltype_in : "pp", // fill method
+    start_bar_in : 70,  // start pressure
+    start_o2_in : 21,   // start o2 %
+    start_he_in : 35,   // start he %
+    start_n2_in : 44,   // start n2 %
+    stop_bar_in : 200,  // wanted pressure
     stop_o2_in : 21, 
     stop_he_in : 35,
-    //
+    // results
     add_air : 0, // bar of air to top in any method
     add_o2 : 0,  // bar of Oxygen added in any method, not including O2 in air
     add_he : 0,  // bar of Helium added in any method
@@ -37,6 +40,14 @@ const BlenderState = {
     t2_o2_pct : 0, // tbar_2 mix O2 %
     t2_he_pct : 0, // tbar_2 mix He %
     t2_n2_pct : 0, // tbar_2 mix N2 %
+    // 
+    t3_o2_pct : 0, // tbar_3 mix O2 %
+    t3_he_pct : 0, // tbar_3 mix He %
+    t3_n2_pct : 0, // tbar_3 mix N2 %
+    // variables for destination tank
+    tank_liters : 24,
+    tank_add_o2_liters : 0,
+    tank_add_he_liters : 0,
 
 };
 

@@ -173,34 +173,41 @@
         <tr>
             <th>size <br>(liters)</th>
             <th>start<br>pressure<br>(bars)</th>
-            <th>decanting<br>rate<br>(bar/min)</th>
-            <th>pressure<br>needed<br>(bar)</th>
-            <th>decanting<br>time<br>(min)</th>
             <th>end<br>pressure<br>(bars)</th>
+            <th>pressure<br>used<br>(bar)</th>
+            <th>pressure<br>needed<br>(bar)</th>
+            <th>decanting<br>rate<br>(bar/min)</th>
+            <th>decanting<br>time<br>(min)</th>
+        </tr>
 
-        </tr>
         <tr>
-            <td colspan="4"><b>Oxygen storage tank </b></td>
-        </tr>
-        <tr>
-            <td><input type="number" min=1 max=50 step=1 class="o2_storage" value="50" id="o2_storage_liters"/></td>
-            <td><input type="number" min=1 max=300 step=1 class="o2_storage" value="200" id="o2_storage_start"/></td>
-            <td><input type="number" min=1 max=10 step=1 class="o2_storage" value="5" id="o2_storage_rate"/></td>
-            <td> <span id="o2_storage_need">000</span> </td>
-            <td> <span id="o2_storage_time">000</span> </td>
-            <td> <span id="o2_storage_end">000</span> </td>
-        </tr>
-        <tr>
-            <td colspan="4"><b>Helium storage tank </b></td>
+            <td colspan="2"><b>Helium storage tank </b></td>
+            <td colspan="5"><span id="He_storage_use">not used</span></td>
         </tr>
         <tr>
             <td><input type="number" min=1 max=50 step=1 class="He_storage" value="50" id="He_storage_liters"/></td>
             <td><input type="number" min=1 max=300 step=1 class="He_storage" value="200" id="He_storage_start"/></td>
+            <td> <span id="He_storage_end">000</span> </td>
+            <td> <span id="He_storage_used">000</span> </td>
+            <td> <span id="He_storage_need">000</span> </td>            
             <td><input type="number" min=1 max=10 step=1 class="He_storage" value="5" id="He_storage_rate"/></td>
-            <td>--</td>
-            <td>--</td>
-            <td>--</td>
+            <td> <span id="He_storage_time">000</span> </td>
         </tr>
+
+        <tr>
+            <td colspan="2"><b>Oxygen storage tank </b></td>
+            <td colspan="5"><span id="o2_storage_use">not used</span></td>
+        </tr>
+        <tr>
+            <td><input type="number" min=1 max=50 step=1 class="o2_storage" value="50" id="o2_storage_liters"/></td>
+            <td><input type="number" min=1 max=300 step=1 class="o2_storage" value="200" id="o2_storage_start"/></td>
+            <td> <span id="o2_storage_end">000</span> </td>
+            <td> <span id="o2_storage_used">000</span> </td>
+            <td> <span id="o2_storage_need">000</span> </td>
+            <td><input type="number" min=1 max=10 step=1 class="o2_storage" value="5" id="o2_storage_rate"/></td>
+            <td> <span id="o2_storage_time">000</span> </td>
+        </tr>
+
     </table>
     <h3>Compressor operation</h3>
     <table class="t1">

@@ -11,30 +11,40 @@ function openCost(){
     document.getElementById("blender_main").style.display = "none";
     doCost();
 };
+
 function openSources(){
     document.getElementById("blender_sources").style.display = "block";
     document.getElementById("blender_main").style.display = "none";
     //doCost();
 };
+
+/**
+ * 
+ */
 function doCost(){
     let liters = parseInt($("#tank_liters").val());
     let o2_price_eur = parseInt($("#o2_price").val());
     let he_price_eur = parseInt($("#he_price").val());
     let fill_price_eur = parseInt($("#c_price").val());
+    // update the global state object for destination tank size
+    global_result.tank_liters = liters;
     let txt;
     let total_cost;
-    [total_cost, txt] = calculateCost(liters, 
+    [total_cost, txt] = calculateCost(
+        liters, 
         fill_bar = parseInt($('#end_bar').val()), 
         global_result.add_o2, 
         global_result.add_he, 
-        o2_price_eur, he_price_eur, fill_price_eur);
-        $("#cost_output").val(txt);    
-    };
-    function back2blender(){
+        o2_price_eur, he_price_eur, fill_price_eur
+        );
+    $("#cost_output").val(txt);    
+};
+
+function back2blender(){
         document.getElementById("blender_cost").style.display = "none";
         document.getElementById("blender_sources").style.display = "none";
         document.getElementById("blender_main").style.display = "block";
-    };
+};
     
     
 function calculateBlend()
@@ -61,8 +71,9 @@ function calculateBlend()
         else {
             $("#text_output").val(result.status_txt);
         }
-        drawFillProfile(result);
-        
+    drawFillProfile(result);
+    do_O2_storage();
+    do_He_storage();
 } 
         
 // this is called when any class input2 element changes
@@ -79,12 +90,69 @@ $(function()
 {
     $(".o2_storage").on("change",do_O2_storage)
 })
+$(function()
+{
+    $(".He_storage").on("change",do_He_storage)
+})
 
 function do_O2_storage(){
-    // var need = global_result.add_o2_liters
-    $("#o2_storage_need").text("need"); 
-    $("#o2_storage_time").text("time"); 
-    $("#o2_storage_end").text("end"); 
+    let liters = parseInt($("#tank_liters").val()); 
+    let add_o2 = global_result.add_o2;
+    let add_o2_liters = liters * add_o2;
+    let o2_storage_liters = parseInt($("#o2_storage_liters").val());
+    let o2_storage_start = parseInt($("#o2_storage_start").val());
+    let o2_storage_rate = parseInt($("#o2_storage_rate").val());
+    let usage_bars = add_o2_liters / o2_storage_liters;
+    let end_bars = o2_storage_start - usage_bars;
+    let time = add_o2 / o2_storage_rate;
+    let need = global_result.tbar_2 + usage_bars;
+
+    switch (global_result.filltype_in){
+        case "pp": 
+            $("#o2_storage_use").text(`decanting to ${liters} liter tank `+
+            `from ${global_result.tbar_2.toFixed(1)}`+
+            ` to ${global_result.tbar_3.toFixed(1)} bar`);
+            break;
+        case "air":
+            $("#o2_storage_use").text("not used");
+            break;
+
+    }
+
+    $("#o2_storage_used").text(usage_bars.toFixed(1)); 
+    $("#o2_storage_need").text(need.toFixed(1)); 
+    $("#o2_storage_time").text(time.toFixed(1)); 
+    $("#o2_storage_end").text(end_bars.toFixed(1)); 
+}
+
+function do_He_storage(){
+    let liters = parseInt($("#tank_liters").val()); 
+    let add_He = global_result.add_he;
+    let add_He_liters = liters * add_He;
+    let He_storage_liters = parseInt($("#He_storage_liters").val());
+    let He_storage_start = parseInt($("#He_storage_start").val());
+    let He_storage_rate = parseInt($("#He_storage_rate").val());
+    let usage_bars = add_He_liters / He_storage_liters;
+    let end_bars = He_storage_start - usage_bars;
+    let time = add_He / He_storage_rate;
+    let need = global_result.start_bar_in + usage_bars;
+
+    switch (global_result.filltype_in){
+        case "pp": 
+            $("#He_storage_use").text(`decanting to ${liters} liter tank `+
+            `from ${global_result.start_bar_in.toFixed(1)}`+
+            ` to ${global_result.tbar_2.toFixed(1)} bar`);
+            break;
+        case "air":
+            $("#He_storage_use").text("not used");
+            break;
+
+    }
+
+    $("#He_storage_used").text(usage_bars.toFixed(1)); 
+    $("#He_storage_need").text(need.toFixed(1)); 
+    $("#He_storage_time").text(time.toFixed(1)); 
+    $("#He_storage_end").text(end_bars.toFixed(1)); 
 }
         
 // dropdown menu for ft filltype selection
@@ -145,6 +213,7 @@ function calculateCost(
         `- ${o2_lit.toFixed(0)} liters Oxygen costing ${o2_eur.toFixed(2)} EUR\n`+
         `- ${he_lit.toFixed(0)} liters Helium costing ${he_eur.toFixed(2)} EUR\n`+ 
         `- cfm/air fill costing ${fill_cost_eur.toFixed(2)} EUR\n`;
+
         // return the results
         return [total_cost, txt];
     }
