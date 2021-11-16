@@ -134,7 +134,8 @@
 <!-- cost calculation panel -->
 <div id="blender_cost" style="display: none;">
     <h2>Cost calculation of the gas fill</h2>
-    <button onclick="back2blender()">BACK</button>
+    <button onclick="back2blender()">BACK to main</button>
+    <button onclick="openSources()">gas sources</button>
     <table class="t1">
         <tr>
             <td>tank size (liters) </td>
@@ -167,7 +168,8 @@
 <!-- gas sources panel -->
 <div id="blender_sources" style="display: none;">
     <h2>gas sources</h2>
-    <button onclick="back2blender()">BACK</button>
+    <button onclick="back2blender()">BACK to MAIN</button>
+    <button onclick="openCost()">fill cost</button>
     <h3>O2 and He storage tank usage</h3>
     <table class="t1">
         <tr>
@@ -216,15 +218,17 @@
             <th>O2<br>flow<br>(l/min)</th>
             <th>He<br>flow<br>(l/min)</th>
             <th>delta<br>pressure<br>(bar)</th>
+            <th>filled<br>tank<br>(liters)</th>
             <th>fill<br>time<br>(min)</th>
             
         </tr>
         <tr>
-            <td><input type="number" min=50 max=1000 step=1 class="in_sources" value="315" id="o2_storage_liters"/></td>
-            <td>--</td>
-            <td>--</td>
-            <td>--</td>
-            <td>--</td>
+            <td><input type="number" min=50 max=1000 step=1 class="compressor" value="315" id="compressor_rate"/></td>
+            <td><span id="compressor_o2"> 0 </span> </td>
+            <td><span id="compressor_he"> 0 </span></td>
+            <td><span id="compressor_delta"> 0 </span></td>
+            <td><span id="compressor_tl"> 0 </span></td>
+            <td><span id="compressor_time"> 0 </span></td>
         </tr>
 </div>
 

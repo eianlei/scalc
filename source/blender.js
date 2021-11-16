@@ -9,13 +9,14 @@ calculateBlend();
 function openCost(){
     document.getElementById("blender_cost").style.display = "block";
     document.getElementById("blender_main").style.display = "none";
+    document.getElementById("blender_sources").style.display = "none";
     doCost();
 };
 
 function openSources(){
     document.getElementById("blender_sources").style.display = "block";
     document.getElementById("blender_main").style.display = "none";
-    //doCost();
+    document.getElementById("blender_cost").style.display = "none";
 };
 
 /**
@@ -38,6 +39,9 @@ function doCost(){
         o2_price_eur, he_price_eur, fill_price_eur
         );
     $("#cost_output").val(txt);    
+    do_O2_storage();
+    do_He_storage();
+    do_compressor();
 };
 
 function back2blender(){
@@ -74,6 +78,7 @@ function calculateBlend()
     drawFillProfile(result);
     do_O2_storage();
     do_He_storage();
+    do_compressor();
 } 
         
 // this is called when any class input2 element changes
@@ -94,6 +99,10 @@ $(function()
 {
     $(".He_storage").on("change",do_He_storage)
 })
+$(function()
+{
+    $(".compressor").on("change",do_compressor)
+})
 
 function do_O2_storage(){
     let liters = parseInt($("#tank_liters").val()); 
@@ -105,23 +114,33 @@ function do_O2_storage(){
     let usage_bars = add_o2_liters / o2_storage_liters;
     let end_bars = o2_storage_start - usage_bars;
     let time = add_o2 / o2_storage_rate;
-    let need = global_result.tbar_2 + usage_bars;
+    let need = 0;
 
     switch (global_result.filltype_in){
         case "pp": 
             $("#o2_storage_use").text(`decanting to ${liters} liter tank `+
             `from ${global_result.tbar_2.toFixed(1)}`+
             ` to ${global_result.tbar_3.toFixed(1)} bar`);
+            need = global_result.tbar_2 + usage_bars;
+            $("#o2_storage_need").text(need.toFixed(1)); 
+            $("#o2_storage_time").text(time.toFixed(1)); 
             break;
         case "air":
             $("#o2_storage_use").text("not used");
+            $("#o2_storage_need").text("none"); 
+            $("#o2_storage_time").text("N/A"); 
             break;
-
+        case "nx":
+        case "tmx":
+        case "cfm":
+            $("#o2_storage_use").text("continuous flow mix to compressor");
+            need = usage_bars;
+            $("#o2_storage_need").text(need.toFixed(1));         
+            $("#o2_storage_time").text("N/A"); 
+            break;
     }
 
     $("#o2_storage_used").text(usage_bars.toFixed(1)); 
-    $("#o2_storage_need").text(need.toFixed(1)); 
-    $("#o2_storage_time").text(time.toFixed(1)); 
     $("#o2_storage_end").text(end_bars.toFixed(1)); 
 }
 
@@ -135,25 +154,63 @@ function do_He_storage(){
     let usage_bars = add_He_liters / He_storage_liters;
     let end_bars = He_storage_start - usage_bars;
     let time = add_He / He_storage_rate;
-    let need = global_result.start_bar_in + usage_bars;
+    let need = 0;
 
-    switch (global_result.filltype_in){
-        case "pp": 
+    if ((global_result.filltype_in == "pp" || global_result.filltype_in == "cfm" )
+        && usage_bars > 0) {
             $("#He_storage_use").text(`decanting to ${liters} liter tank `+
             `from ${global_result.start_bar_in.toFixed(1)}`+
             ` to ${global_result.tbar_2.toFixed(1)} bar`);
-            break;
-        case "air":
+            need = global_result.start_bar_in + usage_bars;
+            $("#He_storage_need").text(need.toFixed(1)); 
+            $("#He_storage_time").text(time.toFixed(1)); 
+    } else if (global_result.filltype_in ==  "air" || usage_bars == 0){
             $("#He_storage_use").text("not used");
-            break;
-
+            $("#He_storage_need").text("none"); 
+            $("#He_storage_time").text("N/A"); 
+    } else if (global_result.filltype_in == "tmx"){
+            $("#He_storage_use").text("continuous flow mix to compressor");
+            need = usage_bars;
+            $("#He_storage_need").text(need.toFixed(1));         
+            $("#He_storage_time").text("N/A"); 
     }
 
     $("#He_storage_used").text(usage_bars.toFixed(1)); 
-    $("#He_storage_need").text(need.toFixed(1)); 
-    $("#He_storage_time").text(time.toFixed(1)); 
     $("#He_storage_end").text(end_bars.toFixed(1)); 
 }
+
+function do_compressor(){
+    var rate = parseInt($("#compressor_rate").val()); 
+    let liters = parseInt($("#tank_liters").val()); 
+    //var delta = global_result.add_air;
+    //var filled_liters = liters * delta;
+    //var time = filled_liters / rate;
+
+    if(global_result.filltype_in == "air" || global_result.filltype_in == "pp"){
+        var delta = global_result.add_air;
+        var filled_liters = liters * delta;
+        $("#compressor_o2").text("n/a");       
+        $("#compressor_he").text("n/a");       
+    } else if (global_result.filltype_in == "nx" || global_result.filltype_in == "cfm") {
+        var delta = global_result.add_nitrox;
+        var filled_liters = liters * delta;
+        var flow_o2 = rate * ((global_result.nitrox_pct -21) /100);
+        $("#compressor_o2").text(flow_o2.toFixed(0));       
+        $("#compressor_he").text("n/a");  
+    } else if (global_result.filltype_in == "tmx" ) {
+        var delta = global_result.add_tmx;
+        var filled_liters = liters * delta;
+        var flow_o2 = rate * ((global_result.tmx_preo2_pct) /100);
+        var flow_he = rate * (global_result.tmx_he_pct /100);
+        $("#compressor_o2").text(flow_o2.toFixed(0));       
+        $("#compressor_he").text(flow_he.toFixed(0));  
+    }
+    var time = filled_liters / rate;
+
+    $("#compressor_delta").text(delta.toFixed(0)); 
+    $("#compressor_tl").text(liters.toFixed(0)); 
+    $("#compressor_time").text(time.toFixed(1)); 
+};
         
 // dropdown menu for ft filltype selection
 $("#ddl_ft").change(function () {
