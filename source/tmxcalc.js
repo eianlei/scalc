@@ -1,12 +1,46 @@
 // tmxcalc.js
-// modifed from my original C# source TmxCalcClass.cs
-// which was a tranlation from Python source
-// split the orginal function into two parts, this one doing just the math
+// 2021-11-01 Ian Leiman
+// function to calculate trimix blending with ideal gas law
+// modified from my original C# source TmxCalcClass.cs
+// which was a translation from Python source
+// split the original function into two parts, this one doing just the math
 // the other one to generate text output from the results
 
-var BlenderState = null;
+const BlenderState = {
+    "status_code" : 99,
+    "status_txt" : "FATAL ERROR\n",
 
-/**
+    filltype_in : "pp",
+    start_bar_in : 70, 
+    start_o2_in : 21, 
+    start_he_in : 35, 
+    stop_bar_in : 200, 
+    stop_o2_in : 21, 
+    stop_he_in : 35,
+    //
+    add_air : 0, // bar of air to top in any method
+    add_o2 : 0,  // bar of Oxygen added in any method, not including O2 in air
+    add_he : 0,  // bar of Helium added in any method
+    add_nitrox : 0,  // bar of Nitrox added in "nx" method
+    nitrox_pct  : 0,
+    add_tmx : 0,
+    tbar_2 : 0, // tbar_2 is the tank pressure after we have filled Helium with PP method
+    tbar_3 : 0, // tbar_3 is pressure after He+O2 before topping air
+    tmx_preo2_pct : 0, // % of Oxygen in chamber 1 in "tmx" CFM method
+    tmx_he_pct : 0,
+    tmx_o2_pct : 0, // % of Oxygen in chamber 2 in "tmx" CFM method
+    // 
+    mix_o2_pct : 0, // final mix O2 %
+    mix_he_pct : 0, // final mix He %
+    mix_n2_pct : 0, // final mix N2 %
+    // 
+    t2_o2_pct : 0, // tbar_2 mix O2 %
+    t2_he_pct : 0, // tbar_2 mix He %
+    t2_n2_pct : 0, // tbar_2 mix N2 %
+
+};
+
+/** ************************************************************************************************
  * 
  * @param {string} filltype ["air", "nx", "tmx", "pp", "cfm" ]
  * @param {number} start_bar 
@@ -22,40 +56,18 @@ var BlenderState = null;
 function tmxcalc_num(filltype, start_bar, start_o2, start_he, 
     stop_bar, stop_o2, stop_he, he_ignore, o2_ignore)
 {
-    var tmxResult = {
-        "status_code" : 99,
-        "status_txt" : "FATAL ERROR\n",
-        // copy the inputs because we need to pass them to tmxcalc_text();
-        filltype_in : filltype,
-        start_bar_in : start_bar, 
-        start_o2_in : start_o2, 
-        start_he_in : start_he, 
-        stop_bar_in : stop_bar, 
-        stop_o2_in : stop_o2, 
-        stop_he_in : stop_he,
-        //
-        add_air : 0, // bar of air to top in any method
-        add_o2 : 0,  // bar of Oxygen added in any method, not including O2 in air
-        add_he : 0,  // bar of Helium added in any method
-        add_nitrox : 0,  // bar of Nitrox added in "nx" method
-        nitrox_pct  : 0,
-        add_tmx : 0,
-        tbar_2 : 0, // tbar_2 is the tank pressure after we have filled Helium with PP method
-        tbar_3 : 0, // tbar_3 is pressure after He+O2 before topping air
-        tmx_preo2_pct : 0, // % of Oxygen in chamber 1 in "tmx" CFM method
-        tmx_he_pct : 0,
-        tmx_o2_pct : 0, // % of Oxygen in chamber 2 in "tmx" CFM method
-        // 
-        mix_o2_pct : 0, // final mix O2 %
-        mix_he_pct : 0, // final mix He %
-        mix_n2_pct : 0, // final mix N2 %
-        // 
-        t2_o2_pct : 0, // tbar_2 mix O2 %
-        t2_he_pct : 0, // tbar_2 mix He %
-        t2_n2_pct : 0, // tbar_2 mix N2 %
-
-    }
+    var tmxResult = Object.create(BlenderState);
+    // copy the inputs because we need to pass them to tmxcalc_text();
+    tmxResult.filltype_in = filltype;
+    tmxResult.start_bar_in = start_bar; 
+    tmxResult.start_o2_in = start_o2; 
+    tmxResult.start_he_in = start_he; 
+    tmxResult.stop_bar_in = stop_bar; 
+    tmxResult.stop_o2_in = stop_o2; 
+    tmxResult.stop_he_in = stop_he;
     tmxResult.start_n2_in = 100 - start_o2 - start_he;
+
+
     // error checking for input values, anything wrong and we return an error & skip calculations
     const filltypes = new Set(["air", "nx", "tmx", "pp", "cfm" ]);
     if (filltypes.has(filltype) == false) {
@@ -312,8 +324,13 @@ function tmxcalc_num(filltype, start_bar, start_o2, start_he,
     tmxResult.mix_he_pct = mix_he_pct;
     tmxResult.mix_n2_pct = mix_n2_pct;
     return tmxResult;
-}
+} // tmxcalc_num
 
+/** ************************************************************************************************
+ * 
+ * @param {*} result 
+ * @returns 
+ */
 function tmxcalc_text(result )
 {
     // initial strings to use later    
@@ -426,4 +443,4 @@ function tmxcalc_text(result )
     }
 
     return result_txt;
-}
+} // tmxcalc_text
