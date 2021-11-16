@@ -48,8 +48,8 @@ function calculateBlend()
     // filltype = "pp";
     // filltype = $("#ddl_ft").val;
     
-    let deb_txt =  `calculateBlend ${start_bar} ${end_bar} ${start_o2_pct} ${start_he_pct} ${end_o2_pct} ${end_he_pct}`;
-    console.log(filltype);
+    // let deb_txt =  `calculateBlend ${start_bar} ${end_bar} ${start_o2_pct} ${start_he_pct} ${end_o2_pct} ${end_he_pct}`;
+    // console.log(filltype);
     // $("#text_output").val(deb_txt);
     let result = tmxcalc_num(filltype, start_bar, start_o2_pct, start_he_pct, 
         end_bar, end_o2_pct, end_he_pct, false, false);
