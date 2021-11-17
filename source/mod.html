@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="stylesheet" href="index.css">
+<link rel="stylesheet" href="../index.css"> 
 
 <h1>Calculate MOD</h1>
 <p>
@@ -33,6 +33,7 @@
     <tr>
       <td>use case</td>
       <td>
+        <!--
         <div class="dropdown">
           <button class="dropbtn" id="ucB">select</button>
           <div class="dropdown-content">
@@ -41,6 +42,13 @@
             <a href="#" onclick="ucButton(1.2)">extended use</a>
           </div>
         </div>
+        -->
+        <select id ="ddl_pp" name="ddl" class="ddl" onmousedown="this.value='';"" >
+          <option value='1.4' selected="1.4">bottom gas 1.4</option>
+          <option value='1.6'>deco gas 1.6</option>
+          <option value='1.2'>extended use 1.2</option>
+          
+        </select>
       </td>
     </tr>
     <tr>
@@ -70,7 +78,7 @@
 
 
     function ucButton(btn){
-      alert(`recommended ppO2= ${btn}`);
+      // alert(`recommended ppO2= ${btn}`);
       //$("ucB").html("xxxx");
       $("#ppo2").val(btn);
       calculateMOD();
@@ -105,6 +113,12 @@
     $("#o2_pct").val(dropval);
     $('#o2range').val(this.value);
 
+    calculateMOD();
+  });
+
+  $("#ddl_pp").change(function () {
+    var dropval = $(this).val()
+    $("#ppo2").val(dropval);
     calculateMOD();
   });
 
