@@ -92,28 +92,33 @@ function tanksCheck(
         diveplan.currentTank = diveplan.nextTank;
         diveplan.currentTank.useFromTime = runtime;
         
-    } else if (diveplan.currentTank == deco1Tank) {
-        // check if DECO2 next
-        if (deco2Tank.use == true) {
-            diveplan.nextTank = deco2Tank;
-            diveplan.changeDepth = deco2Tank.changeDepth;
-            divephaseNext = DivePhase.ASC_T;
-        } else {
+        if (diveplan.currentTank == deco1Tank) {
+            // check if DECO2 next
+            if (deco2Tank.use == true) {
+                diveplan.nextTank = deco2Tank;
+                diveplan.changeDepth = deco2Tank.changeDepth;
+                divephaseNext = DivePhase.ASC_T;
+            } else {
+                diveplan.nextTank = null;
+                diveplan.changeDepth = -1;
+                divephaseNext = DivePhase.ASCENDING;
+            }
+        } else if (diveplan.nextTank == deco2Tank) {
             diveplan.nextTank = null;
-            diveplan.changeDepth = -1;
             divephaseNext = DivePhase.ASCENDING;
         }
-    } else if (diveplan.nextTank == deco2Tank) {
-        diveplan.nextTank = null;
-        divephaseNext = DivePhase.ASCENDING;
-    } else if (divephase == DivePhase.STOP_DECO) {
+    } //  divephase == DivePhase.STOP_ASC_T
+    else if (divephase == DivePhase.STOP_DECO) {
         // do nothing, but do not delete this either
-    } else if (divephase == DivePhase.DECO_END) {
+    } 
+    else if (divephase == DivePhase.DECO_END) {
         // do nothing, but do not delete this either
-    } else if (divephase == DivePhase.SURFACE) {
+    } 
+    else if (divephase == DivePhase.SURFACE) {
         // todo: record final tank pressures
         diveplan.currentTank.useUntilTime = runtime;
-    } else {
+    } 
+    else {
         console.log("tanksCheck: error");
         
         return DivePhase.ERROR;
@@ -132,4 +137,4 @@ function tanksCheck(
         diveplan.currentTank.pressure = barsLeft;
     }
     return divephaseNext;
-}
+} // tanksCheck
