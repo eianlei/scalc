@@ -553,8 +553,8 @@ function runPlan()
     }
 
     // get input for the tank configuration
-    const myTanks = [
-    { label : "BOTTOM", name: "B", use: true, 
+    const tankBottom =     { 
+        label : "BOTTOM", name: "B", use: true, 
         o2: bottom_O2_in, 
         he: bottom_He_in, 
         SAC: parseInt($("#bottom_SAC").val()), 
@@ -562,8 +562,10 @@ function runPlan()
         liters: parseInt($("#bottom_liters").val()), 
         bar: parseInt($("#bottom_bar").val()), 
         pressure: 200.0, useFromTime: 0, useUntilTime: 0, 
-        type: "bottom", useOrder: 1, color: "Magenta" },
-    { label: "deco1", name: "D1", 
+        type: "bottom", useOrder: 1, color: "Magenta" 
+    };
+    const tankDeco1 =     { 
+        label: "deco1", name: "D1", 
         use: deco1_use,
         o2: parseInt($("#deco1_O2").val()), 
         he: parseInt($("#deco1_He").val()), 
@@ -573,8 +575,10 @@ function runPlan()
         liters: parseInt($("#deco1_liters").val()), 
         bar: parseInt($("#deco1_bar").val()), 
         pressure: 200.0, useFromTime: 0, useUntilTime: 0, 
-        type: "deco", useOrder: 2, color: "Cyan"},
-    { label: "deco2", name: "D2", 
+        type: "deco", useOrder: 2, color: "Cyan"
+    };
+    const tankDeco2 =     { 
+        label: "deco2", name: "D2", 
         use: deco2_use,
         o2: parseInt($("#deco2_O2").val()),  
         he: parseInt($("#deco2_He").val()),  
@@ -584,12 +588,10 @@ function runPlan()
         liters: parseInt($("#deco2_liters").val()), 
         bar: parseInt($("#deco2_bar").val()), 
         pressure: 200.0, useFromTime: 0, useUntilTime: 0, 
-        type: "deco", useOrder: 3, color: "LightGray"},
-    { label: "travel1", name: "T1", use: false, 
-        o2: 21, he: 25, changeDepth: 40.0, SAC: 16, ppo2max: 1.4, liters: 11.0, 
-        bar: 200.0, pressure: 200.0, useFromTime: 0, useUntilTime: 0, useFromTime2: 0, useUntilTime2: 0, 
-        type: "travel", useOrder: 0, color: "Yellow"}
-    ];
+        type: "deco", useOrder: 3, color: "LightGray"
+    };
+
+    const myTanks = [tankBottom, tankDeco1, tankDeco2];
 
     // configure all inputs for the calculatePlan()
     const myDP = new Object();
@@ -613,7 +615,10 @@ function runPlan()
        myDP.changeDepth = 0;
 
        myDP.tankList = myTanks;
-       myDP.currentTank = myTanks[0];
+       myDP.currentTank = tankBottom;
+       myDP.tankBottom = tankBottom;
+       myDP.tankDeco1 = tankDeco1; 
+       myDP.tankDeco2 = tankDeco2; 
        myDP.nextTank = null;
 
        myDP.maxTCnitrogen = 0;

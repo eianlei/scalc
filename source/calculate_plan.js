@@ -13,12 +13,12 @@ import { DecoStop } from "./plan_txt.js";
 */
 
 // debug to console.log controls, set to true to log events
-const LOG_LOOP = false;
+const LOG_LOOP = true;
 const LOG_ASC = false;
 const LOG_catd = false;
 const LOG_MODOUT = false;
 const LOG_bounces = false;
-const LOG_states = false;
+const LOG_states = true;
 
 // phases of dive
 const DivePhase = {
@@ -30,9 +30,9 @@ const DivePhase = {
     STOP_DECO : "deco",
     DECO_END : "end",
     SURFACE : "SUR",
-    DESC_T : "DEt",
+
     ASC_T : "ASCtc",
-    STOP_DESC_T : "SDt",
+
     STOP_ASC_T : "tank",
     ERROR : "ERROR",
     NULL : "NULL",
@@ -56,7 +56,7 @@ function calculatePlan(diveplan) {
     let intervalMinutes;
 
     /**
-     * calculates how mnay meters to ascend on next interval of minutes
+     * calculates how many meters to ascend on next interval of minutes
      * @param {Diveplan} DP 
      * @param {number} depth in meters from where the ascent is to be made
      * @param {number} interval in minutes
@@ -167,22 +167,6 @@ function calculatePlan(diveplan) {
             }
             tanksCheck(diveplan, DivePhase.DESCENDING, beginDepth, endDepth, intervalMinutes, runtime);
 
-
-        } else if (divephase == DivePhase.DESC_T) {
-            runtime += intervalDescent;
-            intervalMinutes = intervalDescent / 60.0;
-            beginDepth = endDepth;
-            endDepth = beginDepth + stepDescent;
-            if (endDepth >= diveplan.changeDepth) {
-                endDepth = diveplan.changeDepth;
-                divephase = DivePhase.STOP_DESC_T;
-            }
-            tanksCheck(diveplan, DivePhase.DESC_T, beginDepth, endDepth, intervalMinutes, runtime);
-        } else if (divephase == DivePhase.STOP_DESC_T) {
-            beginDepth = endDepth;
-            runtime += intervalTankChange;
-            intervalMinutes = intervalTankChange / 60.0;
-            divephase = tanksCheck(diveplan, DivePhase.STOP_DESC_T, beginDepth, endDepth, intervalMinutes, runtime);
         } else if (divephase == DivePhase.BOTTOM) {
             runtime += intervalBottom;
             intervalMinutes = intervalBottom / 60.0;
@@ -425,7 +409,7 @@ function calculatePlan(diveplan) {
         if (LOG_LOOP) {  
             console.log(`${index}# ${endDepth.toFixed(1)}m ${(runtime /60).toFixed(1)}min ${divephase} c=${model.leadCeilingMeters.toFixed(1)}m `);   
         }
-        }; //
+    }; //
     // dive has ended, now save the data for plotting and printing
     diveplan.profileSampled = outProfile;
     // SUSPENDED diveplan.model = modelPoints;

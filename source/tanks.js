@@ -15,10 +15,7 @@ const tankList = [
         o2: 100, he: 0, changeDepth: 6.0, SAC: 13, ppo2max: 1.6, liters: 7.0, 
         bar: 200.0, pressure: 200.0, useFromTime: 0, useUntilTime: 0, 
         type: "deco", useOrder: 3, color: "LightGray"},
-    { label: "travel1", name: "T1", use: false, 
-        o2: 21, he: 25, changeDepth: 40.0, SAC: 16, ppo2max: 1.4, liters: 11.0, 
-        bar: 200.0, pressure: 200.0, useFromTime: 0, useUntilTime: 0, useFromTime2: 0, useUntilTime2: 0, 
-        type: "travel", useOrder: 0, color: "Yellow"}
+
 ];
 */
 
@@ -35,10 +32,9 @@ function tanksCheck(
     intervalMinutes =0.0, runtime = 0) {
 
     let tl = diveplan.tankList;
-    let travelTank = tl.find(x => x.type === 'travel');
-    let bottomTank = tl.find(x => x.type === 'bottom');
-    let deco1Tank = tl.find(x => x.label === 'deco1');
-    let deco2Tank = tl.find(x => x.label === 'deco2');
+    let bottomTank = diveplan.tankBottom;
+    let deco1Tank = diveplan.tankDeco1;
+    let deco2Tank = diveplan.tankDeco2;
 
     let divephaseNext = DivePhase.NULL;
     if (divephase == DivePhase.INIT_TANKS) {
@@ -55,15 +51,6 @@ function tanksCheck(
         }
         divephaseNext = DivePhase.STARTING;
     } else if (divephase == DivePhase.STARTING) {
-        // select and return bottom or travel tank (B or T1),
-        // if travel tank return DivePhase.DESC_CHG_TANK, and changeDepth        
-        if (travelTank.use == true) {
-            divephaseNext = DivePhase.DESC_T;
-            diveplan.changeDepth = travelTank.changeDepth;
-            diveplan.currentTank = travelTank;
-            travelTank.useFromTime2 = runtime;
-            diveplan.nextTank = bottomTank;
-        } else {
             divephaseNext = DivePhase.DESCENDING;
             diveplan.currentTank = bottomTank;
             diveplan.currentTank.useFromTime = runtime;
@@ -77,30 +64,17 @@ function tanksCheck(
                 diveplan.nextTank = null;
                 diveplan.changeDepth = -1;
             }
-        }
+        
     } else if (divephase == DivePhase.DESCENDING) {
         // just update tank pressure
         divephaseNext = DivePhase.DESCENDING;
-    } else if (divephase == DivePhase.DESC_T) {
-        // just update tank pressure
-        divephaseNext = DivePhase.DESC_T;
-    } else if (divephase == DivePhase.STOP_DESC_T) {
-        // change to next tank, which will be BOTTOM at descending
-        tl[TankType.TRAVEL].useUntilTime2 = runtime;
-        diveplan.currentTank = diveplan.nextTank;
-        diveplan.currentTank.useFromTime = runtime;
-        // which means that next gas must be TRAVEL again
-        diveplan.nextTank = travelTank;
-        divephaseNext = DivePhase.DESCENDING;
+
     } else if (divephase == DivePhase.BOTTOM) {
         // just update tank pressure
         divephaseNext = DivePhase.BOTTOM;
     } else if (divephase == DivePhase.ASCENDING) {
         // if any tank changes ahead, then ASC_CHG_TANK
-        // if at BOTTOM tank and TRAVEL enabled, then TRAVEL comes next
         // else DECO1 or DECO2
-        // if previous tank TRAVEL, then change to BOTTOM
-        // if previous tank BOTTOM, then change to TRAVEL if enabled
         // else change to DECO1 if enabled, or DECO2
         if (diveplan.nextTank == null) {
             // there is no tank change ascending
@@ -113,42 +87,29 @@ function tanksCheck(
         // just update tank pressure
         divephaseNext = DivePhase.ASC_T;
     } else if (divephase == DivePhase.STOP_ASC_T) {
-        // change to next tank, which can be TRAVEL, DECO1, DECO2
+        // change to next tank, which can be DECO1, DECO2
         diveplan.currentTank.useUntilTime = runtime;
         diveplan.currentTank = diveplan.nextTank;
         diveplan.currentTank.useFromTime = runtime;
-        if (diveplan.currentTank == travelTank) {
-            // now on TRAVEL tank, check if next can be DECO1, DECO2
-            if (tl[TankType.DECO1].use == true) {
-                diveplan.nextTank = tl[TankType.DECO1];
-                diveplan.changeDepth = tl[TankType.DECO1].changeDepth;
-                divephaseNext = DivePhase.ASC_T;
-            } else if (tl[TankType.DECO2].use == true) {
-                diveplan.nextTank = tl[TankType.DECO2];
-                diveplan.changeDepth = tl[TankType.DECO2].changeDepth;
-                divephaseNext = DivePhase.ASC_T;
-            } else {
-                diveplan.nextTank = null;
-                diveplan.changeDepth = -1;
-                divephaseNext = DivePhase.ASCENDING;
-            }
-        } else if (diveplan.currentTank == deco1Tank) {
-            // check if DECO2 next
-            if (deco2Tank.use == true) {
-                diveplan.nextTank = deco2Tank;
-                diveplan.changeDepth = deco2Tank.changeDepth;
-                divephaseNext = DivePhase.ASC_T;
-            } else {
-                diveplan.nextTank = null;
-                diveplan.changeDepth = -1;
-                divephaseNext = DivePhase.ASCENDING;
-            }
-        } else if (diveplan.nextTank == deco2Tank) {
+        
+    } else if (diveplan.currentTank == deco1Tank) {
+        // check if DECO2 next
+        if (deco2Tank.use == true) {
+            diveplan.nextTank = deco2Tank;
+            diveplan.changeDepth = deco2Tank.changeDepth;
+            divephaseNext = DivePhase.ASC_T;
+        } else {
             diveplan.nextTank = null;
+            diveplan.changeDepth = -1;
             divephaseNext = DivePhase.ASCENDING;
         }
+    } else if (diveplan.nextTank == deco2Tank) {
+        diveplan.nextTank = null;
+        divephaseNext = DivePhase.ASCENDING;
     } else if (divephase == DivePhase.STOP_DECO) {
+        // do nothing, but do not delete this either
     } else if (divephase == DivePhase.DECO_END) {
+        // do nothing, but do not delete this either
     } else if (divephase == DivePhase.SURFACE) {
         // todo: record final tank pressures
         diveplan.currentTank.useUntilTime = runtime;
