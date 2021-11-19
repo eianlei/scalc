@@ -88,6 +88,15 @@ function calculatePlan(diveplan) {
 
     // create a list of depths to ascend, even 3m intervals
     let ascDepths = [];
+
+    /* alternative way to test 
+    let aStep = 0.5;
+    for (var aDepth= 0; aDepth < diveplan.bottomDepth; aDepth += aStep){
+        ascDepths.push(aDepth);
+        if (aDepth >= 12) aStep = 3
+        else  if (aDepth >= 6) aStep = 1 ;
+    }
+    */
     for (var aDepth= 0; aDepth < diveplan.bottomDepth; aDepth += 3.0){
         ascDepths.push(aDepth);
     }
@@ -357,7 +366,7 @@ function calculatePlan(diveplan) {
                 var EndDeco2surface = false;
                 var EndDeco = false;
                 if (endDepth >= 3.0 && model.leadCeilingMeters <= 0) EndDeco2surface = true; // near surface and no ceiling
-                if (endDepth > (model.leadCeilingMeters + 2)) EndDeco = true; ///*** limit was 3, try 0.1 */
+                if (endDepth > (model.leadCeilingMeters + 2.5)) EndDeco = true; ///*** limit was 3, try 0.1 */
                 if (EndDeco2surface || EndDeco) {
                     // yes, it is time to end deco
                     if (LOG_ASC) console.log(`-*- 8 ${endDepth} > ${model.leadCeilingMeters.toFixed(1)} ${EndDeco2surface}`);
@@ -376,7 +385,8 @@ function calculatePlan(diveplan) {
                         `@[${(newDecoStop.runtime).toFixed(0)}-${(runTimeMin).toFixed(0)}]min `+
                         `(${diveplan.currentTank.o2}/${diveplan.currentTank.he})`;
                     if(LOG_states) console.log(`==== ${wp_txt}`);
-                    diveplan.wayPoints.push(wp_txt);
+                    if (currentDecoDone >= 1.0)
+                        diveplan.wayPoints.push(wp_txt);
 
                     newDecoStop = null;
                     //divephase = DivePhase.DECO_END
