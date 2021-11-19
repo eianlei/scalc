@@ -11,6 +11,7 @@ const DecoStop = {
  * @param {[]} decoStops 
  */
 function plan_txt(decoStops, waypoints, tankList){
+    // 2021-11-19 major refactoring: all time units are now MINUTES, seconds removed everywhere
 
     let txt = 'deco planner result:\n';
 
@@ -34,9 +35,9 @@ function plan_txt(decoStops, waypoints, tankList){
     let stopTxt = ' :-(';
     for(idx=0; idx < decoStops.length; idx++){
         if (decoStops[idx] ){
-            let runtime = decoStops[idx].runtime/60;
+            let runtime = decoStops[idx].runtime;
             let depth = decoStops[idx].depth;
-            let duration = decoStops[idx].duration/60;
+            let duration = decoStops[idx].duration;
             let o2 = decoStops[idx].o2;
             let he = decoStops[idx].he;
 

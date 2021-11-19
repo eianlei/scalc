@@ -282,6 +282,7 @@
 <script src="./calculate_plan.js"> </script>
 
 <script>
+// 2021-11-19 major refactoring: all time units are now MINUTES, seconds removed everywhere
 // run the plan automatically for the 1st time with defaults
 runPlan();
 
@@ -367,15 +368,15 @@ function drawSmallProfile(dp){
     //*** end of CEILING
 
     // draw time axis
-    for (var tt=0; tt < totalTime; tt += 60){
+    for (var tt=0; tt < totalTime; tt += 1){
         var x = tt / totalTime * pw;
         ctx.beginPath();
         ctx.moveTo(x, ph);
         ctx.lineTo(x, ph+5);
         ctx.strokeStyle = "black";
         ctx.stroke();
-    } // time ticks every 1 min
-    for (var tt=300; tt < totalTime; tt += 300){
+    } // time ticks every 5 min
+    for (var tt=5; tt < totalTime; tt += 5){
         var x = tt / totalTime * pw;
         ctx.beginPath();
         ctx.moveTo(x, 0);
@@ -384,7 +385,7 @@ function drawSmallProfile(dp){
         ctx.stroke();
         ctx.font = '8pt Arial';
         ctx.fillStyle = "black";
-        ctx.fillText(`${tt / 60}`, x-5, ph+14);
+        ctx.fillText(`${tt}`, x-5, ph+14);
     } // time gridlines every 5 min and minutes text
 
     // draw depth grid
@@ -457,7 +458,7 @@ function drawSmallProfile(dp){
         }
         var pointIdx = idx;
         var mousePoint = prof[pointIdx];
-        var pointTxt = `${mousePoint.depth.toFixed(0)} m, ${(mouseTime/60).toFixed(0)} min`;
+        var pointTxt = `${mousePoint.depth.toFixed(0)} m, ${(mouseTime).toFixed(0)} min`;
         var depthY = mousePoint.depth / maxDepth * ph ;
         return [pointTxt, depthY];
     }
@@ -596,8 +597,8 @@ function runPlan()
     // configure all inputs for the calculatePlan()
     const myDP = new Object();
        myDP.bottomDepth =   parseInt($("#dive_depth").val());
-       myDP.bottomTime =    parseInt($("#dive_bottom_time").val()) * 60.0; // CONVERT TO SECONDS!!!!
-       myDP.descTime = 3 / 60;
+       myDP.bottomTime =    parseInt($("#dive_bottom_time").val()) ; // MINUTES !!!!
+       myDP.descTime = 3 ; //minutes
        myDP.ascRateToDeco = 1;
        myDP.ascRateAtDeco = 1;
        myDP.ascRateToSurface = 1;
@@ -674,7 +675,7 @@ function openTable(){
         for(i=0; i< globalDP.profileSampled.length; i++){
             point = globalDP.profileSampled[i];
             pTable += `<td>${i}</td>`;
-            pTable += `<td>${(point.time/60).toFixed(1)}</td>`;
+            pTable += `<td>${(point.time).toFixed(1)}</td>`;
             pTable += `<td>${point.depth.toFixed(1)}</td>`;
             pTable += `<td>${point.divephase}</td>`;
             pTable += `<td>${point.tank.name}</td>`;    

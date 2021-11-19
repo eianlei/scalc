@@ -28,6 +28,7 @@ const tankList = [
  * @param {number}  runtime
  */
 function tanksCheck(
+    // 2021-11-19 major refactoring: all time units are now MINUTES, seconds removed everywhere
     diveplan, divephase, beginDepth=0.0, endDepth=0.0,
     intervalMinutes =0.0, runtime = 0) {
 
