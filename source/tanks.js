@@ -49,10 +49,11 @@ function changeTanks(diveplan, runtime){
                 diveplan.changeDepth = diveplan.tankDeco2.changeDepth;
             } else {
                 diveplan.nextTank = null;
-                diveplan.changeDepth = -1;
+                diveplan.changeDepth = -1000;
             }
         } else if (diveplan.currentTank.label == "deco2") {
             diveplan.nextTank = null;
+            diveplan.changeDepth = -1000;
         }
     }
 }
