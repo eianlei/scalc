@@ -629,6 +629,8 @@ function runPlan()
        myDP.tableIsGenerated = false; // controls openTable()
        
        // now finally call the actual work horse
+       calculatePlan(myDP);
+       /*
     try {
        calculatePlan(myDP);
     }
@@ -636,7 +638,7 @@ function runPlan()
         alert(`calculatePlan() exception: ${err}\n`+
         "aborted, press F12 to see console.log");
         return;
-    }
+    } */
        
        // output the text from calculatePlan()
        txt = plan_txt(myDP.decoStopsCalculated, myDP.wayPoints, myDP.tankList);
