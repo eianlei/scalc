@@ -152,7 +152,9 @@ function calculatePlan(diveplan) {
             divephase = DivePhase.DESCENDING;
             newDecoStop = null;
             // select the first tank to use, -> diveplan.currentTank, also affects nextTank, changeDepth
-            divephase = tanksCheck(diveplan, DivePhase.STARTING, runTimeMin);
+            tanksCheck(diveplan, DivePhase.STARTING, runTimeMin);
+            divephase = DivePhase.DESCENDING;
+            
         } else if (divephase == DivePhase.DESCENDING) {
             runTimeMin += intervalDescent;
             intervalMinutes = intervalDescent ;
@@ -210,7 +212,14 @@ function calculatePlan(diveplan) {
                 if (LOG_states) console.log(`==== ${wp_txt}`);
                 diveplan.wayPoints.push(wp_txt);
             } else {
-                divephase = tanksCheck(diveplan, DivePhase.ASCENDING, beginDepth, endDepth, intervalMinutes, runTimeMin);
+                tanksCheck(diveplan, DivePhase.ASCENDING, beginDepth, endDepth, intervalMinutes, runTimeMin);
+                if (diveplan.nextTank == null) {
+                    // there is no tank change ascending
+                    divephase = DivePhase.ASCENDING;
+                } else {
+                    divephase = DivePhase.ASC_T;
+                }
+                
                 if (LOG_ASC) console.log(`   ** tanksCheck ${divephase} `);   
             }
         } else if (divephase == DivePhase.ASC_T) {

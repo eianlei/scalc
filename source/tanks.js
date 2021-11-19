@@ -29,6 +29,7 @@ const tankList = [
  */
 function tanksCheck(
     // 2021-11-19 major refactoring: all time units are now MINUTES, seconds removed everywhere
+    // refactor: remove divephaseNext
     diveplan, divephase, beginDepth=0.0, endDepth=0.0,
     intervalMinutes =0.0, runtime = 0) {
 
@@ -37,7 +38,6 @@ function tanksCheck(
     let deco1Tank = diveplan.tankDeco1;
     let deco2Tank = diveplan.tankDeco2;
 
-    let divephaseNext = DivePhase.NULL;
     if (divephase == DivePhase.INIT_TANKS) {
         // make all tanks full
         diveplan.currentTank = null;
@@ -50,9 +50,8 @@ function tanksCheck(
             tl[iTank].useUntilTime = 0;
             tl[iTank].useUntilTime2 = 0;
         }
-        divephaseNext = DivePhase.STARTING;
+
     } else if (divephase == DivePhase.STARTING) {
-            divephaseNext = DivePhase.DESCENDING;
             diveplan.currentTank = bottomTank;
             diveplan.currentTank.useFromTime = runtime;
             if (deco1Tank.use == true) {
@@ -65,28 +64,10 @@ function tanksCheck(
                 diveplan.nextTank = null;
                 diveplan.changeDepth = -1;
             }
-        
-    } else if (divephase == DivePhase.DESCENDING) {
-        // just update tank pressure
-        divephaseNext = DivePhase.DESCENDING;
-
-    } else if (divephase == DivePhase.BOTTOM) {
-        // just update tank pressure
-        divephaseNext = DivePhase.BOTTOM;
     } else if (divephase == DivePhase.ASCENDING) {
-        // if any tank changes ahead, then ASC_CHG_TANK
-        // else DECO1 or DECO2
-        // else change to DECO1 if enabled, or DECO2
-        if (diveplan.nextTank == null) {
-            // there is no tank change ascending
-            divephaseNext = DivePhase.ASCENDING;
-        } else {
-            divephaseNext = DivePhase.ASC_T;
+        if (diveplan.nextTank != null) {
             diveplan.changeDepth = diveplan.nextTank.changeDepth;
         }
-    } else if (divephase == DivePhase.ASC_T) {
-        // just update tank pressure
-        divephaseNext = DivePhase.ASC_T;
     } else if (divephase == DivePhase.STOP_ASC_T) {
         // change to next tank, which can be DECO1, DECO2
         diveplan.currentTank.useUntilTime = runtime;
@@ -98,32 +79,19 @@ function tanksCheck(
             if (deco2Tank.use == true) {
                 diveplan.nextTank = deco2Tank;
                 diveplan.changeDepth = deco2Tank.changeDepth;
-                divephaseNext = DivePhase.ASC_T;
             } else {
                 diveplan.nextTank = null;
                 diveplan.changeDepth = -1;
-                divephaseNext = DivePhase.ASCENDING;
             }
         } else if (diveplan.nextTank == deco2Tank) {
             diveplan.nextTank = null;
-            divephaseNext = DivePhase.ASCENDING;
         }
-    } //  divephase == DivePhase.STOP_ASC_T
-    else if (divephase == DivePhase.STOP_DECO) {
-        // do nothing, but do not delete this either
-    } 
-    else if (divephase == DivePhase.DECO_END) {
-        // do nothing, but do not delete this either
-    } 
+    }
     else if (divephase == DivePhase.SURFACE) {
         // todo: record final tank pressures
         diveplan.currentTank.useUntilTime = runtime;
     } 
-    else {
-        console.log("tanksCheck: error");
-        
-        return DivePhase.ERROR;
-    }
+
     // calculate gas used to update tank pressure
     if (diveplan.currentTank != null) {
         var beginPressure = depth2absolutePressure(beginDepth);
@@ -137,5 +105,5 @@ function tanksCheck(
         // finally update new pressure into the tank itself
         diveplan.currentTank.pressure = barsLeft;
     }
-    return divephaseNext;
+    return 0;
 } // tanksCheck
