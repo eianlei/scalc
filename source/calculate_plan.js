@@ -205,7 +205,7 @@ function calculatePlan(diveplan) {
                 tanksCheck(diveplan, DivePhase.SURFACE, beginDepth, endDepth, intervalMinutes, runTimeMin);
 
                 // record waypoint, now at surface
-                let surfaceAtMinute = Math.ceil(runTimeMin/60);
+                let surfaceAtMinute = Math.ceil(runTimeMin);
                 wp_txt = `SURFACE ${surfaceAtMinute}min (${diveplan.currentTank.o2}/${diveplan.currentTank.he})`;
                 if (LOG_states) console.log(`==== ${wp_txt}`);
                 diveplan.wayPoints.push(wp_txt);
