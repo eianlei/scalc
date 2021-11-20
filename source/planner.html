@@ -631,15 +631,18 @@ function runPlan()
        // now finally call the actual work horse
        calculatePlan(myDP);
        /*
-    try {
-       calculatePlan(myDP);
-    }
-    catch(err) {
-        alert(`calculatePlan() exception: ${err}\n`+
-        "aborted, press F12 to see console.log");
-        return;
-    } */
-       
+        try {
+        calculatePlan(myDP);
+        }
+        catch(err) {
+            alert(`calculatePlan() exception: ${err}\n`+
+            "aborted, press F12 to see console.log\n"+
+            "resetting depth and bottom time to 30m/20min");
+            $("#dive_depth").val(30);
+            $("#dive_bottom_time").val(20);
+            return;
+        }
+       */
        // output the text from calculatePlan()
        txt = plan_txt(myDP.decoStopsCalculated, myDP.wayPoints, myDP.tankList);
        $("#planner_textout").val(txt);
