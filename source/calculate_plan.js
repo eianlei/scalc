@@ -235,19 +235,21 @@ function calculatePlan(diveplan) {
                 divephase = DivePhase.STOP_DECO;
             } 
             
-        } // ascending
+        } // end of DivePhase.ASCENDING)
         else if (divephase == DivePhase.STOP_DECO) {
+            // at a deco stop
             runTimeMin += intervalDeco + addTankChangeTime;
             intervalMinutes = intervalDeco + addTankChangeTime;
             tankUpdate(diveplan, beginDepth, endDepth, intervalDeco + addTankChangeTime);
             // already added tank change interval, so now reset it to zero
             if (addTankChangeTime > 0) addTankChangeTime =0;
-        } 
+        } //end of 
         else if (divephase == DivePhase.DECO_END) {
-            runTimeMin += intervalDeco;
-            intervalMinutes = intervalDeco; 
+            // 
+            runTimeMin += intervalAscent;
+            intervalMinutes = intervalAscent; 
             divephase = DivePhase.ASCENDING;
-            tankUpdate(diveplan, beginDepth, endDepth, intervalDeco);
+            tankUpdate(diveplan, beginDepth, endDepth, intervalAscent);
         } 
         else if (divephase == DivePhase.SURFACE) {
             diveplan.currentTank.useUntilTime = runTimeMin;
@@ -255,8 +257,9 @@ function calculatePlan(diveplan) {
             break;
         } 
         else {
-            console.log("calculatePlan: slipped through the loop");
-            throw "error 101";
+            var errorTxt = `ERROR:calculatePlan: at #${index} r=${runTimeMin.toFixed(1)} unknown state ${divephase}`;
+            console.log(errorTxt);
+            throw errorTxt;
             break;
         }
         /*
@@ -366,7 +369,11 @@ function calculatePlan(diveplan) {
                 var EndDeco2surface = false;
                 var EndDeco = false;
                 if (endDepth >= 3.0 && model.leadCeilingMeters <= 0) EndDeco2surface = true; // near surface and no ceiling
-                if (endDepth > (model.leadCeilingMeters + 2.5)) EndDeco = true; ///*** limit was 3, try 0.1 */
+
+                //******************** THIS IS WHERE DECO ENDS when below 3 m */
+                const endDecoDelta = 2.5; // endDecoDelta configures the delta from current endDepth to ceiling when we end the deco stop
+                if (endDepth > (model.leadCeilingMeters + endDecoDelta)) EndDeco = true; ///*** limit was 3, try 0.1 */
+                
                 if (EndDeco2surface || EndDeco) {
                     // yes, it is time to end deco
                     if (LOG_ASC) console.log(`-*- 8 ${endDepth} > ${model.leadCeilingMeters.toFixed(1)} ${EndDeco2surface}`);
