@@ -26,7 +26,7 @@ const DivePhase = {
     DESCENDING : "DESC",
     BOTTOM : "BOT",
     ASCENDING : "ASC",
-    AT_DECO : "deco",
+    AT_DECO : "DECO",
     //DECO_END : "end",
     SURFACE : "SUR",
   
@@ -158,8 +158,8 @@ function calculatePlan(diveplan) {
         }
 
         if (LOG_LOOP) {  
-            console.log(`i${index}> b${beginDepth.toFixed(1)} e${endDepth.toFixed(1)} r${(runTimeMin).toFixed(1)}min ${divephase} `);   
-        };
+            console.log(`[i${index}  b${beginDepth.toFixed(1)} e${endDepth.toFixed(1)} r${(runTimeMin).toFixed(1)}min ${divephase} `);   
+        }; 
 
 
         let heliumFraction = diveplan.currentTank.he / 100.0;
@@ -174,13 +174,16 @@ function calculatePlan(diveplan) {
         if (LOG_MODOUT) console.log(`    MO stop=${model.leadCeilingStop.toFixed(0)} c=${model.leadCeilingMeters.toFixed(1)} tc=${model.leadTissue}`)
         /////////////////////////////////////////////////////// 
 
+        // update tank pressure    
+        tankUpdate(diveplan, beginDepth, endDepth, intervalAscent);
 
+        // record the new point withj all data    
         let newPoint = Object.create( DiveProfilePoint) ;  /// <-----------------
         newPoint.time = runTimeMin;    
         newPoint.depth = endDepth;
         newPoint.pressure = depth2absolutePressure(endDepth);
         newPoint.tank = diveplan.currentTank;
-        // newPoint.tankO2 = 
+        newPoint.tankPressure = diveplan.currentTank.pressure;
         newPoint.divephase = divephase;
         newPoint.gfSet = gfObject.gfSetFlag;
         newPoint.ascending = ascending;
@@ -188,7 +191,6 @@ function calculatePlan(diveplan) {
         depthSum += endDepth * intervalMinutes;
         depthRunAvg = depthSum / (runTimeMin + 0.00001) ;
         newPoint.depthRunAvg = depthRunAvg;
-        newPoint.tankPressure = diveplan.currentTank.pressure;
 
         // record the current Partial Pressures of all gases breathed
         newPoint.ppOxygen   = newPoint.pressure * oxygenFraction / surfacePressure;
@@ -216,6 +218,8 @@ function calculatePlan(diveplan) {
         diveplan.maxTChelium = Math.max(diveplan.maxTChelium, model.maxHeliumPressure);
         outProfile.push(newPoint);
 
+
+
         ///// then check for dive state changes
         if (divephase == DivePhase.STARTING) {
             // STARTING: initialize variables, tanks and then got DESCENDING
@@ -233,13 +237,14 @@ function calculatePlan(diveplan) {
             // select the bottom tank to use, -> diveplan.currentTank, also affects nextTank, changeDepth
             
             
-        } else if (divephase == DivePhase.DESCENDING) {
+        } //end of divephase STARTING
+        else if (divephase == DivePhase.DESCENDING) {
             // DESCENDING
             runTimeMin += intervalDescent;
             intervalMinutes = intervalDescent ;
             beginDepth = endDepth;
             endDepth = beginDepth + stepDescent;
-            tankUpdate(diveplan, beginDepth, endDepth, intervalDescent);
+            //tankUpdate(diveplan, beginDepth, endDepth, intervalDescent);
             // check if we have reached bottom already
             if (endDepth >= diveplan.bottomDepth) {
                 // we have reached bottom now
@@ -254,13 +259,14 @@ function calculatePlan(diveplan) {
             }
             
 
-        } else if (divephase == DivePhase.BOTTOM) {
+        } //end of divephase DESCENDING
+        else if (divephase == DivePhase.BOTTOM) {
             // at BOTTOM
             runTimeMin += intervalBottom;
             intervalMinutes = intervalBottom ;
             beginDepth = diveplan.bottomDepth;
             endDepth = diveplan.bottomDepth;
-            tankUpdate(diveplan, beginDepth, endDepth, intervalBottom);
+            //tankUpdate(diveplan, beginDepth, endDepth, intervalBottom);
             // check if borrom time has ended
             if (runTimeMin >= diveplan.atBottom + diveplan.bottomTime) {
                 // end of bottom time, now start ascending
@@ -273,7 +279,7 @@ function calculatePlan(diveplan) {
                 diveplan.wayPoints.push(wp_txt);
             }
             
-        } 
+        } //end of divephase BOTTOM
         else if (divephase == DivePhase.AT_DECO) {
             // at a deco stop, possibly also a tank change
             runTimeMin += intervalDeco + addTankChangeTime;
@@ -281,33 +287,36 @@ function calculatePlan(diveplan) {
             tankUpdate(diveplan, beginDepth, endDepth, intervalDeco + addTankChangeTime);
             // already added tank change interval, so now reset it to zero
             if (addTankChangeTime > 0) addTankChangeTime =0;
-            
+            // increment count for deco duraction            
             currentDecoDone += intervalDeco;
-            if (LOG_ASC) console.log(`--1 DECO ${currentDecoDone} ${intervalDeco}`);
-                //todo: check how long it has been now?
+            //todo: check how long it has been now?
             
             if (newDecoStop != null) {
                 newDecoStop.duration = currentDecoDone;
-                if (LOG_ASC) console.log(`--2 DECO ${currentDecoDone}`);
+                if (LOG_ASC) console.log(`DECO t=${currentDecoDone} interval=${intervalDeco}`);
+            } else {
+                if (LOG_ASC) console.log(`DECO ERROR ### newDecoStop==null ${currentDecoDone} ${intervalDeco}`);
             }
             // check if time to end deco
             var EndDeco2surface = false;
             var EndDeco = false;
             if (endDepth <= 3.0 && model.leadCeilingMeters <= 0) EndDeco2surface = true; // near surface and no ceiling
             //******************** THIS IS WHERE DECO ENDS when below 3 m */
-            const endDecoDelta = 2.5; // endDecoDelta configures the delta from current endDepth to ceiling when we end the deco stop
+            const endDecoDelta = 3.0; // endDecoDelta configures the delta from current endDepth to ceiling when we end the deco stop
             if (endDepth > (model.leadCeilingMeters + endDecoDelta)) EndDeco = true; ///*** limit was 3, try 0.1 */
             
             if (EndDeco2surface || EndDeco) {
                 // yes, it is time to end deco
-                if (LOG_ASC) console.log(`-*- 3 DECO ${endDepth} > ${model.leadCeilingMeters.toFixed(1)} ${EndDeco2surface}`);
-                if (EndDeco2surface) 
+                if (LOG_ASC) console.log(`DECO_END ${endDepth} > ${model.leadCeilingMeters.toFixed(1)} ${EndDeco2surface}`);
+                if (EndDeco2surface) {
                     divephase = DivePhase.SURFACE;
-                else
+                    endDepth = 0;
+                    if (LOG_ASC) console.log(`from DECO to SURFACE ${endDepth}`);
+                } else {
                     divephase = DivePhase.ASCENDING;
-
+                }
                 if (newDecoStop == null){
-                    console.log("######### 8 end deco but newDecoStop=null!!")
+                    console.log("DECO_END ERROR ######### end deco but newDecoStop=null!!")
                     continue;
                 }
                 newDecoStop.duration = currentDecoDone;
@@ -325,32 +334,26 @@ function calculatePlan(diveplan) {
                 newDecoStop = null;
                 //divephase = DivePhase.DECO_END
             } else {
-                if (LOG_ASC) console.log(`--- 9 ${endDepth} <= ${model.leadCeilingMeters +3.0}`);
+                if (LOG_ASC) console.log(`DECO cont. d=${endDepth} c=${model.leadCeilingMeters} delta=${endDecoDelta}`);
             }
 
-        } //end of divephase == DivePhase.STOP_DECO
-/*
-        else if (divephase == DivePhase.DECO_END) {
-            // 
-            runTimeMin += intervalAscent;
-            intervalMinutes = intervalAscent; 
-            divephase = DivePhase.ASCENDING;
-            tankUpdate(diveplan, beginDepth, endDepth, intervalAscent);
-        } 
-*/
+        } //end of divephase STOP_DECO
+
         else if (divephase == DivePhase.SURFACE) {
+            // SURFACE
             diveplan.currentTank.useUntilTime = runTimeMin;
-            tankUpdate(diveplan, beginDepth, endDepth, intervalAscent);
+            //tankUpdate(diveplan, beginDepth, endDepth, intervalAscent);
+            if (LOG_ASC) console.log(`SURFACE d=${endDepth} ceil=${model.leadCeilingMeters}`);
             break;
-        } 
+        } //end of divephase SURFACE
+
         else if (divephase == DivePhase.ASCENDING) {
-            // ASCENDING
+            // ** ASCENDING ************************************************************
             runTimeMin += intervalAscent;
             intervalMinutes = intervalAscent;
             beginDepth = endDepth;
-            endDepth = ascDepths.pop(); // pop the next ascent step from the list
-            tankUpdate(diveplan, beginDepth, endDepth, intervalAscent);
-            if (LOG_ASC) console.log(`   **ASC b${beginDepth} e${endDepth}`);   
+           
+
 
             // check that we are not at surface yet
             if (endDepth <= 0.0) {
@@ -358,7 +361,7 @@ function calculatePlan(diveplan) {
                 divephase = DivePhase.SURFACE;
                 beginDepth = 0.0;
                 endDepth = 0.0;
-                tankUpdate(diveplan, beginDepth, endDepth, intervalAscent);
+                //tankUpdate(diveplan, beginDepth, endDepth, intervalAscent);
 
                 // record waypoint, now at surface
                 let surfaceAtMinute = Math.ceil(runTimeMin);
@@ -383,7 +386,9 @@ function calculatePlan(diveplan) {
             let hitCeiling = endDepth <= model.leadCeilingStop;
             if ( hitCeiling ) {
                 // we have hit a deco ceiling
-                if (LOG_ASC) console.log(`--- GOTO DECO ${model.leadCeilingStop.toFixed(1)}`);
+                if (LOG_ASC) console.log(`--- GOTO DECO (${beginDepth}) leadCeilingStop=${model.leadCeilingStop.toFixed(1)}`);
+                // make sure we stay at this depth
+                endDepth = beginDepth;
                 divephase = DivePhase.AT_DECO;
                 currentDecoDone = 0.0;
                     // now set the gradient factor
@@ -401,19 +406,30 @@ function calculatePlan(diveplan) {
                 newDecoStop = Object.create(DecoStop); // DecoStop defined in plan_txt.js;
                 newDecoStop.depth = endDepth
                 newDecoStop.runtime = runTimeMin;
-            } 
-            
+            } else {
+                //** not at surface and not hit deco ceiling, so then ascend next step */
+                //tankUpdate(diveplan, beginDepth, endDepth, intervalAscent);
+                if (ascDepths.length > 0) {
+                    endDepth = ascDepths.pop(); // pop the next ascent step from the list
+                } else {
+                    // this should not happen, continuing would throw errors anyway
+                    console.log("ERROR: ASCENDING and ascDepths already empty");
+                    break;
+                }
+            }
+            if (LOG_ASC) console.log(`   **ASCENDING b${beginDepth} e${endDepth}`);   
         } // end of DivePhase.ASCENDING)
 
         else {
+            // unknown divephase, should not happen
             var errorTxt = `ERROR:calculatePlan: at #${index} r=${runTimeMin.toFixed(1)} unknown state ${divephase}`;
             console.log(errorTxt);
             throw errorTxt;
             break;
-        }
+        } // end of unknown divephase
 
         if (LOG_LOOP) {  
-            console.log(`i${index}# b${beginDepth.toFixed(1)} e${endDepth.toFixed(1)} r${(runTimeMin).toFixed(1)}min ${divephase} `);   
+            console.log(` i${index} b${beginDepth.toFixed(1)} e${endDepth.toFixed(1)} r${(runTimeMin).toFixed(1)}min ${divephase} `);   
         };
     }; //
     // dive has ended, now save the data for plotting and printing
