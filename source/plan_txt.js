@@ -24,14 +24,16 @@ function plan_txt(decoStops, waypoints, tankList){
     for(idx=0; idx < tankList.length; idx++){
         if (tankList[idx].use){
             let t = tankList[idx];
-            tanktxt = `${t.label} (${t.o2}/${t.he}) ${t.pressure.toFixed(0)} bar at end\n`;
+            let tO2HE = `(${t.o2}/${t.he})`
+            tanktxt = `${t.label.padEnd(6," ")} ${tO2HE.padEnd(7," ")} ${t.pressure.toFixed(0).padStart(3, " ")} bar at end\n`;
             txt += tanktxt;
         }
 
     }
 
 
-    txt += "\ndeco stops:\n";
+    txt += "\ndeco stops:\n"+
+        "STOP ,duration, runtime  , gas\n";
     let stopTxt = ' :-(';
     for(idx=0; idx < decoStops.length; idx++){
         if (decoStops[idx] ){
@@ -40,8 +42,11 @@ function plan_txt(decoStops, waypoints, tankList){
             let duration = decoStops[idx].duration;
             let o2 = decoStops[idx].o2;
             let he = decoStops[idx].he;
+            let depth_padded = depth.toFixed(0).padStart(3, " ");
+            let duration_padded = duration.toFixed(1).padStart(4, " ");
 
-            stopTxt = `run ${runtime.toFixed(0)} min, ${depth.toFixed(0)} m, ${duration.toFixed(0)} min, gas ${o2}/${he}\n`;
+            //stopTxt = `@${runtime.toFixed(1)} min, ${depth_padded} m, ${duration_padded} min, gas ${o2}/${he}\n`;
+            stopTxt = `${depth_padded} m,${duration_padded} min, @${runtime.toFixed(1)} min, ${o2}/${he}\n`;
         } else{
             stopTxt = '** empty stop record **\n';
         }

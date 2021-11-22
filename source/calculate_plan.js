@@ -127,9 +127,12 @@ function calculatePlan(diveplan) {
     diveplan.maxTChelium = 0.0;
 
     // setting unit is minutes, refactored
-    let intervalDescent = 0.5; //--> diveplan.descTime / 1.0;
-    let stepDescent = calculateStepDescend(diveplan, diveplan.bottomDepth, intervalDescent) // diveplan.bottomDepth / 5.0;
-    let intervalBottom = 1.0; //--> diveplan.bottomTime / 5;
+
+    let stepDescent = diveplan.bottomDepth / diveplan.desc_steps;
+                        //calculateStepDescend(diveplan, diveplan.bottomDepth, intervalDescent) // diveplan.bottomDepth / 5.0;
+    let intervalDescent = (diveplan.bottomDepth / diveplan.desc_rate) / diveplan.desc_steps; 
+    let intervalBottom = diveplan.bottomTime / diveplan.bottom_steps;
+                         //1.0; //--> diveplan.bottomTime / 5;
     let intervalAscent = 0.3333;
     let intervalDeco = 2.0;
     let intervalTankChange = 1.0;
@@ -170,8 +173,8 @@ function calculatePlan(diveplan) {
         let gfCurrent = gfObject.gfGet(endDepth);
         model.calculateAllTissuesDepth (beginDepth, endDepth, intervalMinutes, 
                                         heliumFraction, nitrogenFraction, gfCurrent );
-        if (LOG_catd)  console.log(`     catd b${beginDepth} e${endDepth} i${intervalMinutes.toFixed(1)} (${heliumFraction}/${nitrogenFraction.toFixed(2)}) GF${gfCurrent.toFixed(2)}`);  
-        if (LOG_MODOUT) console.log(`    MO stop=${model.leadCeilingStop.toFixed(0)} c=${model.leadCeilingMeters.toFixed(1)} tc=${model.leadTissue}`)
+        if (LOG_catd)  console.log(`>> CATD-in idx=${index} r=${runTimeMin.toFixed(1)} b/e=(${beginDepth}>${endDepth}) interval=${intervalMinutes.toFixed(1)} he/n2=(${heliumFraction}/${nitrogenFraction.toFixed(2)}) GF=${gfCurrent.toFixed(2)}`);  
+        if (LOG_MODOUT) console.log(`<< CATD-out stop=${model.leadCeilingStop.toFixed(0)} c=${model.leadCeilingMeters.toFixed(1)} tc=${model.leadTissue}`)
         /////////////////////////////////////////////////////// 
 
         // update tank pressure    
@@ -252,7 +255,8 @@ function calculatePlan(diveplan) {
                 endDepth = diveplan.bottomDepth;
                 
                 // record waypoint, now at bottom
-                wp_txt = `d ${endDepth}m ${runTimeMin.toFixed(1)}min ${runTimeMin.toFixed(1)}min (${diveplan.currentTank.o2}/${diveplan.currentTank.he})`;
+                wp_txt = `\\ ${endDepth.toFixed(0).padStart(3, " ")}m ${runTimeMin.toFixed(0).padStart(2, " ")}min `+
+                         `${runTimeMin.toFixed(0).padStart(2, " ")}min (${diveplan.currentTank.o2}/${diveplan.currentTank.he})`;
                 if (LOG_states) console.log(`==== ${wp_txt}`);
                 diveplan.wayPoints.push(wp_txt);
                 diveplan.atBottom = runTimeMin;
@@ -274,7 +278,7 @@ function calculatePlan(diveplan) {
                 diveplan.ascentBegins = runTimeMin;
                 ascending = true;
                 // record waypoint, now starting ascent
-                wp_txt = `b ${endDepth}m ${(runTimeMin-diveplan.atBottom).toFixed(0)}min ${runTimeMin.toFixed(1)}min (${diveplan.currentTank.o2}/${diveplan.currentTank.he})`;
+                wp_txt = `= ${endDepth.toFixed(0).padStart(3, " ")}m ${(runTimeMin-diveplan.atBottom).toFixed(0).padStart(2, " ")}min ${runTimeMin.toFixed(0).padStart(2, " ")}min (${diveplan.currentTank.o2}/${diveplan.currentTank.he})`;
                 if (LOG_states) console.log(`==== ${wp_txt}`);
                 diveplan.wayPoints.push(wp_txt);
             }
@@ -324,8 +328,8 @@ function calculatePlan(diveplan) {
                 newDecoStop.he = diveplan.currentTank.he;
                 diveplan.decoStopsCalculated.push(newDecoStop);
                 // record the deco stop done
-                wp_txt = `> ${endDepth}m ${(currentDecoDone)}min `+
-                    `@[${(newDecoStop.runtime).toFixed(0)}-${(runTimeMin).toFixed(0)}]min `+
+                wp_txt = `> ${beginDepth.toFixed(0).padStart(3, " ")}m ${currentDecoDone.toFixed(0).padStart(2, " ")}min `+
+                    `@[${newDecoStop.runtime.toFixed(0).padStart(2, " ")}-${runTimeMin.toFixed(0).padStart(2, " ")}]min `+
                     `(${diveplan.currentTank.o2}/${diveplan.currentTank.he})`;
                 if(LOG_states) console.log(`==== ${wp_txt}`);
                 if (currentDecoDone >= 1.0)
@@ -344,6 +348,12 @@ function calculatePlan(diveplan) {
             diveplan.currentTank.useUntilTime = runTimeMin;
             //tankUpdate(diveplan, beginDepth, endDepth, intervalAscent);
             if (LOG_ASC) console.log(`SURFACE d=${endDepth} ceil=${model.leadCeilingMeters}`);
+
+            // 
+            let surfaceAtMinute = Math.ceil(runTimeMin);
+            wp_txt = `SURFACE ${surfaceAtMinute}min (${diveplan.currentTank.o2}/${diveplan.currentTank.he})`;
+            if (LOG_states) console.log(`==== ${wp_txt}`);
+            diveplan.wayPoints.push(wp_txt);  
             break;
         } //end of divephase SURFACE
 
@@ -364,9 +374,10 @@ function calculatePlan(diveplan) {
                 //tankUpdate(diveplan, beginDepth, endDepth, intervalAscent);
 
                 // record waypoint, now at surface
+                // apparenty code never gets here
                 let surfaceAtMinute = Math.ceil(runTimeMin);
-                wp_txt = `SURFACE ${surfaceAtMinute}min (${diveplan.currentTank.o2}/${diveplan.currentTank.he})`;
-                if (LOG_states) console.log(`==== ${wp_txt}`);
+                wp_txt = `SURFACE at ${surfaceAtMinute}min (${diveplan.currentTank.o2}/${diveplan.currentTank.he})`;
+                if (LOG_states) console.log(`=2== ${wp_txt}`);
                 diveplan.wayPoints.push(wp_txt);    
             } 
             // check tank change
@@ -374,50 +385,56 @@ function calculatePlan(diveplan) {
                 // do a tank change here
                 // endDepth = diveplan.changeDepth;
                 // runTimeMin += intervalTankChange;
-                changeTanks(diveplan, runTimeMin);
-                wp_txt = `  ${endDepth}m CHANGE @${runTimeMin.toFixed(0)}min to (${diveplan.currentTank.o2}/${diveplan.currentTank.he})`;
+                wp_txt = `..${diveplan.changeDepth.toFixed(0).padStart(3," ")}m T-chg @${runTimeMin.toFixed(0)}min `+
+                         `GAS (${diveplan.currentTank.o2}/${diveplan.currentTank.he})`;
                 if (LOG_states) console.log(`TANK CHANGE ${wp_txt}`);
                 diveplan.wayPoints.push(wp_txt);
+
+                changeTanks(diveplan, runTimeMin);
+
                 // force a fake deco stop for gas change interval 
                 addTankChangeTime = intervalTankChange;
                 divephase = DivePhase.AT_DECO;
-            } 
-            // check that next step will not cross ceiling
-            let hitCeiling = endDepth <= model.leadCeilingStop;
-            if ( hitCeiling ) {
-                // we have hit a deco ceiling
-                if (LOG_ASC) console.log(`--- GOTO DECO (${beginDepth}) leadCeilingStop=${model.leadCeilingStop.toFixed(1)}`);
-                // make sure we stay at this depth
-                endDepth = beginDepth;
-                divephase = DivePhase.AT_DECO;
-                currentDecoDone = 0.0;
-                    // now set the gradient factor
-                newPoint.gfNow = gfObject.gfSet(endDepth);
-                newPoint.gfSet = true;
-                // the decos near surface take longer, so longer intervals used
-                if (endDepth == 3.0) {
-                    intervalDeco = 1.0;
-                } else if (endDepth == 6.0) {
-                    intervalDeco = 1.0;
-                } else {
-                    intervalDeco = 0.5;
-                }
-                //record the new deco stop
-                newDecoStop = Object.create(DecoStop); // DecoStop defined in plan_txt.js;
-                newDecoStop.depth = endDepth
-                newDecoStop.runtime = runTimeMin;
-            } else {
-                //** not at surface and not hit deco ceiling, so then ascend next step */
-                //tankUpdate(diveplan, beginDepth, endDepth, intervalAscent);
-                if (ascDepths.length > 0) {
-                    endDepth = ascDepths.pop(); // pop the next ascent step from the list
-                } else {
-                    // this should not happen, continuing would throw errors anyway
-                    console.log("ERROR: ASCENDING and ascDepths already empty");
-                    break;
-                }
-            }
-            if (LOG_ASC) console.log(`   **ASCENDING b${beginDepth} e${endDepth}`);   
+            } // tank change
+            else {
+                // check that next step will not cross ceiling
+                let hitCeiling = endDepth <= model.leadCeilingStop;
+                if ( hitCeiling ) {
+                    // we have hit a deco ceiling
+                    if (LOG_ASC) console.log(`--- GOTO DECO (${beginDepth}) leadCeilingStop=${model.leadCeilingStop.toFixed(1)}`);
+                    // make sure we stay at this depth
+                    endDepth = beginDepth;
+                    divephase = DivePhase.AT_DECO;
+                    currentDecoDone = 0.0;
+                        // now set the gradient factor
+                    newPoint.gfNow = gfObject.gfSet(endDepth);
+                    newPoint.gfSet = true;
+                    // the decos near surface take longer, so longer intervals used
+                    if (endDepth == 3.0) {
+                        intervalDeco = 1.0;
+                    } else if (endDepth == 6.0) {
+                        intervalDeco = 1.0;
+                    } else {
+                        intervalDeco = 0.5;
+                    }
+                    //record the new deco stop
+                    newDecoStop = Object.create(DecoStop); // DecoStop defined in plan_txt.js;
+                    newDecoStop.depth = endDepth
+                    newDecoStop.runtime = runTimeMin;
+                } // end hitCeiling
+                else {
+                    //** not at surface, no tank change and not hit deco ceiling, so then ascend next step */
+                    //tankUpdate(diveplan, beginDepth, endDepth, intervalAscent);
+                    if (ascDepths.length > 0) {
+                        endDepth = ascDepths.pop(); // pop the next ascent step from the list
+                    } else {
+                        // this should not happen, continuing would throw errors anyway
+                        console.log("ERROR: ASCENDING and ascDepths already empty");
+                        break;
+                    }
+                    if (LOG_ASC) console.log(`   **ASCENDING b${beginDepth} e${endDepth}`);   
+                } // end normal ascent
+            } // end checked hitCeiling
         } // end of DivePhase.ASCENDING)
 
         else {
