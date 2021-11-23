@@ -48,6 +48,13 @@
         <option value='top' disabled>He + O2 + topoff gas</option>
         </select>
     </div>
+    <span>algorithm: </span>
+    <select id ="ddl_algorithm" name="ddl_algorithm" class="ddl" onmousedown="this.value='';"" value="air">
+        <option value='IDG' selected="selected">ideal gas law</option>
+        <option value='VdW1'>Van Der Waals law, simple</option>
+        <option value='VdW2' disabled>Van Der Waals law, temperatures</option>
+    </select>
+
     <div>
         <button onclick="openCost()">Cost of this fill</button>
         <button onclick="openSources()">Gas Sources</button>
@@ -235,6 +242,7 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="./tmxcalc.js"></script>
 <script src="./blender.js"></script>
+<script src="./vanderwaals.js"></script>
 
 </body>
 </html>

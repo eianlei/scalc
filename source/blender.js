@@ -3,6 +3,7 @@
 */
 let global_result;
 var filltype = "pp";
+var algorithm = "IDG";
 // always run the whole show once with defaults
 calculateBlend();
 
@@ -59,15 +60,24 @@ function calculateBlend()
     let start_he_pct = parseInt($('#start_he_pct').val());
     let end_o2_pct =   parseInt($('#end_o2_pct').val());
     let end_he_pct =   parseInt($('#end_he_pct').val());
+    let liters = parseInt($("#tank_liters").val()); 
+    let result;
     // filltype = "pp";
     // filltype = $("#ddl_ft").val;
     
     // let deb_txt =  `calculateBlend ${start_bar} ${end_bar} ${start_o2_pct} ${start_he_pct} ${end_o2_pct} ${end_he_pct}`;
     // console.log(filltype);
     // $("#text_output").val(deb_txt);
-    let result = tmxcalc_num(filltype, start_bar, start_o2_pct, start_he_pct, 
-        end_bar, end_o2_pct, end_he_pct, false, false);
+    // just trying this out
+    if (filltype == "pp" && algorithm== "VdW1") {
+        result = vdw_calc(start_bar, start_o2_pct, start_he_pct, 
+            end_bar, end_o2_pct, end_he_pct, liters, 20.0);
+        $("#text_output").val(result.status_txt);
         global_result = result;
+    } else {
+        result = tmxcalc_num(filltype, start_bar, start_o2_pct, start_he_pct, 
+            end_bar, end_o2_pct, end_he_pct, false, false);
+            global_result = result;
         if (result.status_code == 0) {
             result_txt = tmxcalc_text(result);
             $("#text_output").val(result_txt);
@@ -75,6 +85,9 @@ function calculateBlend()
         else {
             $("#text_output").val(result.status_txt);
         }
+    }
+
+
     drawFillProfile(result);
     do_O2_storage();
     do_He_storage();
@@ -242,6 +255,14 @@ $("#dd_wantedGas").change(function () {
 $("#dd_end_bar").change(function () {
     var dropTxt = $(this).val();
     $("#end_bar").val(parseInt(dropTxt) );
+    
+    calculateBlend();
+});
+
+// dropdown menu for algorithm  
+$("#ddl_algorithm").change(function () {
+    var dropTxt = $(this).val();
+    algorithm = dropTxt;
     
     calculateBlend();
 });
