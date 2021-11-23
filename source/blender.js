@@ -1,4 +1,5 @@
-/**
+/** (c) 2021 Ian Leiman, ian.leiman@gmail.com
+* blender.js
 * 
 */
 let global_result;
