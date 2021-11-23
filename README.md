@@ -20,8 +20,11 @@ But you can safely ignore the warnings.
 
 # Installation
 This is a web application so it needs to be served by a web server to a web browser. You can either install it to a "real" web server (such Apache, nginx) or use some local development solution such as VS Code Live Server extension.
+
+It is possible to make this app run on electron so it can run like a normal desktop application. 
 ## web server
 Just copy all the files in source folder to a web site server root. 
+Or git clone this repo to the server.
 The web server will serve index.html, which will call out all the modules. 
 Usually a web browser will cache the entire application as it so small. 
 ## VS code & Live Server
@@ -62,21 +65,22 @@ Use this application at your own risk, the author provides no guarantees about t
 - 2021-11-03 published to github a quickly hacked up demo, that needs lot of TLC
 - 2021-11-08 added the dive planner prototype
 - 2021-11-12 most of essential functionality in place
+- 2021-11-21 big cleaning up & refactoring of very messy code in planner 
+- 2021-11-23 implemented Van Der Waals gas law calculation to blender
 
-todo short term:
+## todo short term:
 - some cleanup, proper structuring and commentting to the sources
 - make UI mobile friendly (CSS)
 - do a proper favicon
 - add user documentation
 - to Blender: bring up all the same functionality that exists in [FillCalcWin](https://github.com/eianlei/FillCalcWin)
-  - VanDerWaals
-  - and something new: temperature compensations
+  - new feature: use gas temperatures in calculations 
 - Planner implementation, 
   - Bühlmann: have manually transpiled Python code to Javascript from [pydplan](https://github.com/eianlei/pydplan), 
-  but there are many issues to be fixed
+  but the code still need some fine tuning
   - improvements on graphical web UI
 
-long term plans:
+## long term plans:
 - desktop version will run on [electron](https://www.electronjs.org/) and include Windows installer
 - Android and iOS mobile versions using [Cordova](https://cordova.apache.org/)
 
