@@ -178,7 +178,7 @@ function calculatePlan(diveplan) {
         /////////////////////////////////////////////////////// 
 
         // update tank pressure    
-        tankUpdate(diveplan, beginDepth, endDepth, intervalAscent);
+        tankUpdate(diveplan, beginDepth, endDepth, intervalMinutes);
 
         // record the new point withj all data    
         let newPoint = Object.create( DiveProfilePoint) ;  /// <-----------------
