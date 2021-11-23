@@ -22,7 +22,7 @@
     .div_bProf {
         position: relative;
         width: 600px;
-        height: 210px;
+        height: 310px;
     }
     .div_bProf canvas {
         position: absolute;
@@ -67,7 +67,7 @@
     <select id ="ddl_algorithm" name="ddl_algorithm" class="ddl" onmousedown="this.value='';"" value="air">
         <option value='IDG' selected="selected">ideal gas law</option>
         <option value='VdW1'>Van Der Waals law, simple</option>
-        <option value='VdW2' disabled>Van Der Waals law, temperatures</option>
+        <option value='VdW2'>Van Der Waals law, temperatures</option>
     </select>
 
     <div>
@@ -158,27 +158,27 @@
             <table class="t1">
                 <tr>
                     <td>at start </td>
-                    <td><input type="number" min=1 max=50 step=1 class="temp" value="22" id="temp_start"/></td>
+                    <td><input type="number" min=1 max=50 step=1 class="input2" value="22" id="temp_start"/></td>
                 </tr>
                 <tr>
                     <td>after Helium fill </td>
-                    <td><input type="number" min=1 max=50 step=1 class="temp" value="30" id="temp_he"/></td>
+                    <td><input type="number" min=1 max=90 step=1 class="input2" value="30" id="temp_he"/></td>
                 </tr>
                 <tr>
                     <td>after Oxygen fill </td>
-                    <td><input type="number" min=1 max=50 step=1 class="temp" value="40" id="temp_start"/></td>
+                    <td><input type="number" min=1 max=90 step=1 class="input2" value="40" id="temp_o2"/></td>
                 </tr>
                 <tr>
                     <td>after compressor fill </td>
-                    <td><input type="number" min=1 max=50 step=1 class="temp" value="50" id="temp_he"/></td>
+                    <td><input type="number" min=1 max=90 step=1 class="input2" value="50" id="temp_air"/></td>
                 </tr>
                 <tr>
-                    <td>after cooling down </td>
-                    <td><input type="number" min=1 max=50 step=1 class="temp" value="22" id="temp_start"/></td>
+                    <td>WANTED<br>after cooling down </td>
+                    <td><input type="number" min=1 max=50 step=1 class="input2" value="22" id="temp_final"/></td>
                 </tr>
                 <tr>
                     <td>begin of dive </td>
-                    <td><input type="number" min=1 max=50 step=1 class="temp" value="10" id="temp_he"/></td>
+                    <td><input type="number" min=1 max=50 step=1 class="input2" value="10" id="temp_use"/></td>
                 </tr>
             </table>    
         </div>  
@@ -218,8 +218,8 @@
 
 <div class="div_bProf">
 
-    <canvas id="bProfCanvas" width="600" height="210" style="border:1px solid #000000;"></canvas>
-    <canvas id="pProfCanvas_txt" width="600" height="210" style="border:1px solid #000000;"></canvas>
+    <canvas id="bProfCanvas" width="600" height="310" style="border:1px solid #000000;"></canvas>
+    <canvas id="pProfCanvas_txt" width="600" height="310" style="border:1px solid #000000;"></canvas>
 </div>
 
 <!-- gas sources panel -->
@@ -293,6 +293,6 @@
 <script src="./tmxcalc.js"></script>
 <script src="./blender.js"></script>
 <script src="./vanderwaals.js"></script>
-
+<script src="vdw_temp.js"></script>
 </body>
 </html>

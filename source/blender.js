@@ -75,6 +75,21 @@ function calculateBlend()
             end_bar, end_o2_pct, end_he_pct, liters, 20.0);
         $("#text_output").val(result.status_txt);
         global_result = result;
+    } else if (filltype == "pp" && algorithm== "VdW2") {
+        let temp_start =    parseInt($("#temp_start").val());
+        let temp_he    =    parseInt($("#temp_he").val());
+        let temp_o2    =    parseInt($("#temp_o2").val());
+        let temp_air   =    parseInt($("#temp_air").val());
+        let temp_final =    parseInt($("#temp_final").val());
+        let temp_use   =    parseInt($("#temp_use").val());
+
+        result = vdw_calc_temp(start_bar, start_o2_pct, start_he_pct, 
+            end_bar, end_o2_pct, end_he_pct, liters, temp_start,
+            temp_he, temp_o2, temp_air, temp_final, temp_use);
+        $("#text_output").val(result.status_txt);
+        global_result = result;
+
+
     } else {
         result = tmxcalc_num(filltype, start_bar, start_o2_pct, start_he_pct, 
             end_bar, end_o2_pct, end_he_pct, false, false);
@@ -309,6 +324,7 @@ function drawFillProfile(result){
     var ctxTXT = cTXT.getContext("2d");
     ctx.font = '9px Arial';
     ctx.fillStyle = "black";
+    ctx.globalAlpha = 0.8;
     
     // clear out previous plots
     ctx.clearRect(0,0, c.width, c.height);
@@ -348,7 +364,7 @@ function drawFillProfile(result){
         var steps = [0, 1, 2, 3];
         var divs = tx;
         
-        // print how much gas added in each stage
+        // print how much gas added in each stage in
         [[1, "He", result.add_he], 
         [3, "O2", result.add_o2], 
         [5, "air", result.add_air]].forEach( i => {
@@ -401,12 +417,12 @@ function drawFillProfile(result){
         // print stable pressures at begin/end of each fill stage
         for ( s=0; s < steps.length; s++)  {
             i = steps[s];
-            ctx.fillText(`${b1Bar[i].toFixed(0)} bar`, tx[i*2]+2, 208-b1Bar[i]);
+            ctx.fillText(`${b1Bar[i].toFixed(0)} bar`, tx[i*2]+2, 308-b1Bar[i]);
             if (bHePct[i] > 0)
-            ctx.fillText(`${bHePct[i].toFixed(0)} % He`, tx[i*2]+2, 218-b1Bar[i]);
+            ctx.fillText(`${bHePct[i].toFixed(0)} % He`, tx[i*2]+2, 318-b1Bar[i]);
             
-            ctx.fillText(`${bO2Pct[i].toFixed(0)} % O2`, tx[i*2]+2, 218-bO2Bar[i]);
-            ctx.fillText(`${bN2Pct[i].toFixed(0)} % N2`, tx[i*2]+2, 218-bHeBar[i]);    
+            ctx.fillText(`${bO2Pct[i].toFixed(0)} % O2`, tx[i*2]+2, 318-bO2Bar[i]);
+            ctx.fillText(`${bN2Pct[i].toFixed(0)} % N2`, tx[i*2]+2, 318-bHeBar[i]);    
         };
         
         
@@ -427,13 +443,13 @@ function drawRamp(ctx, color, tx, bar_arr, steps){
         if (bar_arr[i] == null) break;
         x  = tx[i*2];
         x2 = tx[i*2 +1] 
-        y = 210 - bar_arr[i];
+        y = 310 - bar_arr[i];
         ctx.lineTo(x, y);
         ctx.lineTo(x2, y);
         //ctx.fillText(`${bar_arr[i]}`, x, y);
     }
-    ctx.lineTo(x2, 210);
-    ctx.lineTo(0, 210);
+    ctx.lineTo(x2, 310);
+    ctx.lineTo(0, 310);
     ctx.lineTo(0, 0);
     ctx.closePath();
     ctx.lineWidth = 1;
@@ -455,7 +471,7 @@ function drawVertLines(ctx, divs){
     for (var s=0; s< divs.length; s++){
         x = divs[s];
         ctx.moveTo(x, 0);
-        ctx.lineTo(x, 210);
+        ctx.lineTo(x, 310);
         ctx.stroke();
     }
     ctx.stroke();
