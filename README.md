@@ -12,11 +12,10 @@ The existing and planned calculation tools include:
 - gas blending: working, needs improvement
 - dive planner: simple prototype, has many bugs and issues
 
-# scalc at scalc.leiman.fi
-There is a working sample of the tool running at: http://scalc.leiman.fi/
+# scalc at scalc.ianleiman.com
+There is a working sample of the tool running at: http://scalc.ianleiman.com/
 
-Note that the site leiman.fi does not have an SSL-certificate, so there is no HTTPS and therefore most browsers will give you warnings. 
-But you can safely ignore the warnings. 
+This sample may not be as up to date as the github.io instance that syncs directly from this repo: https://eianlei.github.io/scalc/index.html
 
 # Installation
 This is a web application so it needs to be served by a web server to a web browser. You can either install it to a "real" web server (such Apache, nginx) or use some local development solution such as VS Code Live Server extension.
