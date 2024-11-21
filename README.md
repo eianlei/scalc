@@ -41,16 +41,31 @@ ls -l
 cd /etc/apache2/sites-available
 nano scalc.yourdomain.conf
 # edit the virtual host file, save and exit
+# see example below
 sudo a2ensite scalc.yourdomain.conf
 sudo systemctl restart apache2
 # http://scalc.yourdomain
 # now get SSL cert using certbot
 sudo certbot --apache
 # https://scalc.yourdomain
-}
 ```
 ### example virtual host file 
 scalc.yourdomain.conf
+```
+UseCanonicalName On
+<VirtualHost *:80>
+        ServerAdmin you@yourdomain
+        ServerName scalc.yourdomain
+        DocumentRoot /var/www/scalc
+        <Directory /var/www/scalc/>
+            Options Indexes FollowSymLinks MultiViews
+            AllowOverride All
+            Require all granted
+        </Directory>
+        ErrorLog ${APACHE_LOG_DIR}/error.log
+        CustomLog ${APACHE_LOG_DIR}/access.log combined
+</VirtualHost>
+```
 
 ## VS code & Live Server
 If you have Visual Studio Code installed, then it is really easy to run any web app using the Live Server extension.
