@@ -26,6 +26,32 @@ Just copy all the files in source folder to a web site server root.
 Or git clone this repo to the server.
 The web server will serve index.html, which will call out all the modules. 
 Usually a web browser will cache the entire application as it so small. 
+
+### example how to clone the app on linux server and make apache virtual server
+Assuming you have a standard linux server and apache is installed and running, and you use certbot for SSL.
+```shell
+ssh yoursever
+cd /var/www
+sudo mkdir scalc
+sudo chown www-data:www-data scalc
+sudo git clone https://github.com/eianlei/scalc.git
+cd scalc
+ls -l
+# check that you have all you need
+cd /etc/apache2/sites-available
+nano scalc.yourdomain.conf
+# edit the virtual host file, save and exit
+sudo a2ensite scalc.yourdomain.conf
+sudo systemctl restart apache2
+# http://scalc.yourdomain
+# now get SSL cert using certbot
+sudo certbot --apache
+# https://scalc.yourdomain
+}
+```
+### example virtual host file 
+scalc.yourdomain.conf
+
 ## VS code & Live Server
 If you have Visual Studio Code installed, then it is really easy to run any web app using the Live Server extension.
 
