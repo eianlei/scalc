@@ -13,7 +13,7 @@ The existing and planned calculation tools include:
 - dive planner: simple prototype, has many bugs and issues
 
 # scalc at scalc.ianleiman.com
-There is a working sample of the tool running at: http://scalc.ianleiman.com/
+There is a working sample of the tool running at: https://scalc.ianleiman.com/
 
 This sample may not be as up to date as the github.io instance that syncs directly from this repo: https://eianlei.github.io/scalc/index.html
 
@@ -72,7 +72,19 @@ If you have Visual Studio Code installed, then it is really easy to run any web 
 
 In Visual Studio Code clone this repository.
 Install "Live Server" extension. Now you can launch the app from editor to your browser using a local server with live reload.
-## node.js
+
+## use python built-in development server
+If you have git and python3 installed, you can clone this application and use python built-in web server.
+To git clone and start a webserver using Python run the commands below:
+```
+cd some_directory
+git clone https://github.com/eianlei/scalc.git
+cd scalc
+python3 -m http.server
+```
+That will open a webserver on port 8000. You can then open your browser at http://127.0.0.1:8000/.
+
+After the app has loaded on your browser you can actually kill the web server (Ctrl-C) beacause it is now running on your browser and no longer needs a server.
 
 # Technology
 **scalc** is made from plain vanilla HTML, CSS, Javascript and does not use any fancy JS frameworks (such as Angular, React, Vue, Svelte etc...).
