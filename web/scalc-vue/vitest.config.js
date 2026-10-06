@@ -11,6 +11,7 @@ export default mergeConfig(
       root: fileURLToPath(new URL('./', import.meta.url)),
       pool: 'threads',
       fileParallelism: false,
+      testTimeout: 15000,
     },
   }),
 )

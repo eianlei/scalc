@@ -1,11 +1,21 @@
 import { describe, it, expect } from 'vitest'
-
-import { mount } from '@vue/test-utils'
+import { mount, flushPromises } from '@vue/test-utils'
+import { createMemoryHistory, createRouter } from 'vue-router'
 import App from '../App.vue'
+import { routes } from '../router'
 
 describe('App', () => {
-  it('mounts renders properly', () => {
-    const wrapper = mount(App)
-    expect(wrapper.text()).toContain('You did it!')
+  it('renders SCALC tab labels', async () => {
+    const router = createRouter({ history: createMemoryHistory(), routes })
+    await router.push('/about')
+    await router.isReady()
+    const wrapper = mount(App, {
+      global: { plugins: [router] },
+    })
+    await flushPromises()
+    expect(wrapper.text()).toContain('ABOUT')
+    expect(wrapper.text()).toContain('MOD')
+    expect(wrapper.text()).toContain('Blender')
+    expect(wrapper.text()).toContain('Planner')
   })
 })
