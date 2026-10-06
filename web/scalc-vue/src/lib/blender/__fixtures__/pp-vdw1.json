@@ -1,0 +1,27 @@
+{
+  "inputs": {
+    "start_bar": 100,
+    "start_o2": 21,
+    "start_he": 35,
+    "want_bar": 200,
+    "want_o2": 21,
+    "want_he": 35,
+    "volume": 24,
+    "temp": 20
+  },
+  "result": {
+    "status_code": 0,
+    "add_he": 37.34353889974298,
+    "add_o2": 8.485750261349494,
+    "add_air": 54.170710838907524,
+    "add_nitrox": 0,
+    "nitrox_pct": 0,
+    "add_tmx": 0,
+    "tbar_2": 137.34353889974298,
+    "tbar_3": 145.82928916109248,
+    "mix_o2_pct": 21,
+    "mix_he_pct": 35,
+    "mix_n2_pct": 44,
+    "status_txt": "Starting from 100 bar with mix 21/35 (O2/He).\nVan der Waals blend:\n- From 100.0 bars add 37.3 bar Helium,\n- From 137.3 bars add 8.5 bar Oxygen,\n- From 145.8 bars add 54.2 bar air to 200.0 bar.  \nResulting mix will be 21/35 (O2/He).\n"
+  }
+}

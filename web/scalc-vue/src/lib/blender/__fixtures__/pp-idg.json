@@ -1,0 +1,26 @@
+{
+  "inputs": {
+    "filltype": "pp",
+    "start_bar": 100,
+    "start_o2": 21,
+    "start_he": 35,
+    "stop_bar": 200,
+    "stop_o2": 21,
+    "stop_he": 35
+  },
+  "result": {
+    "status_code": 0,
+    "add_he": 35,
+    "add_o2": 9.303797468354418,
+    "add_air": 55.696202531645575,
+    "add_nitrox": 65,
+    "nitrox_pct": 32.30769230769231,
+    "add_tmx": 100,
+    "tbar_2": 135,
+    "tbar_3": 144.30379746835442,
+    "mix_o2_pct": 20.99999999999999,
+    "mix_he_pct": 35,
+    "mix_n2_pct": 44.000000000000014
+  },
+  "text": "Starting from 100 bar with mix 21/35/44 (O2/He/N).\nPARTIAL PRESSURE BLENDING:\n - From 100.0 bars add 35.0 bar Helium to 135.0 bar (16/52/33),\n - From 135.0 bars add 9.3 bar Oxygen to 144.3 bar (21/49/30) ,\n - From 144.3 bars add 55.7 bar air to 200.0 bar.  \nResulting mix will be 21/35/44 (O2/He/N).\n"
+}

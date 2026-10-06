@@ -1,0 +1,26 @@
+{
+  "inputs": {
+    "filltype": "nx",
+    "start_bar": 1,
+    "start_o2": 21,
+    "start_he": 0,
+    "stop_bar": 200,
+    "stop_o2": 32,
+    "stop_he": 0
+  },
+  "result": {
+    "status_code": 0,
+    "add_he": 0,
+    "add_o2": 27.848101265822777,
+    "add_air": 171.15189873417722,
+    "add_nitrox": 199,
+    "nitrox_pct": 32.05527638190955,
+    "add_tmx": 199,
+    "tbar_2": 1,
+    "tbar_3": 28.848101265822777,
+    "mix_o2_pct": 31.999999999999996,
+    "mix_he_pct": 0,
+    "mix_n2_pct": 68
+  },
+  "text": "Starting from 1 bar with mix 21/0/79 (O2/He/N).\nNitrox CFM FILL:\n - no Helium \n - Oxygen enriched \nFrom 1.0 bars add 199.0 bar 32.1% NITROX BY CFM, \nResulting mix will be 32/0/68 (O2/He/N).\n"
+}

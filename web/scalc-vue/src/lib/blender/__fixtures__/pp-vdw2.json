@@ -1,0 +1,32 @@
+{
+  "inputs": {
+    "start_bar": 100,
+    "start_o2": 21,
+    "start_he": 35,
+    "want_bar": 200,
+    "want_o2": 21,
+    "want_he": 35,
+    "volume": 24,
+    "temp_start": 22,
+    "temp_he": 30,
+    "temp_o2": 40,
+    "temp_air": 50,
+    "temp_final": 22,
+    "temp_use": 10
+  },
+  "result": {
+    "status_code": 0,
+    "add_he": 41.345290837374534,
+    "add_o2": 14.248330920132304,
+    "add_air": 66.93680888741974,
+    "add_nitrox": 0,
+    "nitrox_pct": 0,
+    "add_tmx": 122.53043064492658,
+    "tbar_2": 141.34529083737453,
+    "tbar_3": 155.59362175750684,
+    "mix_o2_pct": 21,
+    "mix_he_pct": 35,
+    "mix_n2_pct": 44,
+    "status_txt": "At 22°C, starting from 100 bar with mix 21/35 (O2/He).\nVan der Waals blend:\n- From 100.0 bars add 41.3 bar Helium,temperature 22°C -> 30°C\n- From 141.3 bars add 14.2 bar Oxygen,temperature 30°C -> 40°C\n- From 155.6 bars add 66.9 bar air to 222.5 bar,temperature 40°C -> 50°C\nResulting mix will be 21/35 (O2/He).\nafter cooling down to 22°C tank pressure is 200 bar\nat begin of dive at 10°C tank pressure is 190 bar\n"
+  }
+}

@@ -1,0 +1,75 @@
+{
+  "inputs": {
+    "bottomDepth": 50,
+    "bottomTime": 30,
+    "GFlow": 0.3,
+    "GFhigh": 0.8
+  },
+  "wayPoints": [
+    "plan for 30min at 50m GF=30/80)",
+    "\\  50m  5min  5min (21/35)",
+    "=  50m 30min 35min (21/35)",
+    ">  24m  2min @[39-41]min (21/35)",
+    ".. 21m T-chg @41min GAS (21/35)",
+    ">  15m  2min @[45-47]min (50/0)",
+    ">  12m  4min @[48-52]min (50/0)",
+    ">   9m  7min @[52-59]min (50/0)",
+    "..  6m T-chg @60min GAS (50/0)",
+    ">   3m 15min @[68-83]min (100/0)",
+    "SURFACE 84min (100/0)"
+  ],
+  "decoStopsCalculated": [
+    {
+      "depth": 27,
+      "runtime": 37.99970000000001,
+      "duration": 0.5,
+      "o2": 21,
+      "he": 35
+    },
+    {
+      "depth": 24,
+      "runtime": 39.166300000000014,
+      "duration": 1.5,
+      "o2": 21,
+      "he": 35
+    },
+    {
+      "depth": 18,
+      "runtime": 43.99950000000002,
+      "duration": 0.5,
+      "o2": 50,
+      "he": 0
+    },
+    {
+      "depth": 15,
+      "runtime": 45.16610000000002,
+      "duration": 2,
+      "o2": 50,
+      "he": 0
+    },
+    {
+      "depth": 12,
+      "runtime": 47.832700000000024,
+      "duration": 4,
+      "o2": 50,
+      "he": 0
+    },
+    {
+      "depth": 9,
+      "runtime": 52.49930000000003,
+      "duration": 6.5,
+      "o2": 50,
+      "he": 0
+    },
+    {
+      "depth": 3,
+      "runtime": 68.33250000000001,
+      "duration": 15,
+      "o2": 100,
+      "he": 0
+    }
+  ],
+  "profileSampledLength": 98,
+  "lastRuntime": 83.33250000000001,
+  "text": "deco planner result:\nplan for 30min at 50m GF=30/80)\n\\  50m  5min  5min (21/35)\n=  50m 30min 35min (21/35)\n>  24m  2min @[39-41]min (21/35)\n.. 21m T-chg @41min GAS (21/35)\n>  15m  2min @[45-47]min (50/0)\n>  12m  4min @[48-52]min (50/0)\n>   9m  7min @[52-59]min (50/0)\n..  6m T-chg @60min GAS (50/0)\n>   3m 15min @[68-83]min (100/0)\nSURFACE 84min (100/0)\n\ngas usage:\nBOTTOM (21/35)  56 bar at end\ndeco1  (50/0)   96 bar at end\ndeco2  (100/0)  57 bar at end\n\ndeco stops:\nSTOP ,duration, runtime  , gas\n 27 m, 0.5 min, @38.0 min, 21/35\n 24 m, 1.5 min, @39.2 min, 21/35\n 18 m, 0.5 min, @44.0 min, 50/0\n 15 m, 2.0 min, @45.2 min, 50/0\n 12 m, 4.0 min, @47.8 min, 50/0\n  9 m, 6.5 min, @52.5 min, 50/0\n  3 m,15.0 min, @68.3 min, 100/0\n"
+}
