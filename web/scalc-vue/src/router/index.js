@@ -1,4 +1,6 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
+import AboutView from '@/views/AboutView.vue'
+import ModView from '@/views/ModView.vue'
 import LegacyIframeView from '@/views/LegacyIframeView.vue'
 
 export const routes = [
@@ -6,14 +8,12 @@ export const routes = [
   {
     path: '/about',
     name: 'about',
-    component: LegacyIframeView,
-    meta: { iframe: 'source/about.html', title: 'about' },
+    component: AboutView,
   },
   {
     path: '/mod',
     name: 'mod',
-    component: LegacyIframeView,
-    meta: { iframe: 'source/mod.html', title: 'mod' },
+    component: ModView,
   },
   {
     path: '/blender/:panel?',

@@ -17,5 +17,7 @@ describe('App', () => {
     expect(wrapper.text()).toContain('MOD')
     expect(wrapper.text()).toContain('Blender')
     expect(wrapper.text()).toContain('Planner')
+    expect(wrapper.text()).toContain('SCALC Application')
   })
 })
+

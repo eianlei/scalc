@@ -1,0 +1,38 @@
+/* Inner tool pages (About, MOD, …). Do not apply tabs.css h1 padding. */
+.tool-page {
+  color: #111;
+  font: 14px Arial, Helvetica, sans-serif;
+  text-align: left;
+}
+
+.tool-page h1 {
+  font-size: 2em;
+  font-weight: bold;
+  margin: 0.67em 0;
+}
+
+.tool-page h2 {
+  font-size: 1.5em;
+  font-weight: bold;
+  margin: 0.83em 0;
+}
+
+.tool-page p {
+  margin: 0 0 1em;
+  line-height: 1.5;
+}
+
+.tool-page ul {
+  margin: 0 0 1em 1.5em;
+  line-height: 1.5;
+}
+
+.tool-page a {
+  color: #00e;
+}
+
+.tool-page .input,
+.tool-page .ddl {
+  color: #111;
+  font: 14px Arial, Helvetica, sans-serif;
+}
