@@ -43,3 +43,23 @@ export const blenderAlgorithms = [
 ]
 
 export const blenderEndPressures = ['200', '232', '300']
+
+/** Planner bottom-gas list (hypoxic mixes omitted, matching vanilla planner.html). */
+export const plannerBottomGases = [
+  { value: '21/0', label: 'air' },
+  { value: '28/0', label: 'EAN 28%' },
+  { value: '32/0', label: 'EAN 32%' },
+  { value: '30/30', label: 'TMX 30/30' },
+  { value: '21/35', label: 'TMX 21/35' },
+  { value: '18/45', label: 'TMX 18/45' },
+  { value: '50/0', label: 'EAN 50%' },
+  { value: '100/0', label: 'EAN 100%' },
+]
+
+export const plannerGfPresets = [
+  { value: '30/85', label: '30/85' },
+  { value: '35/75', label: '35/75' },
+  { value: '40/85', label: '40/85' },
+  { value: '45/75', label: '45/75' },
+  { value: '100/100', label: '100/100' },
+]

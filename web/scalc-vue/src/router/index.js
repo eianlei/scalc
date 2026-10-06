@@ -5,7 +5,9 @@ import BlenderView from '@/views/blender/BlenderView.vue'
 import BlenderMain from '@/views/blender/BlenderMain.vue'
 import BlenderCost from '@/views/blender/BlenderCost.vue'
 import BlenderSources from '@/views/blender/BlenderSources.vue'
-import LegacyIframeView from '@/views/LegacyIframeView.vue'
+import PlannerView from '@/views/planner/PlannerView.vue'
+import PlannerMain from '@/views/planner/PlannerMain.vue'
+import PlannerTable from '@/views/planner/PlannerTable.vue'
 
 export const routes = [
   { path: '/', redirect: '/about' },
@@ -29,10 +31,12 @@ export const routes = [
     ],
   },
   {
-    path: '/planner/:panel?',
-    name: 'planner',
-    component: LegacyIframeView,
-    meta: { iframe: 'source/planner.html', title: 'planner' },
+    path: '/planner',
+    component: PlannerView,
+    children: [
+      { path: '', name: 'planner', component: PlannerMain },
+      { path: 'table', name: 'planner-table', component: PlannerTable },
+    ],
   },
 ]
 

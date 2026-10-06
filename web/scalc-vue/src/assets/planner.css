@@ -1,0 +1,78 @@
+.planner-page .pTable {
+  border-collapse: collapse;
+  text-align: right;
+  font-size: 12px;
+}
+
+.planner-page .pTable th,
+.planner-page .pTable td {
+  border: 1px solid #ddd;
+  padding: 2px 4px;
+}
+
+.planner-page .pTable tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+.planner-page .pTable tr:hover {
+  background-color: #ddd;
+}
+
+.planner-page .profile2 {
+  position: relative;
+  width: 600px;
+  height: 200px;
+}
+
+.planner-page .profile2 canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.planner-page .popup {
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+  user-select: none;
+}
+
+.planner-page .popup .popuptext {
+  visibility: hidden;
+  width: 160px;
+  background-color: #555;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 8px 0;
+  position: absolute;
+  z-index: 1;
+  bottom: 125%;
+  left: 50%;
+  margin-left: -80px;
+}
+
+.planner-page .popup .popuptext::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: #555 transparent transparent transparent;
+}
+
+.planner-page .popup .show {
+  visibility: visible;
+}
+
+.planner-page textarea {
+  color: #111;
+  font: 12px Arial, Helvetica, sans-serif;
+}
+
+.planner-page .t1 tr,
+.planner-page .t1 td {
+  height: auto;
+}

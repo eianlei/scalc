@@ -18,3 +18,9 @@ test('Blender default PP IDG instructions', async ({ page }) => {
   await expect(page.getByRole('heading', { name: 'Gas Blender' })).toBeVisible()
   await expect(page.getByLabel('Blend instructions')).toHaveValue(/PARTIAL PRESSURE BLENDING/)
 })
+
+test('Planner default 50 m / 30 min plan', async ({ page }) => {
+  await page.goto('/#/planner')
+  await expect(page.getByRole('heading', { name: 'Dive Planner Prototype (not suitable for real dives)' })).toBeVisible()
+  await expect(page.getByLabel('Planner text output')).toHaveValue(/plan for 30min at 50m GF=30\/80\)/)
+})
