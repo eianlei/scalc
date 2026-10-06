@@ -54,7 +54,7 @@
     <div class="wrap-flex">
         <p><b>Blending method selection: </b></p>
 
-        <select id ="ddl_ft" name="ddl_ft" class="ddl" onmousedown="this.value='';"" value="air">
+        <select id ="ddl_ft" name="ddl_ft" class="ddl" onmousedown="this.value='';" value="air">
         <option value='air'>plain air fill</option>
         <option value='nx'>Nitrox CFM</option>
         <option value='tmx'>Trimix CFM</option>
@@ -64,7 +64,7 @@
         </select>
     </div>
     <span>algorithm: </span>
-    <select id ="ddl_algorithm" name="ddl_algorithm" class="ddl" onmousedown="this.value='';"" value="air">
+    <select id ="ddl_algorithm" name="ddl_algorithm" class="ddl" onmousedown="this.value='';" value="air">
         <option value='IDG' selected="selected">ideal gas law</option>
         <option value='VdW1'>Van Der Waals law, simple</option>
         <option value='VdW2'>Van Der Waals law, temperatures</option>
@@ -287,11 +287,12 @@
             <td><span id="compressor_tl"> 0 </span></td>
             <td><span id="compressor_time"> 0 </span></td>
         </tr>
+    </table>
 </div>
 
 <script src="./tmxcalc.js"></script>
-<script src="./blender.js"></script>
 <script src="./vanderwaals.js"></script>
 <script src="vdw_temp.js"></script>
+<script src="./blender.js"></script>
 </body>
 </html>

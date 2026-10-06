@@ -87,8 +87,8 @@
     // calculate MOD and print result
     function calculateMOD()
     {
-      o2_pct = document.getElementById("o2_pct").value;
-      ppo2 = document.getElementById("ppo2").value;
+      let o2_pct = document.getElementById("o2_pct").value;
+      let ppo2 = document.getElementById("ppo2").value;
    
       let mod_result = 10* ((ppo2 / (o2_pct / 100))-1);
       console.log(`calculateMOD ${o2_pct} ${ppo2} ${mod_result}`);

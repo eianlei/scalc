@@ -15,13 +15,13 @@ function plan_txt(decoStops, waypoints, tankList){
 
     let txt = 'deco planner result:\n';
 
-    for(idx=0; idx < waypoints.length; idx++){
+    for(let idx=0; idx < waypoints.length; idx++){
         txt += waypoints[idx];
         txt += "\n";
     }
     txt += "\ngas usage:\n";    
     let tanktxt = "";
-    for(idx=0; idx < tankList.length; idx++){
+    for(let idx=0; idx < tankList.length; idx++){
         if (tankList[idx].use){
             let t = tankList[idx];
             let tO2HE = `(${t.o2}/${t.he})`
@@ -35,7 +35,7 @@ function plan_txt(decoStops, waypoints, tankList){
     txt += "\ndeco stops:\n"+
         "STOP ,duration, runtime  , gas\n";
     let stopTxt = ' :-(';
-    for(idx=0; idx < decoStops.length; idx++){
+    for(let idx=0; idx < decoStops.length; idx++){
         if (decoStops[idx] ){
             let runtime = decoStops[idx].runtime;
             let depth = decoStops[idx].depth;

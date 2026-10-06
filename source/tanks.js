@@ -1,6 +1,3 @@
-// import { DivePhase } from "./calculate_plan.js";
-// import { Diveplan } from "./diveplan.js";
-
 /**
  * 
  * @param {*} diveplan 
@@ -28,7 +25,7 @@ function tankUpdate(
         diveplan.currentTank.pressure = barsLeft;
     }
     return barsLeft;
-} // tanksCheck
+} // tankUpdate
 
 /**
  * 

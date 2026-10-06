@@ -2,15 +2,6 @@
 2021-11-08 Ian Leiman
 calculate_plan.js
 */
-/*
-//*** not  currently supported on all browsers ***
-import { Diveplan } from "./diveplan.js";
-import {gradientFactor} from "./gradient_factor.js";
-import {ModelPoint} from "./model.js";
-import {tanksCheck, tankList} from "./tanks.js"
-import { DiveProfilePoint } from "./profile_point.js";
-import { DecoStop } from "./plan_txt.js";
-*/
 
 // debug to console.log controls, set to true to log events
 const LOG_LOOP = true;
@@ -146,6 +137,7 @@ function calculatePlan(diveplan) {
     let beginDepth = 0.0;
     let depthSum = 0.0;
     let currentDecoDone = -1;
+    let wp_txt;
 
 
     wp_txt = `plan for ${(diveplan.bottomTime).toFixed(0)}min at ${diveplan.bottomDepth}m GF=${diveplan.GFlow*100}/${diveplan.GFhigh*100})`;

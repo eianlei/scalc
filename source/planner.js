@@ -251,8 +251,6 @@ document.getElementById("dd_bGas").addEventListener("change", function () {
     runPlan();
   });
 
-//let myDP = new Diveplan();
-
 var globalDP;
 
 /** runPlan() gets the inputs from GUI and then calls calculatePlan
@@ -323,7 +321,7 @@ function runPlan()
     const myTanks = [tankBottom, tankDeco1, tankDeco2];
 
     // configure all inputs for the calculatePlan()
-    const myDP = new Object();
+    const myDP = createDiveplan();
        myDP.bottomDepth =   parseInt(inputVal("dive_depth"));
        myDP.bottomTime =    parseInt(inputVal("dive_bottom_time")) ; // MINUTES !!!!
        myDP.desc_rate = 10 ; //minutes/seconds
@@ -334,29 +332,11 @@ function runPlan()
        myDP.ascRateToSurface = 1;
        myDP.GFlow = parseInt(inputVal("gf_low")) / 100.0; // 0.30;  //<=== fraction, not percentage!
        myDP.GFhigh = parseInt(inputVal("gf_high")) / 100.0; //  0.85; //<=== fraction, not percentage!
-       myDP.modelUsed = "ZHL16c";
-       myDP.decoStopsCalculated = [];
-       myDP.wayPoints = [];
-       myDP.maxPPoxygen = 0;
-       myDP.maxPPhelium = 0;
-       myDP.maxPPnitrogen = 0;
-       myDP.maxTCnitrogen = 0;
-       myDP.maxTChelium = 0;
-       myDP.ascentBegins = 0;
-       myDP.changeDepth = 0;
-
        myDP.tankList = myTanks;
        myDP.currentTank = tankBottom;
        myDP.tankBottom = tankBottom;
        myDP.tankDeco1 = tankDeco1; 
        myDP.tankDeco2 = tankDeco2; 
-       myDP.nextTank = null;
-
-       myDP.maxTCnitrogen = 0;
-       myDP.maxTChelium = 0;
-       myDP.profileSampled = [];
-       myDP.model = [];
-       myDP.tableIsGenerated = false; // controls openTable()
        
        // now finally call the actual work horse
        calculatePlan(myDP);
@@ -374,7 +354,7 @@ function runPlan()
         }
        */
        // output the text from calculatePlan()
-       txt = plan_txt(myDP.decoStopsCalculated, myDP.wayPoints, myDP.tankList);
+       let txt = plan_txt(myDP.decoStopsCalculated, myDP.wayPoints, myDP.tankList);
        setInputVal("planner_textout", txt);
     
        // draw the profile canvas

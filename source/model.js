@@ -5,9 +5,6 @@ pydplan_buhlmann.py to model.js, at https://github.com/eianlei/pydplan
 this is the Buhlmann ZH-L16c model implemented in JavaScript
 */
 
-// newest javascript engines would know what this is, older ones do not :-(
-// import { ZHL16c } from "./ZHL16c.js"; // model coefficients for ZHL16c
-
 /**
  * some useful constants
  */
@@ -28,7 +25,7 @@ const initN2 = 0.745;
  * @returns 
  */
 function depth2pressure(depth){
-    pressure =  (depth / 10.0);
+    let pressure =  (depth / 10.0);
     return pressure;
 }
 
@@ -38,7 +35,7 @@ function depth2pressure(depth){
  * @returns 
  */
 function pressure2depth(pressure){
-    depth = (pressure * 10.0);
+    let depth = (pressure * 10.0);
     return depth;
 }
 
@@ -48,7 +45,7 @@ function pressure2depth(pressure){
  * @returns 
  */
 function depth2absolutePressure(depth){
-    pressure = surfacePressure + (depth / 10.0);
+    let pressure = surfacePressure + (depth / 10.0);
     return pressure;
 }
 

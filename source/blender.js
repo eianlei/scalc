@@ -20,8 +20,6 @@ function onClassChange(className, handler) {
 let global_result;
 var filltype = "pp";
 var algorithm = "IDG";
-// always run the whole show once with defaults
-calculateBlend();
 
 function openCost(){
     document.getElementById("blender_cost").style.display = "block";
@@ -110,7 +108,7 @@ function calculateBlend()
             end_bar, end_o2_pct, end_he_pct, false, false);
             global_result = result;
         if (result.status_code == 0) {
-            result_txt = tmxcalc_text(result);
+            let result_txt = tmxcalc_text(result);
             setInputVal("text_output", result_txt);
         }
         else {
@@ -241,7 +239,7 @@ function do_compressor(){
         
 // dropdown menu for ft filltype selection
 document.getElementById("ddl_ft").addEventListener("change", function () {
-    dropval = this.value;
+    let dropval = this.value;
     console.log(`ddl_ft ${dropval} `);
     filltype = dropval;
     calculateBlend();
@@ -475,4 +473,8 @@ function drawVertLines(ctx, divs){
     ctx.stroke();
     ctx.closePath();
 }
-            
+
+document.addEventListener("DOMContentLoaded", function () {
+    calculateBlend();
+});
+ 
