@@ -119,6 +119,7 @@ Use this application at your own risk, the author provides no guarantees about t
 - 2021-11-12 most of essential functionality in place
 - 2021-11-21 big cleaning up & refactoring of very messy code in planner 
 - 2021-11-23 implemented Van Der Waals gas law calculation to blender
+- 2026-10-06 removed jQuery with vanilla Javascipt DOM API
 
 ## todo short term:
 - some cleanup, proper structuring and commentting to the sources
@@ -133,11 +134,14 @@ Use this application at your own risk, the author provides no guarantees about t
   - improvements on graphical web UI
 
 ## long term plans:
-- desktop version will run on [electron](https://www.electronjs.org/) and include Windows installer
-- Android and iOS mobile versions using [Cordova](https://cordova.apache.org/)
+Updated 2026
+
+- convert plain vanilla frontend code to Vue 3
+- desktop version will run on [Tauri v2](https://v2.tauri.app/) and include Windows installer
+- Android and iOS mobile versions using [Tauri v2](https://v2.tauri.app/)
 
 # License
-Copyright (C) 2021 Ian Leiman
+Copyright (C) 2026 Ian Leiman
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
