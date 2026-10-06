@@ -4,7 +4,7 @@ This plan is for **this repository**, not a generic Vue starter. It describes ho
 
 **Do not treat this as an implementation.** Application code stays as-is until a later change.
 
-**Vanilla P0 hygiene (M1–M10 in `PLANS/quick_fixes.md`) is done.** Do not re-fix those as if they were still broken: valid `index.html`, HTTPS fonts in `tabs.css`, no jQuery, no About JS-version sniff, `let` on the listed implicit globals, classic `createDiveplan()` loaded by the planner, no `planner_table.html` stub, blender compressor table closed and VdW scripts before `blender.js`, no `calcHeight()`, no commented fake `import` lines. Remaining vanilla work is N1–N6 in that file (try/catch, `LOG_*`, leftover markup). One residual leak: `planner.js` `getPointText` still uses `for (idx = 0; …)` without `let`.
+**Vanilla P0 + N\* hygiene (M1–M10 and N1–N6 in `PLANS/quick_fixes.md`) is done.** Do not re-fix those as if they were still broken: valid `index.html`, HTTPS fonts in `tabs.css`, no jQuery, no About JS-version sniff, `let` on the listed implicit globals (including planner `getPointText` `pointIdx`), classic `createDiveplan()` loaded by the planner, no `planner_table.html` stub, blender compressor table closed and VdW scripts before `blender.js`, no `calcHeight()`, no commented fake `import` lines, live `try/catch` around `calculatePlan`, `DEBUG = false` gating `LOG_*`, valid dropdown `onmousedown` quotes, MOD leftover row gone, planner buttons in a `div`, no unused sidenav / empty `#profile`. Remaining work in that file is **L\*** (Vue), not more vanilla cleanup.
 
 ---
 
@@ -107,12 +107,11 @@ Fill methods: `air`, `nx`, `tmx`, `pp`, `cfm` (`top` option is **disabled**). Al
 
 **Planner** (`source/planner.html` + `planner.js`)
 
-- `#main` — depth/time, GF, three tanks (bottom + deco1/deco2 checkboxes), `runPlan()`, dual canvas, `#planner_textout`.
+- `#main` — depth/time, GF, three tanks (bottom + deco1/deco2 checkboxes), calculate/table buttons in a `div`, `runPlan()`, dual canvas (`.profile2`), `#planner_textout`.
 - `#table_panel` — HTML table from `globalDP.profileSampled`, CSV download (`createTableCSV`, EU `;` and comma decimals).
-- `#profile` — empty stub (`#profile_big`).
-- `#mySidenav` — mostly unused (`openNav` exists; Controls/Profile/Debug are `#` links).
+- No empty `#profile` stub and no `#mySidenav` / `openNav` (removed in vanilla N3/N6). Do not re-add them in Vue.
 
-`runPlan()` reads `.input3` fields, builds tank objects, calls `calculatePlan(myDP)`, then `plan_txt(...)` and `drawSmallProfile(myDP)`. Mouse move on `#profileCanvas_txt` shows a readout.
+`runPlan()` reads `.input3` fields, builds tank objects, wraps `calculatePlan(myDP)` in `try/catch` (alert + reset 30 m / 20 min), then `plan_txt(...)` and `drawSmallProfile(myDP)`. Mouse move on `#profileCanvas_txt` shows a readout.
 
 ### 2.4 Calculation modules (keep as logic, not Vue)
 
@@ -130,7 +129,7 @@ Treat these as **pure-ish JS libraries**. Vue should call them; it should not em
 | `source/tanks.js` | `tankUpdate`, `changeTanks`, `initTanks` | Keep with planner engine |
 | `source/profile_point.js` | `DiveProfilePoint` template object | Engine internal |
 | `source/plan_txt.js` | `DecoStop`, `plan_txt()` | Engine / view-model |
-| `source/calculate_plan.js` | `DivePhase`, `calculatePlan(diveplan)` | Core planner; `LOG_*` flags spam console |
+| `source/calculate_plan.js` | `DivePhase`, `calculatePlan(diveplan)` | Core planner; `LOG_*` follow `DEBUG = false` (quiet by default; Vue: `import.meta.env.DEV`) |
 | `source/diveplan.js` | Classic `createDiveplan()` matching `runPlan()` | Reuse / export that factory in Vue |
 | `source/planner.js` | DOM (native), canvas, table HTML, CSV | Vue views + `drawSmallProfile` helper |
 
@@ -153,7 +152,7 @@ Treat these as **pure-ish JS libraries**. Vue should call them; it should not em
 | **Vue 3** (Composition API, `<script setup>`) | Current standard; small app; `v-model` replaces remaining `getElementById` field wiring. Vue 2 is EOL. |
 | **Vite** | Native ES modules, fast HMR, static `dist/` that still deploys like today’s Apache/GitHub Pages tree. Matches “no backend” exactly. |
 | **vue-router** | Replaces radio+iframe tabs with real URLs (`/`, `/mod`, `/blender`, `/planner`) so refresh/bookmark work. Nested routes replace blender/planner `display:none` panels. |
-| **JavaScript, not TS first** | Existing code is untyped. Listed implicit globals were given `let` in vanilla; residual `idx` in `planner.js` `getPointText`. Typing `calculatePlan` is a later hardening pass, not a migration blocker. |
+| **JavaScript, not TS first** | Existing code is untyped. Listed implicit globals (including `getPointText` `pointIdx`) already have `let` in vanilla. Typing `calculatePlan` is a later hardening pass, not a migration blocker. |
 | **Vitest** for engine tests | The valuable part of SCALC is numeric. Unit-test `tmxcalc_num` / `vdw_calc` / `calculatePlan` without mounting Vue. |
 | **No Pinia in phase 1** | See §5. |
 | **No jQuery** | Already gone in vanilla; Vue bindings replace remaining `getElementById` wiring. |
@@ -210,7 +209,7 @@ Reasons from actual state:
 | `filltype`, `algorithm`, `global_result` | `useBlender()` composable |
 | Blender cost/sources inputs | same composable (or nested `useBlenderCost`) |
 | `globalDP` | `usePlanner()` holding last `diveplan` |
-| Table / main / sidenav | `usePlanner().panel` or nested route |
+| Table / main | `usePlanner().panel` or nested route (no sidenav in vanilla) |
 
 **Add Pinia later** only if you persist blender prices, last-used mixes, or share a tank library across Blender and Planner. That is a product feature, not required to leave vanilla JS.
 
@@ -234,7 +233,7 @@ Because this host is often a **subdirectory** (`/scalc/`) and Apache may not rew
 | `/planner` | `#main` in `planner.html` |
 | `/planner/table` | `#table_panel` |
 
-Drop or defer: unused sidenav (`openNav`), empty `#profile`. `planner_table.html` is already gone. CSV stays a button on the table view.
+Do not re-add unused sidenav or empty `#profile` (already removed in vanilla). `planner_table.html` is already gone. CSV stays a button on the table view.
 
 Tab UI: keep visual tabs (port `tabs.css`) as `router-link`s, not radio inputs.
 
@@ -345,13 +344,13 @@ or nginx `try_files $uri $uri/ /index.html`.
 
 - Vite bundles Vue + `src/lib/*`.
 - Keep calculation files **side-effect free** after extraction (today `blender.js` calls `calculateBlend()` on `DOMContentLoaded`; `planner.js` still runs `runPlan()` on input change / load as vanilla UI).
-- Turn off or gate `LOG_LOOP` etc. in `calculate_plan.js` in production (`import.meta.env.DEV`).
+- Vanilla already gates `LOG_LOOP` etc. behind `DEBUG = false`. After extraction, keep them off in production (`import.meta.env.DEV`).
 
 ### CSS
 
 1. Import `index.css` globally (tables `.t1`, `.ddl`, `.slider`).
 2. Move `tabs.css` to the app chrome. Font URL is **already HTTPS** (`https://fonts.googleapis.com/...`). Do not revert to `http://`. Tauri still must **bundle** fonts later (`tauri_desktop.md`); HTTPS CDN is enough for GitHub Pages.
-3. Move inline styles from `blender.html` (`.wrap-flex`, `.div_bProf`) and `planner.html` (`.sidenav`, `.profile2`, `.popup`) into scoped component CSS or `src/assets/planner.css`.
+3. Move inline styles from `blender.html` (`.wrap-flex`, `.div_bProf`) and `planner.html` (`.profile2`, `.popup`) into scoped component CSS or `src/assets/planner.css`. There is no `.sidenav` left in vanilla — do not invent one.
 4. Canvas stacking (`.profile2 canvas { position: absolute }`) must survive the move or profiles will not overlay.
 
 ### Static / public
@@ -377,7 +376,7 @@ From the **current** app, record outputs:
 
 **Blender (IDG, pp):** current 100 bar 21/35 → 200 bar 21/35. Save `#text_output` and key fields of `global_result` (`add_he`, `add_o2`, `add_air`, `tbar_2`, `tbar_3`). Repeat for `nx`, `air`, `VdW1`, `VdW2` with default temps.
 
-**Planner defaults:** 50 m / 30 min, GF 30/80, bottom 21/35 24 L 200 bar, deco1 50% @ 21 m, deco2 100% @ 6 m. Save `#planner_textout` and CSV (or `profileSampled.length`, last runtime, deco stop list). Vanilla `LOG_*` flags are still `true` (N2 in `quick_fixes.md`) — expect console noise until gated.
+**Planner defaults:** 50 m / 30 min, GF 30/80, bottom 21/35 24 L 200 bar, deco1 50% @ 21 m, deco2 100% @ 6 m. Save `#planner_textout` and CSV (or `profileSampled.length`, last runtime, deco stop list). Vanilla `LOG_*` is gated (`DEBUG = false`, N2 done) — default plan should not flood the console.
 
 Store fixtures as `web/src/lib/**/__fixtures__/*.json`.
 
@@ -408,7 +407,7 @@ Browser verification of Vue UI belongs to the implementation phase; this plan do
 
 | Risk | Why it is real here | Mitigation |
 |------|---------------------|------------|
-| Implicit globals | Listed leaks (`pressure`/`depth`, `plan_txt` `idx`, `wp_txt`, blender `result_txt`/`dropval`, planner `txt`, MOD `o2_pct`/`ppo2`) already have `let` in vanilla. Residual: `planner.js` `getPointText` still `for (idx = 0; …)`. ES modules + `"use strict"` will throw on that loop. | Add `let` **only** on remaining leaks while modularizing; do not “clean up” algorithms. Do not re-declare the already-fixed sites as a Vue task. |
+| Implicit globals | Listed leaks (`pressure`/`depth`, `plan_txt` `idx`, `wp_txt`, blender `result_txt`/`dropval`, planner `txt`, MOD `o2_pct`/`ppo2`, `getPointText` `pointIdx`) already have `let` in vanilla. | Copy those declarations when modularizing; do not “clean up” algorithms. Do not re-declare the already-fixed sites as a Vue task. |
 | `Object.create(BlenderState)` / `DiveProfilePoint` | Shared prototype mutations can leak between runs. | Keep the same pattern in lib until tests exist; then clone with `{...BlenderState}` if tests show pollution. |
 | Diveplan shape | Vanilla now uses `createDiveplan()` (classic script) from `runPlan()`. Do not invent a second `export const Diveplan` with GF 30/85 or `currentTank: "BOTTOM"`. | Copy `createDiveplan()` into `src/lib/planner/createDiveplan.js`; keep `runPlan()` field assignments. |
 | Canvas in Vue | `getElementById` at wrong lifecycle; overlay canvas size. | `ref` + `watch` + `nextTick`; keep width/height 600×310 and 600×200. |
@@ -417,7 +416,7 @@ Browser verification of Vue UI belongs to the implementation phase; this plan do
 | Iframe CSS isolation lost | Each iframe had its own `index.css` + inline styles. One SPA shares CSS; `h1 { padding: 100px }` in `tabs.css` will wreck inner pages if applied globally. | **Do not import `tabs.css` rules for `h1`/`p` globally.** Scope chrome styles to the tab bar. This is the highest CSS risk. Font URL is already HTTPS — do not “fix” it again except bundling for Tauri. |
 | GitHub Pages base path | Absolute `/assets/...` 404s under `/scalc/`. | `base: './'`. |
 | jQuery | **Already removed** from vanilla. | Do not add jQuery to Vite. Native/`v-model` only. |
-| Planner iteration cap | `MAX_index = 500` throws. Vanilla still has a **commented** try/catch (N1). | Same engine; Vue should `try/catch` like that commented block in `runPlan()`. |
+| Planner iteration cap | `MAX_index = 500` throws. Vanilla `runPlan()` already has a live `try/catch` (N1): alert, reset 30 m / 20 min, return. | Same engine; Vue should keep that catch around `calculatePlan`. |
 | Disabled fill type `top` | Easy to “enable” accidentally. | Keep disabled until product work. |
 | Hypoxic gases | Planner HTML comments them out; blender allows 10/70. | Preserve per-screen lists in `gases.js`. |
 | Extra blender scripts / unclosed table | **Fixed** in vanilla (table closed; VdW before `blender.js`; `calculateBlend` on `DOMContentLoaded`). | Lib copies stay side-effect free; do not restore the old script order. |
@@ -489,7 +488,7 @@ Repo root until cutover keeps current `index.html` and `source/`.
 
 ### Phase 0 — Baseline (no Vue)
 
-- [ ] Record MOD / Blender / Planner golden outputs (defaults + a few extra cases). Vanilla P0 HTML/JS hygiene (M1–M10) is already done.
+- [ ] Record MOD / Blender / Planner golden outputs (defaults + a few extra cases). Vanilla P0 + N\* hygiene (M1–M10, N1–N6) is already done.
 - [ ] Note `tabs.css` `h1 { padding: 100px }` so it is not applied inside tools.
 - [ ] Decide deploy `base`: `'./'` recommended.
 
@@ -502,7 +501,7 @@ Repo root until cutover keeps current `index.html` and `source/`.
 ### Phase 2 — Modularize engines (still no UI rewrite)
 
 - [ ] Copy calc files into `web/src/lib/` with `export` on public functions/classes/constants. Use `createDiveplan()`, not an unused `Diveplan` export.
-- [ ] Listed implicit globals already have `let` in vanilla. Add `let` on residual `idx` in `planner.js` `getPointText` when that helper is copied. Do not “re-fix” `model.js` / `plan_txt.js` / `wp_txt` as if still leaking.
+- [ ] Listed implicit globals already have `let` in vanilla, including `getPointText` (`pointIdx`). Copy that loop as-is. Do not “re-fix” `model.js` / `plan_txt.js` / `wp_txt` as if still leaking.
 - [ ] Keep lib copies side-effect free (`calculateBlend` / `runPlan` stay in UI/composables). Vanilla already moved blender init to `DOMContentLoaded`.
 - [ ] Vitest: `tmxcalc_num`, `vdw_calc`, `calculatePlan` vs fixtures.
 - [ ] Vanilla `source/*.html` unchanged and still working.
@@ -538,7 +537,7 @@ Repo root until cutover keeps current `index.html` and `source/`.
 - [ ] `ProfileCanvas` + mousemove readout.
 - [ ] Table view without `innerHTML`; CSV blob download `planner_table.csv`.
 - [ ] Preserve `alert()` validation for O2/He or replace with inline error (behavior change — call it out in the PR).
-- [ ] Do not port unused sidenav. `planner_table.html` stub is already deleted; table is in-page `#table_panel`.
+- [ ] Do not re-add unused sidenav or empty `#profile` (already gone in vanilla). `planner_table.html` stub is already deleted; table is in-page `#table_panel`. Keep `runPlan()`’s try/catch around `calculatePlan`.
 - [ ] Compare `plan_txt` and stop list to fixture.
 
 ### Phase 7 — Cut over and cleanup
@@ -565,4 +564,4 @@ Repo root until cutover keeps current `index.html` and `source/`.
 
 ## 15. Summary
 
-SCALC is four isolated browser tools behind CSS tabs and iframes, with native DOM glue and substantial JS math (vanilla P0 hygiene in `quick_fixes.md` is done; jQuery is gone). Vue 3 + Vite should wrap that math as ES modules, replace tabs with the router, and convert MOD → Blender → Planner. No Pinia and no backend. Static hosting stays the deployment model.
+SCALC is four isolated browser tools behind CSS tabs and iframes, with native DOM glue and substantial JS math (vanilla M1–M10 and N1–N6 in `quick_fixes.md` are done; jQuery is gone). Vue 3 + Vite should wrap that math as ES modules, replace tabs with the router, and convert MOD → Blender → Planner. No Pinia and no backend. Static hosting stays the deployment model.

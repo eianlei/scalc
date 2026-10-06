@@ -38,15 +38,16 @@ body {font-family: Arial;}
 
 /* Style the buttons inside the tab */
 .tab button {
-  background-color: inherit;
+  background-color: white;
+  font-size: large;
+  border-top-left-radius: 14px;
+  border-top-right-radius: 14px;
   float: left;
-  border: 1;
-  border-radius: 5px;
-  outline: 1;
+  border: 2px solid black;
+  outline-width: 2px;
   cursor: pointer;
-  padding: 4px 4px;
-  transition: 0.5s;
-  font-size: 14px;
+  padding: 4px 6px 0px 6px;
+  transition: 0.3s;
 }
 
 /* Change background color of buttons on hover */
