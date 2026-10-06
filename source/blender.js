@@ -2,6 +2,21 @@
 * blender.js
 * 
 */
+function inputVal(id) {
+    return document.getElementById(id).value;
+}
+function setInputVal(id, value) {
+    document.getElementById(id).value = value;
+}
+function setText(id, text) {
+    document.getElementById(id).textContent = text;
+}
+function onClassChange(className, handler) {
+    document.querySelectorAll("." + className).forEach(function (el) {
+        el.addEventListener("change", handler);
+    });
+}
+
 let global_result;
 var filltype = "pp";
 var algorithm = "IDG";
@@ -25,22 +40,22 @@ function openSources(){
  * 
  */
 function doCost(){
-    let liters = parseInt($("#tank_liters").val());
-    let o2_price_eur = parseInt($("#o2_price").val());
-    let he_price_eur = parseInt($("#he_price").val());
-    let fill_price_eur = parseInt($("#c_price").val());
+    let liters = parseInt(inputVal("tank_liters"));
+    let o2_price_eur = parseInt(inputVal("o2_price"));
+    let he_price_eur = parseInt(inputVal("he_price"));
+    let fill_price_eur = parseInt(inputVal("c_price"));
     // update the global state object for destination tank size
     global_result.tank_liters = liters;
     let txt;
     let total_cost;
     [total_cost, txt] = calculateCost(
         liters, 
-        fill_bar = parseInt($('#end_bar').val()), 
+        fill_bar = parseInt(inputVal("end_bar")), 
         global_result.add_o2, 
         global_result.add_he, 
         o2_price_eur, he_price_eur, fill_price_eur
         );
-    $("#cost_output").val(txt);    
+    setInputVal("cost_output", txt);    
     do_O2_storage();
     do_He_storage();
     do_compressor();
@@ -55,38 +70,38 @@ function back2blender(){
     
 function calculateBlend()
 {
-    let start_bar =    parseInt($("#start_bar").val());
-    let end_bar =      parseInt($('#end_bar').val());
-    let start_o2_pct = parseInt($('#start_o2_pct').val());
-    let start_he_pct = parseInt($('#start_he_pct').val());
-    let end_o2_pct =   parseInt($('#end_o2_pct').val());
-    let end_he_pct =   parseInt($('#end_he_pct').val());
-    let liters = parseInt($("#tank_liters").val()); 
+    let start_bar =    parseInt(inputVal("start_bar"));
+    let end_bar =      parseInt(inputVal("end_bar"));
+    let start_o2_pct = parseInt(inputVal("start_o2_pct"));
+    let start_he_pct = parseInt(inputVal("start_he_pct"));
+    let end_o2_pct =   parseInt(inputVal("end_o2_pct"));
+    let end_he_pct =   parseInt(inputVal("end_he_pct"));
+    let liters = parseInt(inputVal("tank_liters")); 
     let result;
     // filltype = "pp";
-    // filltype = $("#ddl_ft").val;
+    // filltype = document.getElementById("ddl_ft").value;
     
     // let deb_txt =  `calculateBlend ${start_bar} ${end_bar} ${start_o2_pct} ${start_he_pct} ${end_o2_pct} ${end_he_pct}`;
     // console.log(filltype);
-    // $("#text_output").val(deb_txt);
+    // setInputVal("text_output", deb_txt);
     // just trying this out
     if (filltype == "pp" && algorithm== "VdW1") {
         result = vdw_calc(start_bar, start_o2_pct, start_he_pct, 
             end_bar, end_o2_pct, end_he_pct, liters, 20.0);
-        $("#text_output").val(result.status_txt);
+        setInputVal("text_output", result.status_txt);
         global_result = result;
     } else if (filltype == "pp" && algorithm== "VdW2") {
-        let temp_start =    parseInt($("#temp_start").val());
-        let temp_he    =    parseInt($("#temp_he").val());
-        let temp_o2    =    parseInt($("#temp_o2").val());
-        let temp_air   =    parseInt($("#temp_air").val());
-        let temp_final =    parseInt($("#temp_final").val());
-        let temp_use   =    parseInt($("#temp_use").val());
+        let temp_start =    parseInt(inputVal("temp_start"));
+        let temp_he    =    parseInt(inputVal("temp_he"));
+        let temp_o2    =    parseInt(inputVal("temp_o2"));
+        let temp_air   =    parseInt(inputVal("temp_air"));
+        let temp_final =    parseInt(inputVal("temp_final"));
+        let temp_use   =    parseInt(inputVal("temp_use"));
 
         result = vdw_calc_temp(start_bar, start_o2_pct, start_he_pct, 
             end_bar, end_o2_pct, end_he_pct, liters, temp_start,
             temp_he, temp_o2, temp_air, temp_final, temp_use);
-        $("#text_output").val(result.status_txt);
+        setInputVal("text_output", result.status_txt);
         global_result = result;
 
 
@@ -96,10 +111,10 @@ function calculateBlend()
             global_result = result;
         if (result.status_code == 0) {
             result_txt = tmxcalc_text(result);
-            $("#text_output").val(result_txt);
+            setInputVal("text_output", result_txt);
         }
         else {
-            $("#text_output").val(result.status_txt);
+            setInputVal("text_output", result.status_txt);
         }
     }
 
@@ -110,36 +125,19 @@ function calculateBlend()
     do_compressor();
 } 
         
-// this is called when any class input2 element changes
-$(function()
-{
-    $(".input2").on("change",calculateBlend)
-})
-
-$(function()
-{
-    $(".in_cost").on("change",doCost)
-})
-$(function()
-{
-    $(".o2_storage").on("change",do_O2_storage)
-})
-$(function()
-{
-    $(".He_storage").on("change",do_He_storage)
-})
-$(function()
-{
-    $(".compressor").on("change",do_compressor)
-})
+onClassChange("input2", calculateBlend);
+onClassChange("in_cost", doCost);
+onClassChange("o2_storage", do_O2_storage);
+onClassChange("He_storage", do_He_storage);
+onClassChange("compressor", do_compressor);
 
 function do_O2_storage(){
-    let liters = parseInt($("#tank_liters").val()); 
+    let liters = parseInt(inputVal("tank_liters")); 
     let add_o2 = global_result.add_o2;
     let add_o2_liters = liters * add_o2;
-    let o2_storage_liters = parseInt($("#o2_storage_liters").val());
-    let o2_storage_start = parseInt($("#o2_storage_start").val());
-    let o2_storage_rate = parseInt($("#o2_storage_rate").val());
+    let o2_storage_liters = parseInt(inputVal("o2_storage_liters"));
+    let o2_storage_start = parseInt(inputVal("o2_storage_start"));
+    let o2_storage_rate = parseInt(inputVal("o2_storage_rate"));
     let usage_bars = add_o2_liters / o2_storage_liters;
     let end_bars = o2_storage_start - usage_bars;
     let time = add_o2 / o2_storage_rate;
@@ -147,39 +145,39 @@ function do_O2_storage(){
 
     switch (global_result.filltype_in){
         case "pp": 
-            $("#o2_storage_use").text(`decanting to ${liters} liter tank `+
+            setText("o2_storage_use", `decanting to ${liters} liter tank `+
             `from ${global_result.tbar_2.toFixed(1)}`+
             ` to ${global_result.tbar_3.toFixed(1)} bar`);
             need = global_result.tbar_2 + usage_bars;
-            $("#o2_storage_need").text(need.toFixed(1)); 
-            $("#o2_storage_time").text(time.toFixed(1)); 
+            setText("o2_storage_need", need.toFixed(1)); 
+            setText("o2_storage_time", time.toFixed(1)); 
             break;
         case "air":
-            $("#o2_storage_use").text("not used");
-            $("#o2_storage_need").text("none"); 
-            $("#o2_storage_time").text("N/A"); 
+            setText("o2_storage_use", "not used");
+            setText("o2_storage_need", "none"); 
+            setText("o2_storage_time", "N/A"); 
             break;
         case "nx":
         case "tmx":
         case "cfm":
-            $("#o2_storage_use").text("continuous flow mix to compressor");
+            setText("o2_storage_use", "continuous flow mix to compressor");
             need = usage_bars;
-            $("#o2_storage_need").text(need.toFixed(1));         
-            $("#o2_storage_time").text("N/A"); 
+            setText("o2_storage_need", need.toFixed(1));         
+            setText("o2_storage_time", "N/A"); 
             break;
     }
 
-    $("#o2_storage_used").text(usage_bars.toFixed(1)); 
-    $("#o2_storage_end").text(end_bars.toFixed(1)); 
+    setText("o2_storage_used", usage_bars.toFixed(1)); 
+    setText("o2_storage_end", end_bars.toFixed(1)); 
 }
 
 function do_He_storage(){
-    let liters = parseInt($("#tank_liters").val()); 
+    let liters = parseInt(inputVal("tank_liters")); 
     let add_He = global_result.add_he;
     let add_He_liters = liters * add_He;
-    let He_storage_liters = parseInt($("#He_storage_liters").val());
-    let He_storage_start = parseInt($("#He_storage_start").val());
-    let He_storage_rate = parseInt($("#He_storage_rate").val());
+    let He_storage_liters = parseInt(inputVal("He_storage_liters"));
+    let He_storage_start = parseInt(inputVal("He_storage_start"));
+    let He_storage_rate = parseInt(inputVal("He_storage_rate"));
     let usage_bars = add_He_liters / He_storage_liters;
     let end_bars = He_storage_start - usage_bars;
     let time = add_He / He_storage_rate;
@@ -187,30 +185,30 @@ function do_He_storage(){
 
     if ((global_result.filltype_in == "pp" || global_result.filltype_in == "cfm" )
         && usage_bars > 0) {
-            $("#He_storage_use").text(`decanting to ${liters} liter tank `+
+            setText("He_storage_use", `decanting to ${liters} liter tank `+
             `from ${global_result.start_bar_in.toFixed(1)}`+
             ` to ${global_result.tbar_2.toFixed(1)} bar`);
             need = global_result.start_bar_in + usage_bars;
-            $("#He_storage_need").text(need.toFixed(1)); 
-            $("#He_storage_time").text(time.toFixed(1)); 
+            setText("He_storage_need", need.toFixed(1)); 
+            setText("He_storage_time", time.toFixed(1)); 
     } else if (global_result.filltype_in ==  "air" || usage_bars == 0){
-            $("#He_storage_use").text("not used");
-            $("#He_storage_need").text("none"); 
-            $("#He_storage_time").text("N/A"); 
+            setText("He_storage_use", "not used");
+            setText("He_storage_need", "none"); 
+            setText("He_storage_time", "N/A"); 
     } else if (global_result.filltype_in == "tmx"){
-            $("#He_storage_use").text("continuous flow mix to compressor");
+            setText("He_storage_use", "continuous flow mix to compressor");
             need = usage_bars;
-            $("#He_storage_need").text(need.toFixed(1));         
-            $("#He_storage_time").text("N/A"); 
+            setText("He_storage_need", need.toFixed(1));         
+            setText("He_storage_time", "N/A"); 
     }
 
-    $("#He_storage_used").text(usage_bars.toFixed(1)); 
-    $("#He_storage_end").text(end_bars.toFixed(1)); 
+    setText("He_storage_used", usage_bars.toFixed(1)); 
+    setText("He_storage_end", end_bars.toFixed(1)); 
 }
 
 function do_compressor(){
-    var rate = parseInt($("#compressor_rate").val()); 
-    let liters = parseInt($("#tank_liters").val()); 
+    var rate = parseInt(inputVal("compressor_rate")); 
+    let liters = parseInt(inputVal("tank_liters")); 
     //var delta = global_result.add_air;
     //var filled_liters = liters * delta;
     //var time = filled_liters / rate;
@@ -218,66 +216,66 @@ function do_compressor(){
     if(global_result.filltype_in == "air" || global_result.filltype_in == "pp"){
         var delta = global_result.add_air;
         var filled_liters = liters * delta;
-        $("#compressor_o2").text("n/a");       
-        $("#compressor_he").text("n/a");       
+        setText("compressor_o2", "n/a");       
+        setText("compressor_he", "n/a");       
     } else if (global_result.filltype_in == "nx" || global_result.filltype_in == "cfm") {
         var delta = global_result.add_nitrox;
         var filled_liters = liters * delta;
         var flow_o2 = rate * ((global_result.nitrox_pct -21) /100);
-        $("#compressor_o2").text(flow_o2.toFixed(0));       
-        $("#compressor_he").text("n/a");  
+        setText("compressor_o2", flow_o2.toFixed(0));       
+        setText("compressor_he", "n/a");  
     } else if (global_result.filltype_in == "tmx" ) {
         var delta = global_result.add_tmx;
         var filled_liters = liters * delta;
         var flow_o2 = rate * ((global_result.tmx_preo2_pct) /100);
         var flow_he = rate * (global_result.tmx_he_pct /100);
-        $("#compressor_o2").text(flow_o2.toFixed(0));       
-        $("#compressor_he").text(flow_he.toFixed(0));  
+        setText("compressor_o2", flow_o2.toFixed(0));       
+        setText("compressor_he", flow_he.toFixed(0));  
     }
     var time = filled_liters / rate;
 
-    $("#compressor_delta").text(delta.toFixed(0)); 
-    $("#compressor_tl").text(liters.toFixed(0)); 
-    $("#compressor_time").text(time.toFixed(1)); 
+    setText("compressor_delta", delta.toFixed(0)); 
+    setText("compressor_tl", liters.toFixed(0)); 
+    setText("compressor_time", time.toFixed(1)); 
 };
         
 // dropdown menu for ft filltype selection
-$("#ddl_ft").change(function () {
-    dropval = $(this).val();
+document.getElementById("ddl_ft").addEventListener("change", function () {
+    dropval = this.value;
     console.log(`ddl_ft ${dropval} `);
     filltype = dropval;
     calculateBlend();
 });
 
 // dropdown menu for start gas  
-$("#dd_startGas").change(function () {
-    var dropTxt = $(this).val();
+document.getElementById("dd_startGas").addEventListener("change", function () {
+    var dropTxt = this.value;
     var gases = dropTxt.split('/');
-    $("#start_o2_pct").val(gases[0]);
-    $("#start_he_pct").val(gases[1]);
+    setInputVal("start_o2_pct", gases[0]);
+    setInputVal("start_he_pct", gases[1]);
     calculateBlend();
 });
 
 // dropdown menu for wanted gas  
-$("#dd_wantedGas").change(function () {
-    var dropTxt = $(this).val();
+document.getElementById("dd_wantedGas").addEventListener("change", function () {
+    var dropTxt = this.value;
     var gases = dropTxt.split('/');
-    $("#end_o2_pct").val(gases[0]);
-    $("#end_he_pct").val(gases[1]);
+    setInputVal("end_o2_pct", gases[0]);
+    setInputVal("end_he_pct", gases[1]);
     calculateBlend();
 });
 
 // dropdown menu for end_bar  
-$("#dd_end_bar").change(function () {
-    var dropTxt = $(this).val();
-    $("#end_bar").val(parseInt(dropTxt) );
+document.getElementById("dd_end_bar").addEventListener("change", function () {
+    var dropTxt = this.value;
+    setInputVal("end_bar", parseInt(dropTxt));
     
     calculateBlend();
 });
 
 // dropdown menu for algorithm  
-$("#ddl_algorithm").change(function () {
-    var dropTxt = $(this).val();
+document.getElementById("ddl_algorithm").addEventListener("change", function () {
+    var dropTxt = this.value;
     algorithm = dropTxt;
     
     calculateBlend();
@@ -285,10 +283,10 @@ $("#ddl_algorithm").change(function () {
 
 // from button EMPTY tank
 function emptyTank(){
-    $("#start_bar").val(1);
-    $("#start_o2_pct").val(21);
-    $("#start_he_pct").val(0);
-    $("#dd_startGas").val("21/0");
+    setInputVal("start_bar", 1);
+    setInputVal("start_o2_pct", 21);
+    setInputVal("start_he_pct", 0);
+    setInputVal("dd_startGas", "21/0");
     calculateBlend();
 };
     

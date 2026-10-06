@@ -2,6 +2,13 @@
  * planner.js
  * 
  */
+function inputVal(id) {
+    return document.getElementById(id).value;
+}
+function setInputVal(id, value) {
+    document.getElementById(id).value = value;
+}
+
 // 2021-11-19 major refactoring: all time units are now MINUTES, seconds removed everywhere
 // run the plan automatically for the 1st time with defaults
 runPlan();
@@ -224,24 +231,23 @@ function getCursorPosition(canvas, event) {
     return [x, y];
 } // from https://stackoverflow.com/questions/55677/how-do-i-get-the-coordinates-of-a-mouse-click-on-a-canvas-element/18053642#18053642
 
-$(function()
-{
-    $(".input3").on("change",runPlan)
-})   
+document.querySelectorAll(".input3").forEach(function (el) {
+    el.addEventListener("change", runPlan);
+});
 
-$("#dd_bGas").change(function () {
-    var dropTxt = $(this).val()
+document.getElementById("dd_bGas").addEventListener("change", function () {
+    var dropTxt = this.value;
     var gases = dropTxt.split('/');
-    $("#bottom_O2").val(gases[0]);
-    $("#bottom_He").val(gases[1]);
+    setInputVal("bottom_O2", gases[0]);
+    setInputVal("bottom_He", gases[1]);
     runPlan();
   });
 
-  $("#dd_gf").change(function () {
-    var dropTxt = $(this).val()
+  document.getElementById("dd_gf").addEventListener("change", function () {
+    var dropTxt = this.value;
     var gfs = dropTxt.split('/');
-    $("#gf_low").val(gfs[0]);
-    $("#gf_high").val(gfs[1]);
+    setInputVal("gf_low", gfs[0]);
+    setInputVal("gf_high", gfs[1]);
     runPlan();
   });
 
@@ -255,24 +261,24 @@ var globalDP;
 function runPlan()
 {
     // are deco tanks in use, get checkbox status
-    let deco1_use = $("#tank_deco1").prop("checked");
-    let deco2_use = $("#tank_deco2").prop("checked");
+    let deco1_use = document.getElementById("tank_deco1").checked;
+    let deco2_use = document.getElementById("tank_deco2").checked;
 
     // check that input values are sane
-    var bottom_O2_in = parseInt($("#bottom_O2").val());
-    var bottom_He_in = parseInt($("#bottom_He").val());
+    var bottom_O2_in = parseInt(inputVal("bottom_O2"));
+    var bottom_He_in = parseInt(inputVal("bottom_He"));
     if (bottom_O2_in > 100 || bottom_O2_in <18){
         alert(`invalid bottom O2% = ${bottom_O2_in}\nreverting to 21%`);
         bottom_O2_in = 21;
-        $("#bottom_O2").val(21);
+        setInputVal("bottom_O2", 21);
     }
     if ((bottom_O2_in + bottom_He_in > 100) || bottom_He_in > 82 ){
         alert(`invalid bottom O2/He% = ${bottom_O2_in}/${bottom_He_in} \n`+
         "reverting to 21/35%");
         bottom_O2_in = 21;
         bottom_He_in = 35;
-        $("#bottom_O2").val(21);
-        $("#bottom_He").val(35);
+        setInputVal("bottom_O2", 21);
+        setInputVal("bottom_He", 35);
     }
 
     // get input for the tank configuration
@@ -280,36 +286,36 @@ function runPlan()
         label : "BOTTOM", name: "B", use: true, 
         o2: bottom_O2_in, 
         he: bottom_He_in, 
-        SAC: parseInt($("#bottom_SAC").val()), 
+        SAC: parseInt(inputVal("bottom_SAC")), 
         ppo2max: 1.4, 
-        liters: parseInt($("#bottom_liters").val()), 
-        bar: parseInt($("#bottom_bar").val()), 
+        liters: parseInt(inputVal("bottom_liters")), 
+        bar: parseInt(inputVal("bottom_bar")), 
         pressure: 200.0, useFromTime: 0, useUntilTime: 0, 
         type: "bottom", useOrder: 1, color: "Magenta" 
     };
     const tankDeco1 =     { 
         label: "deco1", name: "D1", 
         use: deco1_use,
-        o2: parseInt($("#deco1_O2").val()), 
-        he: parseInt($("#deco1_He").val()), 
-        changeDepth: parseInt($("#deco1_switch").val()), 
-        SAC: parseInt($("#deco1_SAC").val()), 
+        o2: parseInt(inputVal("deco1_O2")), 
+        he: parseInt(inputVal("deco1_He")), 
+        changeDepth: parseInt(inputVal("deco1_switch")), 
+        SAC: parseInt(inputVal("deco1_SAC")), 
         ppo2max: 1.6, 
-        liters: parseInt($("#deco1_liters").val()), 
-        bar: parseInt($("#deco1_bar").val()), 
+        liters: parseInt(inputVal("deco1_liters")), 
+        bar: parseInt(inputVal("deco1_bar")), 
         pressure: 200.0, useFromTime: 0, useUntilTime: 0, 
         type: "deco", useOrder: 2, color: "Cyan"
     };
     const tankDeco2 =     { 
         label: "deco2", name: "D2", 
         use: deco2_use,
-        o2: parseInt($("#deco2_O2").val()),  
-        he: parseInt($("#deco2_He").val()),  
-        changeDepth: parseInt($("#deco2_switch").val()), 
-        SAC: parseInt($("#deco2_SAC").val()), 
+        o2: parseInt(inputVal("deco2_O2")),  
+        he: parseInt(inputVal("deco2_He")),  
+        changeDepth: parseInt(inputVal("deco2_switch")), 
+        SAC: parseInt(inputVal("deco2_SAC")), 
         ppo2max: 1.6, 
-        liters: parseInt($("#deco2_liters").val()), 
-        bar: parseInt($("#deco2_bar").val()), 
+        liters: parseInt(inputVal("deco2_liters")), 
+        bar: parseInt(inputVal("deco2_bar")), 
         pressure: 200.0, useFromTime: 0, useUntilTime: 0, 
         type: "deco", useOrder: 3, color: "LightGray"
     };
@@ -318,16 +324,16 @@ function runPlan()
 
     // configure all inputs for the calculatePlan()
     const myDP = new Object();
-       myDP.bottomDepth =   parseInt($("#dive_depth").val());
-       myDP.bottomTime =    parseInt($("#dive_bottom_time").val()) ; // MINUTES !!!!
+       myDP.bottomDepth =   parseInt(inputVal("dive_depth"));
+       myDP.bottomTime =    parseInt(inputVal("dive_bottom_time")) ; // MINUTES !!!!
        myDP.desc_rate = 10 ; //minutes/seconds
-       myDP.desc_steps = parseInt($("#desc_steps").val());
-       myDP.bottom_steps = parseInt($("#bottom_steps").val());
+       myDP.desc_steps = parseInt(inputVal("desc_steps"));
+       myDP.bottom_steps = parseInt(inputVal("bottom_steps"));
        myDP.ascRateToDeco = 1;
        myDP.ascRateAtDeco = 1;
        myDP.ascRateToSurface = 1;
-       myDP.GFlow = parseInt($("#gf_low").val()) / 100.0; // 0.30;  //<=== fraction, not percentage!
-       myDP.GFhigh = parseInt($("#gf_high").val()) / 100.0; //  0.85; //<=== fraction, not percentage!
+       myDP.GFlow = parseInt(inputVal("gf_low")) / 100.0; // 0.30;  //<=== fraction, not percentage!
+       myDP.GFhigh = parseInt(inputVal("gf_high")) / 100.0; //  0.85; //<=== fraction, not percentage!
        myDP.modelUsed = "ZHL16c";
        myDP.decoStopsCalculated = [];
        myDP.wayPoints = [];
@@ -362,14 +368,14 @@ function runPlan()
             alert(`calculatePlan() exception: ${err}\n`+
             "aborted, press F12 to see console.log\n"+
             "resetting depth and bottom time to 30m/20min");
-            $("#dive_depth").val(30);
-            $("#dive_bottom_time").val(20);
+            setInputVal("dive_depth", 30);
+            setInputVal("dive_bottom_time", 20);
             return;
         }
        */
        // output the text from calculatePlan()
        txt = plan_txt(myDP.decoStopsCalculated, myDP.wayPoints, myDP.tankList);
-       $("#planner_textout").val(txt);
+       setInputVal("planner_textout", txt);
     
        // draw the profile canvas
        globalDP = myDP;

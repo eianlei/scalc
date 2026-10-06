@@ -64,23 +64,21 @@
   
   </table>
 
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script>
    var slider = document.getElementById("o2range");
     slider.oninput = function(){
-      $("#o2_pct").val(this.value);
+      document.getElementById("o2_pct").value = this.value;
       calculateMOD();
     }
 
-    $('#o2_pct').change(function(){
-      $('#o2range').val(this.value);
+    document.getElementById("o2_pct").addEventListener("change", function(){
+      document.getElementById("o2range").value = this.value;
     });
 
 
     function ucButton(btn){
       // alert(`recommended ppO2= ${btn}`);
-      //$("ucB").html("xxxx");
-      $("#ppo2").val(btn);
+      document.getElementById("ppo2").value = btn;
       calculateMOD();
     }
 
@@ -89,36 +87,32 @@
     // calculate MOD and print result
     function calculateMOD()
     {
-      o2_pct = $("#o2_pct").val();
-      ppo2 = $('#ppo2').val();
+      o2_pct = document.getElementById("o2_pct").value;
+      ppo2 = document.getElementById("ppo2").value;
    
       let mod_result = 10* ((ppo2 / (o2_pct / 100))-1);
       console.log(`calculateMOD ${o2_pct} ${ppo2} ${mod_result}`);
  
-      $("#mod_result").text(mod_result.toFixed(1));
+      document.getElementById("mod_result").textContent = mod_result.toFixed(1);
   }
   
   // this is called when any class input element changes
-  $(function()
-  {
-      $(".input").on("change",calculateMOD)
-      // var slider = document.getElementById("o2range");
-      // slider.value = $("#o2_pct").val();
-    })
-  // var o2input = document.getElementById("o2_pct");
+  document.querySelectorAll("input").forEach(function(el){
+      el.addEventListener("change", calculateMOD);
+  });
 
 
-  $("#ddl").change(function () {
-    var dropval = $(this).val()
-    $("#o2_pct").val(dropval);
-    $('#o2range').val(this.value);
+  document.getElementById("ddl").addEventListener("change", function () {
+    var dropval = this.value;
+    document.getElementById("o2_pct").value = dropval;
+    document.getElementById("o2range").value = this.value;
 
     calculateMOD();
   });
 
-  $("#ddl_pp").change(function () {
-    var dropval = $(this).val()
-    $("#ppo2").val(dropval);
+  document.getElementById("ddl_pp").addEventListener("change", function () {
+    var dropval = this.value;
+    document.getElementById("ppo2").value = dropval;
     calculateMOD();
   });
 

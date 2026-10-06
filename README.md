@@ -91,7 +91,7 @@ After the app has loaded on your browser you can actually kill the web server (C
 The UI uses plain HTML5 elements and canvas.
 Calculations are done by pure and simple Javascript functions running on your browser. There is no back-end, nothing is calculated at the server end.
 ## dependencies
-jQuery
+None. The UI is vanilla HTML, CSS, and JavaScript.
 
 # Background
 The Javascript used in calculations is refactored (manually transpiled) from following Python and C# projects that I have published previously:
