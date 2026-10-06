@@ -13,7 +13,21 @@ export default defineConfig([
     files: ['**/*.{vue,js,mjs,jsx}'],
   },
 
-  globalIgnores(['**/dist/**', '**/dist-ssr/**', '**/coverage/**']),
+  globalIgnores([
+    '**/dist/**',
+    '**/dist-ssr/**',
+    '**/coverage/**',
+    'src/lib/blender/tmxcalc.js',
+    'src/lib/blender/vanderwaals.js',
+    'src/lib/blender/vdw_temp.js',
+    'src/lib/planner/ZHL16c.js',
+    'src/lib/planner/model.js',
+    'src/lib/planner/gradientFactor.js',
+    'src/lib/planner/tanks.js',
+    'src/lib/planner/profilePoint.js',
+    'src/lib/planner/planTxt.js',
+    'src/lib/planner/calculatePlan.js',
+  ]),
 
   {
     languageOptions: {
