@@ -1,28 +1,25 @@
 # SCALC: quick fixes before Vue conversion
 
-This is a **vanilla JS / HTML / CSS** checklist. Do this work in the **current** static site so the Vue migration does not copy broken markup, unused ES-module leftovers, or iframe hacks.
+This is a **vanilla JS / HTML / CSS** checklist. The **must-fix (M*) batch is complete** in the current static site. Remaining work is **nice-to-fix (N*)** or **leave until Vue (L*)**.
 
-It is **not** an implementation. Application code stays as-is until someone executes these items.
+It is **not** an implementation. Do not start Vite from this file.
 
-Primary source of issues: `PLANS/convert2vue.md` §11 (Risks and mitigations), plus architecture/screens/engines notes in §§2, 9, 13–14. Every item below was **checked in the repo**, not only in that plan.
+Primary source of issues: `PLANS/convert2vue.md` (architecture + §11), plus items that were checked in the repo. Vue conversion should **not** re-do M1–M10 as if they were still broken.
 
-**jQuery:** gone in the **current vanilla code**. There is no CDN script to `code.jquery.com`, no vendored `jquery*.js`, and no `$` / `.val()` / `.on()` jQuery API usage in HTML/JS. MOD, Blender, and Planner use `document.getElementById`, `querySelectorAll`, and `addEventListener`. `convert2vue.md` still describes the old jQuery CDN in places; that file is **not** the live app. Do not vendor or re-add jQuery.
+**jQuery:** gone in the **current vanilla code**. There is no CDN script to `code.jquery.com`, no vendored `jquery*.js`, and no `$` / `.val()` / `.on()` jQuery API usage in HTML/JS. MOD, Blender, and Planner use `document.getElementById`, `querySelectorAll`, and `addEventListener`. Do not vendor or re-add jQuery.
 
 ---
 
 ## 1. Purpose
 
-Vue will replace the radio-tab + iframe shell with a SPA, then convert About → MOD → Blender → Planner. During that work it is easy to:
+Vue will replace the radio-tab + iframe shell with a SPA, then convert About → MOD → Blender → Planner.
 
-- paste `index.html` / `about.html` “as the content”
-- copy `tabs.css` including the HTTP font URL
-- `import { Diveplan }` from a file that does **not** match `runPlan()`
-- uncomment fake `import` lines that name APIs that do not exist
-- wrap leftover iframes in Vue (strangler) and keep `calcHeight()`
+The cheap vanilla hygiene that blocked a clean copy (invalid `index.html`, HTTP fonts, About sniff, implicit globals, unused `Diveplan` module, blender table/script order, `calcHeight`, fake `import` comments) is **done**. What is left:
 
-Those mistakes are cheaper to prevent **now**, while the app is still four HTML files and classic `<script src>` tags.
+- **N\*** — optional vanilla cleanups (try/catch, log flags, leftover markup typos)
+- **L\*** — items that belong in Vue (router, canvas refs, `v-for` table, scoped CSS)
 
-Fixing this set does **not** require Vite, Vue, or Tauri.
+Fixing N\* still does **not** require Vite, Vue, or Tauri.
 
 ---
 
@@ -42,44 +39,27 @@ Do **not** do these as part of this checklist:
 
 ---
 
-## 3. Must-fix before Vue
+## 3. Must-fix before Vue — **done** (M1–M10)
 
-These are cheap in vanilla, and painful or pointless to migrate as-is.
+These were cheap in vanilla and painful to migrate as-is. **All ten are closed** in current vanilla code. Status style matches M3.
 
-### M1. Repair `index.html` (invalid document + extra `</script>`)
+### M1. Repair `index.html` (invalid document + extra `</script>`) — **done**
 
-**Problem.** `index.html` is not a valid HTML document:
+**Status.** Closed.
 
-- `<html>` is **inside** `<body>` (line 8); `</html>` is **before** `</body>` (lines 67–68)
-- `<title>` sits in the body, not in `<head>`
-- `<div class="content" ">` and `<div id="content_ABOUT" " >` have stray quotes (lines 25–26)
-- Real script for `calcHeight()` ends at line 63, then a **second** `</script>` at line 67 with no opening tag
+`index.html` is a valid shell: `<!DOCTYPE html><html lang="en">`, `<title>` in `<head>`, no stray quotes on `.content` / `#content_ABOUT`, no extra `</script>`, no `calcHeight`. Four radio tabs and four iframes remain until Vue.
 
-Vue/Vite will replace this file as the SPA host (`convert2vue` §2.1). If the strangler phase still serves this shell, broken markup and a stray closer stay in production. Do not treat this file as a template for `App.vue`.
-
-**Vanilla fix.** Rebuild a minimal valid shell: `<!DOCTYPE html><html lang="en"><head>…title, viewport, CSS…</head><body>…tabs…</body></html>`. Delete the extra `</script>`. Fix the two attribute typos. Keep the four radio tabs and four iframes until Vue exists.
-
-**Effort / priority.** Small / **P0**.
-
-**Verify.** Open `index.html` in DevTools → Elements: one `<html>`, head contains title, no console parse errors. Tabs still switch About / MOD / Blender / Planner.
+**Verify (already true).** One `<html>`; head contains title. Tabs still switch About / MOD / Blender / Planner.
 
 ---
 
-### M2. Google Fonts over HTTP (`tabs.css`)
+### M2. Google Fonts over HTTP (`tabs.css`) — **done**
 
-**Problem.** `source/tabs.css` line 1:
+**Status.** Closed.
 
-```css
-@import url('http://fonts.googleapis.com/css?family=Open+Sans:400,600,700');
-```
+`source/tabs.css` uses `https://fonts.googleapis.com/css?family=Open+Sans:400,600,700`. Do **not** bundle fonts yet (that is Tauri/`tauri_desktop.md`). Do **not** move `h1 { padding: 100px }` into tool pages (see L3).
 
-GitHub Pages is HTTPS (`convert2vue` §2, §9). Browsers block this as **mixed content**; Open Sans never loads. Vue will copy this file into app chrome unless the URL is fixed first (`convert2vue` §9, §13 phase 7).
-
-**Vanilla fix.** Change to `https://fonts.googleapis.com/css?family=Open+Sans:400,600,700`. Do **not** bundle fonts yet (that is Tauri/`tauri_desktop.md`). Do **not** move `h1 { padding: 100px }` into tool pages (see L3).
-
-**Effort / priority.** Tiny / **P0**.
-
-**Verify.** Serve over HTTPS (or GitHub Pages). Network tab: font CSS is `https://`, no mixed-content warning. Tab labels still use Open Sans.
+**Verify (already true).** Font CSS is `https://`. Tab labels still use Open Sans.
 
 ---
 
@@ -97,131 +77,92 @@ That is obsolete. The live tools no longer load jQuery at all. DOM glue is vanil
 
 ---
 
-### M4. About “JavaScript version” sniff (extra `<script>` tags)
+### M4. About “JavaScript version” sniff (extra `<script>` tags) — **done**
 
-**Problem.** `source/about.html` lines 49–65: `version = 1.0` then nine `language="Javascript1.x"` tags that mutate a global, then `#jsversion` innerHTML. This is 1990s UA sniffing. `convert2vue` §2.3 / §7: drop in Vue; do not port.
+**Status.** Closed.
 
-Also malformed nested `<p>` / `<P>` (lines 5–16). Cheap to tidy while editing this file.
+The ten `language="Javascript1.x"` tags and `#jsversion` sniff are gone. About copy includes a static line: “Calculations run in your browser.” Nested paragraph markup was flattened.
 
-**Vanilla fix.** Delete the ten version `<script>` tags. Replace `#jsversion` with a static sentence (“Calculations run in your browser”) or omit it. Optionally flatten the nested paragraphs. Do not add `navigator.userAgent` unless you want it for debugging.
-
-**Effort / priority.** Tiny / **P0**.
-
-**Verify.** About tab: no “javascript version 1.x” line. No extra script tags in the iframe document. Copy still readable.
+**Verify (already true).** About tab: no “javascript version 1.x” line. No extra version-sniff scripts.
 
 ---
 
-### M5. Implicit globals that will throw under ES modules
+### M5. Implicit globals that will throw under ES modules — **done** (with residual)
 
-**Problem.** Classic scripts leak assignments. `convert2vue` §11: ES modules + `"use strict"` **will throw**. Confirmed sites:
+**Status.** Closed for the sites listed below.
 
-| File | Leak | Notes |
-|------|------|--------|
-| `source/model.js` | `pressure`, `depth` | `depth2pressure`, `pressure2depth`, `depth2absolutePressure` assign without `var`/`let` (lines 31, 41, 51) |
-| `source/plan_txt.js` | `idx` | `for(idx=0; …)` three loops (lines 18, 24, 38) |
-| `source/calculate_plan.js` | `wp_txt` | assigned in several phases (e.g. lines 151, 258, 281, 331, 354, 379, 388) |
-| `source/blender.js` | `result_txt`, `dropval` | lines 113, 244 |
-| `source/planner.js` | `txt` | `txt = plan_txt(...)` (and CSV builder uses `txt` later) |
-| `source/mod.html` inline | `o2_pct`, `ppo2` | `calculateMOD()` lines 90–91 |
+| File | Leak | Now |
+|------|------|-----|
+| `source/model.js` | `pressure`, `depth` | `let` in `depth2pressure` / `pressure2depth` / `depth2absolutePressure` |
+| `source/plan_txt.js` | `idx` | `for (let idx = 0; …)` |
+| `source/calculate_plan.js` | `wp_txt` | `let wp_txt` in `calculatePlan` |
+| `source/blender.js` | `result_txt`, `dropval` | `let` |
+| `source/planner.js` | `txt` | `let txt` after `plan_txt(...)` |
+| `source/mod.html` inline | `o2_pct`, `ppo2` | `let` in `calculateMOD()` |
 
-**Vanilla fix.** Add `let`/`var` at each assignment (or `for (let idx = 0; …)`). **Do not** refactor the algorithms. Do not “clean up” `Object.create` in the same pass (see L1).
+**Residual (not in the original table).** `planner.js` `getPointText` still has `for (idx = 0; idx < prof.length; idx++)` without `let`/`var`. That can still throw under ES modules + `"use strict"`. Treat as leftover N-item / Vue modularize work, not a reopened M5.
 
-**Effort / priority.** Small / **P0** (blocker for `convert2vue` phase 2 modularize).
-
-**Verify.** After the change, default MOD `56.7`, default blender PP/IDG text, default planner 50 m / 30 min text + canvas still match previous behavior. DevTools: those names are not new `window.*` properties after a run.
+**Verify (already true for listed leaks).** Do not “clean up” `Object.create` in the same pass (see L1).
 
 ---
 
-### M6. Unused `diveplan.js` vs canonical `runPlan()` object
+### M6. Unused `diveplan.js` vs canonical `runPlan()` object — **done**
 
-**Problem.** `source/diveplan.js` is an **ES module** (`import { tankList } from "./tanks.js"` + `export const Diveplan`). `planner.html` does **not** load it. `planner.js` even comments `//let myDP = new Diveplan();` and builds `const myDP = new Object()` with extra fields (`convert2vue` §2.2, §11, §14.1).
+**Status.** Closed. Option A.
 
-`Diveplan` is missing fields the engine actually uses: `desc_rate`, `desc_steps`, `bottom_steps`, `wayPoints`, `tankBottom`, `tankDeco1`, `tankDeco2`, `tableIsGenerated`, `atBottom`, … Defaults also disagree (GF 30/85 vs UI 30/80; depth 30 vs 50). `currentTank : "BOTTOM"` is a string; runtime uses tank objects.
+`source/diveplan.js` is a **classic** (non-module) `function createDiveplan()` returning the same keys `runPlan()` uses (`desc_steps`, `wayPoints`, `tankBottom`, GF 30/80, depth 50, `currentTank: null`, …). `planner.html` loads it before `planner.js`. `runPlan()` calls `const myDP = createDiveplan()` then fills tanks/inputs. No `import`/`export`.
 
-`tanks.js` does **not** export `tankList` (only a property on the diveplan object). If someone later `import { Diveplan } from "./diveplan.js"` in Vue, the shape and the tanks import are both wrong.
-
-**Vanilla fix.** Treat `planner.js` `runPlan()` `myDP` as the **canonical** shape. Either:
-
-- **A (preferred):** rewrite `diveplan.js` as a **classic** (non-module) `function createDiveplan() { return { …same keys as runPlan… }; }` with no `import`/`export`, then call it from `runPlan()`; or
-- **B:** delete `diveplan.js` and add a short comment on `runPlan()` that Vue should copy that object, not a separate type file.
-
-Do not leave a live `export const Diveplan` that does not match the engine.
-
-**Effort / priority.** Small / **P0**.
-
-**Verify.** Planner still not loading a module (no CORS/`type=module` errors). Default plan text unchanged. If using option A, `createDiveplan()` fields include `desc_steps`, `wayPoints`, `tankBottom`.
+**Verify (already true).** Planner still classic scripts. Default plan object shape includes `desc_steps`, `wayPoints`, `tankBottom`.
 
 ---
 
-### M7. Dead `planner_table.html` + sidenav new-tab
+### M7. Dead `planner_table.html` + sidenav new-tab — **done**
 
-**Problem.** `source/planner_table.html` is an incomplete stub: empty `#planner_table`, commented demo script, **wrong stylesheet** `href="index.css"` (file is under `source/`; live pages use `../index.css`). Live table is `#table_panel` **inside** `planner.html` (`convert2vue` §2.1).
+**Status.** Closed.
 
-`planner.html` sidenav still has `<a href="planner_table.html" target="_blank">Table</a>` (line 134). Opening it is a blank page. `openNav()` exists in `planner.js` but the “panels” button is commented out; sidenav stays `width: 0`.
+`source/planner_table.html` is **gone**. Sidenav “Table” calls `openTable()` (in-page `#table_panel` + CSV). `#mySidenav` / `openNav`/`closeNav` still exist unused (`width: 0`; panels button commented) — that leftover is **N6**, not a reopened M7.
 
-Vue phase 6: “Do not port dead sidenav / `planner_table.html` stub.”
-
-**Vanilla fix.** Point sidenav “Table” at `openTable()` (or remove the link). Delete `planner_table.html` **or** leave a one-line comment in `PLANS` that it is unused — do not copy it into Vue. Optional: remove the whole sidenav markup if nothing opens it (then also drop `openNav`/`closeNav`). Keep in-page table + CSV.
-
-**Effort / priority.** Tiny / **P0**.
-
-**Verify.** Planner **table** button still shows the in-page table and CSV. No new tab to an empty stub. `source/planner_table.html` gone or not linked.
+**Verify (already true).** Planner **table** button still shows the in-page table and CSV. No new tab to an empty stub.
 
 ---
 
-### M8. Blender: unclosed table + script order
+### M8. Blender: unclosed table + script order — **done**
 
-**Problem.**
+**Status.** Closed.
 
-1. `source/blender.html` compressor `<table class="t1">` (around line 272) is **never closed**. The sources panel `</div>` at line 290 closes over an open table. Invalid HTML; Vue ports of this markup will inherit it.
-2. Script order (lines 292–295): `tmxcalc.js` → **`blender.js`** → `vanderwaals.js` → `vdw_temp.js`. `blender.js` **calls `calculateBlend()` at top level** (line 24) before VdW files exist. Default `algorithm = "IDG"` hides this; switching default to VdW1/VdW2 or a slow parse would throw `vdw_calc is not defined`.
-3. Extra malformation: `onmousedown="this.value='';""` on `#ddl_ft` and `#ddl_algorithm` (extra `"`). Same pattern on MOD/planner dropdowns (see N4).
+Compressor `<table class="t1">` is closed before `#blender_sources` `</div>`. Script order: `tmxcalc.js` → `vanderwaals.js` → `vdw_temp.js` → `blender.js`. Initial `calculateBlend()` is on `DOMContentLoaded`. Extra `"` on `#ddl_ft` and `#ddl_algorithm` is fixed.
 
-**Vanilla fix.** Close `</table>` before `</div>` of `#blender_sources`. Load order: `tmxcalc.js` → `vanderwaals.js` → `vdw_temp.js` → `blender.js`. Move the initial `calculateBlend()` to `DOMContentLoaded` (or call it after the other scripts so canvases/inputs exist). Fix the extra quote on those two selects.
+**Residual (N4, not M8).** Other blender/MOD/planner dropdowns still have `onmousedown="this.value='';""`.
 
-**Effort / priority.** Small / **P0**.
-
-**Verify.** Default PP + ideal gas still prints. Switch to VdW1 and VdW2 with defaults: no `ReferenceError`. Cost and Sources panels still open/back. View source / validator: compressor table closed.
+**Verify (already true).** Default PP + IDG still prints. VdW files load before `blender.js`.
 
 ---
 
-### M9. Iframe `calcHeight()` hack
+### M9. Iframe `calcHeight()` hack — **done**
 
-**Problem.** Only the About iframe has `onload="calcHeight();"` (`index.html` line 27). `calcHeight()` reads `about` iframe `scrollHeight` and sets `e.height`. All four iframes also have **inline `height: 1000px`**. Extra `</script>` sits after this function (M1). Vue layouts do not need this (`convert2vue` §14.6). Copying it into a strangler `App.vue` iframe is pointless.
+**Status.** Closed.
 
-**Vanilla fix.** Remove `onload` and the `calcHeight` script entirely. Keep a single explicit iframe height (1000px is fine until Vue). About page is short; a fixed height already matches MOD/Blender/Planner.
+No `onload="calcHeight();"` and no `calcHeight` script. Iframes keep explicit `height: 1000px`.
 
-**Effort / priority.** Tiny / **P0**.
-
-**Verify.** About tab: no `## calcHeight` console log. No iframe-to-parent `contentWindow` access errors. Tabs still show full tool UI without clipping the blender/planner canvases (those iframes already use 1000px).
+**Verify (already true).** About tab: no `## calcHeight` console log.
 
 ---
 
-### M10. Commented-out `import` lines that do not match the code
+### M10. Commented-out `import` lines that do not match the code — **done**
 
-**Problem.** Classic scripts cannot use `import`. Leftover comments look like a TODO for Vue:
+**Status.** Closed.
 
-| File | What’s wrong |
-|------|----------------|
-| `source/calculate_plan.js` 6–13 | Block comments `import { Diveplan }`, `gradientFactor`, `tanksCheck, tankList`, etc. **`tanksCheck` does not exist.** `tanks.js` ends `tankUpdate` with `} // tanksCheck` (line 31) — leftover name. |
-| `source/tanks.js` 1–2 | `// import { DivePhase }`, `// import { Diveplan }` |
-| `source/model.js` 8–9 | `// import { ZHL16c } from "./ZHL16c.js"` — ZHL16c is already a global from a prior `<script>` |
+Commented `import` blocks are gone from `calculate_plan.js`, `tanks.js`, `model.js`. `tanks.js` ends `tankUpdate` with `} // tankUpdate`. When Vue modularizes, add **real** exports that match actual function names (`calculatePlan`, `tankUpdate`, `ZHL16c`, `ModelPoint`, …).
 
-Uncommenting these in a module pass will fail (missing exports, circular `Diveplan` / `tanks.js`).
-
-**Vanilla fix.** Delete the commented `import` blocks. Rename the `} // tanksCheck` comment to `} // tankUpdate`. When Vue modularizes, add **real** exports that match actual function names (`calculatePlan`, `tankUpdate`, `ZHL16c`, `ModelPoint`, …).
-
-**Effort / priority.** Tiny / **P0**.
-
-**Verify.** `planner.html` script list unchanged; planner still runs. Grep: no `tanksCheck` except history in this plan.
+**Verify (already true).** `planner.html` script list is classic; grep: no `tanksCheck` except history in this plan / convert2vue notes.
 
 ---
 
-## 4. Nice-to-fix (vanilla, not blockers)
+## 4. Nice-to-fix (vanilla, not blockers) — **still open**
 
 ### N1. Uncomment `try/catch` around `calculatePlan`
 
-`planner.js`: live code still has a path that can throw after `MAX_index = 500` (`convert2vue` §11). Vue is told to `try/catch` like the commented block around `calculatePlan(myDP)`.
+`planner.js`: live code still has a path that can throw after `MAX_index = 500` (`convert2vue` §11). Vue is told to `try/catch` like the commented block around `calculatePlan(myDP)`. There is still a **bare** `calculatePlan(myDP)` above the commented try/catch.
 
 **Fix now:** uncomment the try/catch and **remove** any duplicate bare `calculatePlan(myDP)` above it. Keep the alert + reset to 30 m / 20 min.
 
@@ -241,7 +182,7 @@ Uncommenting these in a module pass will fail (missing exports, circular `Divepl
 
 ### N4. Extra `"` on `onmousedown` dropdowns
 
-Same typo as blender: `onmousedown="this.value='';""` in `mod.html` (`#ddl`, `#ddl_pp`), `blender.html` (fill/algorithm/gas/bar selects), and `planner.html` (`#dd_gf`, `#dd_bGas`). Harmless in many parsers; still invalid.
+`#ddl_ft` and `#ddl_algorithm` were fixed with M8. Remaining: `mod.html` (`#ddl`, `#ddl_pp`), other blender gas/bar selects, and `planner.html` (`#dd_gf`, `#dd_bGas`). Harmless in many parsers; still invalid.
 
 **Fix:** one closing quote. **Verify:** dropdowns still clear-on-mousedown and fill O2/He or GF.
 
@@ -251,7 +192,7 @@ Same typo as blender: `onmousedown="this.value='';""` in `mod.html` (`#ddl`, `#d
 
 ### N6. Dead sidenav chrome
 
-If M7 unlinks Table, the sidenav is unused (`width: 0`, Controls/Profile/Debug are `#`). Removing `#mySidenav` + CSS + `openNav`/`closeNav` reduces what Vue might copy. Optional.
+M7 unlinked Table from the stub page; the sidenav is still unused (`width: 0`, Controls/Profile/Debug are `#`). Removing `#mySidenav` + CSS + `openNav`/`closeNav` reduces what Vue might copy. Optional.
 
 ---
 
@@ -273,27 +214,22 @@ From `convert2vue` §11 unless noted. **Do not** “fix” these in vanilla beyo
 | **L10. Disabled fill `top`** | Keep `disabled` until a product decision. |
 | **L11. Planner algorithm / `MAX_index`** | Same engine. UI catch is N1; do not raise the cap or rewrite stops. |
 | **L12. Duplicate inline CSS** (`blender.html` / `planner.html` `<style>`) | Move when extracting Vue components. Canvas stacking rules must survive. |
-| **L13. Golden Vitest fixtures** | `convert2vue` phase 0 — record **after** P0 HTML/JS hygiene if outputs might change; store under the future `web/` tree, not this checklist’s implementation. |
+| **L13. Golden Vitest fixtures** | `convert2vue` phase 0 — record **after** P0 HTML/JS hygiene if outputs might change; store under the future `web/` tree, not this checklist’s implementation. Vanilla P0 hygiene is done; fixtures can be recorded now. |
 
 ---
 
 ## 6. Suggested order of work
 
-Do **one** local `python3 -m http.server` from repo root and keep the default MOD / Blender / Planner outputs in a text file **before** M5/M6/N1 (so you can diff).
+Must-fix **M1–M10 are done**. Skip them. Remaining vanilla (optional):
 
-1. **M1 + M9** — valid `index.html`, no `calcHeight` (same file).
-2. **M2** — HTTPS font (one line).
-3. **M3** — skip (jQuery already removed).
-4. **M4** — About scripts.
-5. **M8 + N4** — blender markup/script order; dropdown quotes (include MOD/planner if touching those files).
-6. **M7 + N3 + N6** — planner dead pages / stray `<td>` / sidenav.
-7. **M5** — `let` on globals (behavior-sensitive; diff text outputs).
-8. **M6** — `createDiveplan()` or delete unused module.
-9. **M10** — delete misleading `import` comments.
-10. **N1 + N2** — try/catch + quiet logs.
-11. **N5** — MOD leftover markup.
+Keep a local `python3 -m http.server` from repo root and default MOD / Blender / Planner outputs in a text file **before** N1 (so you can diff).
 
-Stop. Do not start Vite.
+1. **N1 + N2** — try/catch + quiet logs.
+2. **N4** — remaining dropdown quotes (MOD / blender gas-bar / planner).
+3. **N3 + N6** — stray `<td>` / empty `#profile` / unused sidenav.
+4. **N5** — MOD leftover markup.
+
+Stop. Do not start Vite from this checklist (`convert2vue.md` phases start after that).
 
 ---
 
@@ -303,23 +239,24 @@ Manual, no test runner today (`convert2vue` §10).
 
 | After | Check |
 |-------|--------|
-| M1, M9 | Valid document; four tabs; no extra `</script>`; About has no `calcHeight` log |
-| M2 | HTTPS: no mixed-content font error |
-| M3 | Already done: no jQuery CDN / `$` in the tree; tools work offline after first load (fonts still optional) |
-| M4 | About has no version sniff |
-| M8 | VdW1/VdW2 run; sources table not “eaten” by unclosed markup |
-| M7 | In-page planner table + CSV; no stub tab |
-| M5, M6, N1 | **Same numbers as pre-change notes:** MOD 21% / 1.4 → **56.7**; blender default PP+IDG text; planner default 50 m / 30 min, GF 30/80, tanks 21/35 + 50% @ 21 m + 100% @ 6 m — text + canvas + table row count |
-| M10 | Planner script tags still classic; no module errors |
+| M1–M10 | **Done.** Valid `index.html`; HTTPS font; no jQuery; no About sniff; listed globals use `let`; `createDiveplan()`; no `planner_table.html`; blender table closed + VdW before `blender.js`; no `calcHeight`; no fake `import` / `tanksCheck` |
+| N1 | Happy-path plan unchanged; catch present; no duplicate bare `calculatePlan` |
 | N2 | Console not flooded on planner load |
-| Regression | EMPTY blender; Cost/Sources back; MOD slider + both dropdowns; planner deco checkboxes |
+| N3, N6 | Buttons valid markup; table + CSV still work; no dead sidenav if removed |
+| N4 | Dropdowns still clear-on-mousedown |
+| N5 | MOD 21% / 1.4 → **56.7**; slider + both dropdowns |
+| Regression | EMPTY blender; Cost/Sources back; planner deco checkboxes; default blender PP+IDG; planner default 50 m / 30 min, GF 30/80 |
 
-If any default numeric/text output changes, **stop** and revert the last item (likely M5/M6). Algorithm drift is out of scope.
+If any default numeric/text output changes, **stop** and revert the last item (likely N1). Algorithm drift is out of scope.
 
 ---
 
 ## 8. Count
 
-**Must-fix items still open: 9** (M1, M2, M4–M10). **M3 is done** (jQuery removed in current vanilla code; not a remaining P0).
+**Must-fix items still open: 0** (M1–M10 **done**).
+
+**Nice-to-fix still open: 6** (N1–N6). **Leave-until-Vue: L1–L13** (L7 jQuery already done in vanilla).
+
+**Residual vs M5 list:** `planner.js` `getPointText` `for (idx = 0; …)` still undeclared.
 
 File written: `PLANS/quick_fixes.md`.
