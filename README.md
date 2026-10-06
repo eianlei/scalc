@@ -1,27 +1,47 @@
 # scalc
-**scalc** is a Web tool for interactive calculations needed for planning technical scuba dives.
+**scalc** is a Web and desktop calculation tool for interactive calculations needed for planning technical scuba dives.
 
 [You can open the application here at GitHub pages by clicking this line](https://eianlei.github.io/scalc/index.html)
 
 ![mainwin-shorturl](https://github.com/eianlei/scalc/blob/master/scalc-planner.jpg?raw=true)
 
 
-SCALC is currently work in progress and under active development.
-The existing and planned calculation tools include:
-- MOD calculation: working 
-- gas blending: working, needs improvement
-- dive planner: simple prototype, has many bugs and issues
+SCALC has been in development since 2012.
+- the early 2012 version was implemented in plain HTML, CSS and vanilla Javascript
+- 2026 a refactored version was done using the [Vue 3](https://vuejs.org/) framework
+- 2026 a desktop version using [Tauri v2](https://v2.tauri.app/)
+
+The calculation tools include:
+- MOD calculation
+- gas blending using several algortihms 
+- dive planner using Buhlmann model with Gradient Factors
 
 # scalc at scalc.ianleiman.com
 There is a working sample of the tool running at: https://scalc.ianleiman.com/
 
 This sample may not be as up to date as the github.io instance that syncs directly from this repo: https://eianlei.github.io/scalc/index.html
 
-# Installation
+# Installing and using the 2026 Vue version for web
+
+
+## install distribution builds
+
+## install tools for building from sources
+
+
+# Installing and using the 2026 Vue version for desktop
+
+To be done once implemented
+
+# Installing and using the legacy vanilla version
+The code for the legacy version still exists but is no longer maintained.
+It is advised to use the newer Vue based version.
+
+## Installation
 This is a web application so it needs to be served by a web server to a web browser. You can either install it to a "real" web server (such Apache, nginx) or use some local development solution such as VS Code Live Server extension.
 
-It is possible to make this app run on electron so it can run like a normal desktop application. 
-## web server
+
+### web server
 Just copy all the files in source folder to a web site server root. 
 Or git clone this repo to the server.
 The web server will serve index.html, which will call out all the modules. 
@@ -86,7 +106,7 @@ That will open a webserver on port 8000. You can then open your browser at http:
 
 After the app has loaded on your browser you can actually kill the web server (Ctrl-C) beacause it is now running on your browser and no longer needs a server.
 
-# Technology
+## Technology
 **scalc** is made from plain vanilla HTML, CSS, Javascript and does not use any fancy JS frameworks (such as Angular, React, Vue, Svelte etc...).
 The UI uses plain HTML5 elements and canvas.
 Calculations are done by pure and simple Javascript functions running on your browser. There is no back-end, nothing is calculated at the server end.
