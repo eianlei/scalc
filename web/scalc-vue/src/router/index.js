@@ -1,6 +1,10 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
 import AboutView from '@/views/AboutView.vue'
 import ModView from '@/views/ModView.vue'
+import BlenderView from '@/views/blender/BlenderView.vue'
+import BlenderMain from '@/views/blender/BlenderMain.vue'
+import BlenderCost from '@/views/blender/BlenderCost.vue'
+import BlenderSources from '@/views/blender/BlenderSources.vue'
 import LegacyIframeView from '@/views/LegacyIframeView.vue'
 
 export const routes = [
@@ -16,10 +20,13 @@ export const routes = [
     component: ModView,
   },
   {
-    path: '/blender/:panel?',
-    name: 'blender',
-    component: LegacyIframeView,
-    meta: { iframe: 'source/blender.html', title: 'blender' },
+    path: '/blender',
+    component: BlenderView,
+    children: [
+      { path: '', name: 'blender', component: BlenderMain },
+      { path: 'cost', name: 'blender-cost', component: BlenderCost },
+      { path: 'sources', name: 'blender-sources', component: BlenderSources },
+    ],
   },
   {
     path: '/planner/:panel?',

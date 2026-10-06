@@ -12,3 +12,9 @@ test('MOD default is 56.7', async ({ page }) => {
   await expect(page.getByRole('heading', { name: 'Calculate MOD' })).toBeVisible()
   await expect(page.getByText('56.7')).toBeVisible()
 })
+
+test('Blender default PP IDG instructions', async ({ page }) => {
+  await page.goto('/#/blender')
+  await expect(page.getByRole('heading', { name: 'Gas Blender' })).toBeVisible()
+  await expect(page.getByLabel('Blend instructions')).toHaveValue(/PARTIAL PRESSURE BLENDING/)
+})

@@ -32,6 +32,11 @@
 }
 
 .tool-page .input,
+.tool-page .input2,
+.tool-page .in_cost,
+.tool-page .o2_storage,
+.tool-page .He_storage,
+.tool-page .compressor,
 .tool-page .ddl {
   color: #111;
   font: 14px Arial, Helvetica, sans-serif;

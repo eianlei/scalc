@@ -1,0 +1,47 @@
+.wrap-flex {
+  display: flex;
+  width: 100%;
+  align-items: baseline;
+}
+
+.div_bProf {
+  position: relative;
+  width: 600px;
+  height: 310px;
+}
+
+.div_bProf canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.left_right {
+  display: flex;
+  justify-content: flex-start;
+  gap: 10px;
+}
+
+.child {
+  border: 1px solid darkgrey;
+  border-radius: 10px;
+  margin-top: 5px;
+  margin-bottom: 5px;
+  padding: 5px;
+}
+
+.tool-page h3 {
+  font-size: 1.17em;
+  font-weight: bold;
+  margin: 1em 0;
+}
+
+.tool-page textarea {
+  color: #111;
+  font: 12px Arial, Helvetica, sans-serif;
+}
+
+.blender-page .t1 tr,
+.blender-page .t1 td {
+  height: auto;
+}
