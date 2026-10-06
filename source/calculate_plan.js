@@ -3,12 +3,13 @@
 calculate_plan.js
 */
 
-// debug to console.log controls, set to true to log events
-const LOG_LOOP = true;
-const LOG_ASC = true;
-const LOG_catd = true;
-const LOG_MODOUT = true;
-const LOG_states = true;
+// debug to console.log controls: set DEBUG true to log events
+const DEBUG = false;
+const LOG_LOOP = DEBUG;
+const LOG_ASC = DEBUG;
+const LOG_catd = DEBUG;
+const LOG_MODOUT = DEBUG;
+const LOG_states = DEBUG;
 
 // phases of dive
 const DivePhase = {

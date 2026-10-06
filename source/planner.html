@@ -7,52 +7,11 @@
         font-family: Arial, Helvetica, sans-serif;
         font-size: 12px;
     }
-    
-    .sidenav {
-      height: 100%;
-      width: 0;
-      position: fixed;
-      z-index: 1;
-      top: 0;
-      left: 0;
-      background-color: #111;
-      overflow-x: hidden;
-      transition: 0.5s;
-      padding-top: 60px;
-    }
-    
-    .sidenav a {
-      padding: 8px 8px 8px 32px;
-      text-decoration: none;
-      font-size: 14px;
-      color: #818181;
-      display: block;
-      transition: 0.3s;
-    }
-    
-    .sidenav a:hover {
-      color: #f1f1f1;
-    }
-    
-    .sidenav .closebtn {
-      position: absolute;
-      top: 0;
-      right: 25px;
-      font-size: 36px;
-      margin-left: 50px;
-    }
-    
+
     #main {
-      transition: margin-left .5s;
       padding: 16px;
     }
-    
-    @media screen and (max-height: 450px) {
-      .sidenav {padding-top: 15px;}
-      .sidenav a {font-size: 18px;}
 
-
-    }
     .pTable tr:nth-child(even) {background-color: #f2f2f2;}
     .pTable tr:hover {background-color: #ddd;}
 
@@ -127,14 +86,6 @@
 </head>
 <body>
     
-    <div id="mySidenav" class="sidenav">
-      <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
-      <a href="#">Controls</a>
-      <a href="#">Profile</a>
-      <a href="javascript:void(0)" onclick="openTable()">Table</a>
-      <a href="#">Debug</a>
-    </div>
-    
 <div id="main">
 
     <h1>Dive Planner Prototype (not suitable for real dives)</h1>
@@ -171,7 +122,7 @@
             <td>GF high (%)</td>
             <td title="Gradient Factor HIGH"><input type="number" min=6 max=100 class="input3" value="80"  id="gf_high"/></td>
             <td title="common GF settings">
-                <select id ="dd_gf" name="dd_gf" class="ddl" onmousedown="this.value='';"" >
+                <select id ="dd_gf" name="dd_gf" class="ddl" onmousedown="this.value='';" >
                     <option value='30/85'>30/85</option>
                     <option value='35/75'>35/75</option>
                     <option value='40/85'>40/85</option>
@@ -196,7 +147,7 @@
         <tr>
             <td title="bottom gas">bottom</td>
             <td title="select a standard gas from dropdown list">
-                <select id ="dd_bGas" name="dd_bGas" class="ddl" onmousedown="this.value='';"" >
+                <select id ="dd_bGas" name="dd_bGas" class="ddl" onmousedown="this.value='';" >
                     <option value='21/0'>air</option>
                     <option value='28/0'>EAN 28%</option>
                     <option value='32/0'>EAN 32%</option>
@@ -243,12 +194,10 @@
         <span>bottom steps: </span><input type="number" min=2 max=20 value=5 id="bottom_steps" class="input3" >
     </div>
         
-    <!-- <td><button onclick="openNav()">panels</button></td> -->
-    <td title="click to force calculation"><button onclick="runPlan()">calculate</button></td>  
-    <td title="click to show tabular output of the calculation"><button onclick="openTable()">table</button></td>          
-
-
-    <!-- <button onclick="runPlan()">calculate</button> -->
+    <div>
+        <button title="click to force calculation" onclick="runPlan()">calculate</button>
+        <button title="click to show tabular output of the calculation" onclick="openTable()">table</button>
+    </div>
 
     <div class="profile2">
 
@@ -269,12 +218,6 @@
     <button onclick="showMain()">BACK</button>
     <button id="table_save2csv" onclick="table_save2csv()">SAVE CSV</button>
     <div id ="planner_table"></div>
-</div>
-<div id="profile" style="display: none;">
-    <h1>Dive planner: profile display </h1>
-    <button onclick="showMain()">BACK</button>
-
-    <div id ="profile_big"></div>
 </div>
 
 

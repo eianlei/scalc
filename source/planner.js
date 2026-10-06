@@ -24,16 +24,6 @@ function showMain(){
     document.getElementById("main").style.display = "block";
 }
 
-function openNav() {
-  document.getElementById("mySidenav").style.width = "150px";
-  document.getElementById("main").style.marginLeft = "150px";
-}
-
-function closeNav() {
-  document.getElementById("mySidenav").style.width = "0";
-  document.getElementById("main").style.marginLeft= "0";
-}
-
 function drawSmallProfile(dp){
     var c = document.getElementById("profileCanvas");
     var cTXT = document.getElementById("profileCanvas_txt");
@@ -182,10 +172,10 @@ function drawSmallProfile(dp){
             return ["", 0];
         }
         var mouseTime = xMouse * totalTime /pw;
-        for (idx = 0; idx < prof.length; idx++){
-            if (prof[idx].time >= mouseTime) break;
+        let pointIdx = 0;
+        for (; pointIdx < prof.length; pointIdx++){
+            if (prof[pointIdx].time >= mouseTime) break;
         }
-        var pointIdx = idx;
         var mousePoint = prof[pointIdx];
         var pointTxt = `${mousePoint.depth.toFixed(0)} m, ${(mouseTime).toFixed(0)} min`;
         var depthY = mousePoint.depth / maxDepth * ph ;
@@ -338,10 +328,7 @@ function runPlan()
        myDP.tankDeco1 = tankDeco1; 
        myDP.tankDeco2 = tankDeco2; 
        
-       // now finally call the actual work horse
-       calculatePlan(myDP);
-       /*
-        try {
+       try {
         calculatePlan(myDP);
         }
         catch(err) {
@@ -352,7 +339,6 @@ function runPlan()
             setInputVal("dive_bottom_time", 20);
             return;
         }
-       */
        // output the text from calculatePlan()
        let txt = plan_txt(myDP.decoStopsCalculated, myDP.wayPoints, myDP.tankList);
        setInputVal("planner_textout", txt);

@@ -13,7 +13,7 @@
     <tr>
       <td>Standard gas:</td>
       <td>
-        <select id ="ddl" name="ddl" class="ddl" onmousedown="this.value='';"" >
+        <select id ="ddl" name="ddl" class="ddl" onmousedown="this.value='';" >
           <option value='21'>air</option>
           <option value='32'>Nitrox 32%</option>
           <option value='50'>Nitrox 50%</option>
@@ -33,17 +33,7 @@
     <tr>
       <td>use case</td>
       <td>
-        <!--
-        <div class="dropdown">
-          <button class="dropbtn" id="ucB">select</button>
-          <div class="dropdown-content">
-            <a href="#" onclick="ucButton(1.4)">normal use</a>
-            <a href="#" onclick="ucButton(1.6)">deco gas</a>
-            <a href="#" onclick="ucButton(1.2)">extended use</a>
-          </div>
-        </div>
-        -->
-        <select id ="ddl_pp" name="ddl" class="ddl" onmousedown="this.value='';"" >
+        <select id ="ddl_pp" name="ddl" class="ddl" onmousedown="this.value='';" >
           <option value='1.4' selected="1.4">bottom gas 1.4</option>
           <option value='1.6'>deco gas 1.6</option>
           <option value='1.2'>extended use 1.2</option>
@@ -55,8 +45,6 @@
       <td>ppO2 (bar/ATA)</td>
       <td><input type="number" min=1.0 max=2.0 step=0.1 class="input" value="1.4" id="ppo2"/></td>
     </tr>
-    <tr>
-
     <tr>
       <td> MOD result is </td>
       <td> <b> <span id="mod_result">56.7</span></b> </td>
@@ -74,13 +62,6 @@
     document.getElementById("o2_pct").addEventListener("change", function(){
       document.getElementById("o2range").value = this.value;
     });
-
-
-    function ucButton(btn){
-      // alert(`recommended ppO2= ${btn}`);
-      document.getElementById("ppo2").value = btn;
-      calculateMOD();
-    }
 
 
 
