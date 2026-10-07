@@ -2,19 +2,19 @@
   <article class="tool-page">
     <h1>SCALC Application</h1>
     <p>
-      <b>scalc</b> is a web tool for interactive calculations needed for planning technical scuba dives. It is currently
-      work in progress and under active development.
+      <b>scalc</b> is a web tool for interactive calculations needed for planning technical scuba dives. 
     </p>
     <p>There are many tools for different purposes and you can select then from the top menu.</p>
-    <p>The existing and planned calculation tools include:</p>
+    <p>The tools are:</p>
     <ul>
-      <li>MOD: MOD calculation: working</li>
-      <li>Blender: gas blending: working, needs improvement</li>
-      <li>Planner: very primitive prototype, has many bugs and issues</li>
+      <li><a href="/#/mod">MOD: Maximum Operating Depth calculation</a></li>
+      <li><a href="/#/blender">Blender: gas blending planner with many methods, gas models</a></li>
+      <li><a href="/#/planner">Planner: technical dive planner using a choice of bottom and deco gases</a></li>
     </ul>
     <p>
       The calculation is done by javascript running on your browser and therefore this tool requires that your browser
-      supports javascript and has it enabled. Calculations run in your browser.
+      supports javascript and has it enabled. 
+      Calculations run in your browser not in a backend server.
     </p>
     <h2>GITHUB</h2>
     <p>

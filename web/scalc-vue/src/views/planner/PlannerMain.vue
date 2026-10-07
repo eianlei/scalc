@@ -34,7 +34,6 @@ const {
   deco2Sac,
   descSteps,
   bottomSteps,
-  diveplan,
   textOutput,
   showHowto,
 } = toRefs(planner)
@@ -201,13 +200,28 @@ const router = useRouter()
       <span>bottom steps: </span>
       <input v-model="bottomSteps" type="number" min="2" max="20" class="input3" />
     </div>
-    <div>
-      <button type="button" title="click to force calculation" @click="runPlan()">calculate</button>
-      <button type="button" title="click to show tabular output of the calculation" @click="router.push('/planner/table')">
+    <div class="planner-actions">
+      <button
+        type="button"
+        class="planner-action-btn"
+        title="click to force calculation"
+        @click="runPlan()"
+      >
+        calculate
+      </button>
+      <button
+        type="button"
+        class="planner-action-btn"
+        title="click to show tabular output of the calculation"
+        @click="router.push('/planner/table')"
+      >
         table
       </button>
     </div>
-    <ProfileCanvas :diveplan="diveplan" />
+    <h3>Dive profile plan</h3>
+    <ProfileCanvas />
+
+    <h3>Deco planner results</h3>
     <div>
       <textarea
         :value="textOutput"

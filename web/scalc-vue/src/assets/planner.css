@@ -18,18 +18,6 @@
   background-color: #ddd;
 }
 
-.planner-page .profile2 {
-  position: relative;
-  width: 600px;
-  height: 200px;
-}
-
-.planner-page .profile2 canvas {
-  position: absolute;
-  top: 0;
-  left: 0;
-}
-
 .planner-page .popup {
   position: relative;
   display: inline-block;
@@ -67,9 +55,21 @@
   visibility: visible;
 }
 
-.planner-page textarea {
+.planner-page .planner-actions {
+  display: flex;
+  gap: 12px;
+  margin: 10px 0;
+}
+
+.planner-page .planner-action-btn {
+  width: 8rem;
+  padding: 10px 12px;
+  font: 16px Arial, Helvetica, sans-serif;
+}
+
+.planner-page textarea[name='planner_textout'] {
   color: #111;
-  font: 12px Arial, Helvetica, sans-serif;
+  font: 12px ui-monospace, 'Courier New', Courier, monospace;
 }
 
 .planner-page .t1 tr,

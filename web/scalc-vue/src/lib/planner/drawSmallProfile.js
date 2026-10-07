@@ -1,6 +1,6 @@
 /** Dive profile canvas (ported from planner.js drawSmallProfile). */
 
-export function getProfilePointText(dp, xMouse, pw) {
+export function getProfilePointText(dp, xMouse, pw, ph) {
   if (!dp?.profileSampled?.length) return ['', 0]
   const prof = dp.profileSampled
   const profLastIndex = prof.length - 1
@@ -14,7 +14,7 @@ export function getProfilePointText(dp, xMouse, pw) {
   }
   const mousePoint = prof[pointIdx]
   const pointTxt = `${mousePoint.depth.toFixed(0)} m, ${mouseTime.toFixed(0)} min`
-  const depthY = (mousePoint.depth / maxDepth) * (200 - 15)
+  const depthY = (mousePoint.depth / maxDepth) * ph
   return [pointTxt, depthY]
 }
 
@@ -156,7 +156,8 @@ export function drawSmallProfile(c, dp) {
 export function drawProfileMouseOverlay(ctxTXT, dp, x, y) {
   if (!ctxTXT || !dp) return
   const pw = ctxTXT.canvas.width - 50
-  const [pointTxt, depthY] = getProfilePointText(dp, x, pw)
+  const ph = ctxTXT.canvas.height - 15
+  const [pointTxt, depthY] = getProfilePointText(dp, x, pw, ph)
   ctxTXT.clearRect(0, 0, ctxTXT.canvas.width, ctxTXT.canvas.height)
   ctxTXT.beginPath()
   ctxTXT.font = '8pt Arial'

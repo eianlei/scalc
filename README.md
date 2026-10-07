@@ -23,10 +23,65 @@ This sample may not be as up to date as the github.io instance that syncs direct
 
 # Installing and using the 2026 Vue version for web
 
+The 2026 web UI is a **Vue 3** single-page app built with **Vite**. It lives in `web/scalc-vue/` (not at `web/` itself — there is no `package.json` in `web/`). The original vanilla site (`index.html`, `source/`) remains at the **repository root** and is still served as-is during migration; the Vue app is being developed alongside it per `PLANS/convert2vue.md`.
 
-## install distribution builds
+Stack: Vue 3, JavaScript (no TypeScript), Vue Router, Vitest, ESLint, and Prettier. No Pinia or end-to-end test suite in the initial scaffold.
 
-## install tools for building from sources
+## Prerequisites
+
+Install a current **Node.js** and **npm**. The Vue project expects Node `^22.18.0` or `>=24.12.0` (see `engines` in `web/scalc-vue/package.json`).
+
+## Building from source
+
+Clone this repository, then work inside the Vue app directory:
+
+```shell
+cd web/scalc-vue
+```
+
+### First-time setup
+
+```shell
+npm install
+```
+
+On Windows, `npm install` may fail on Vitest peer-dependency conflicts. If so, run:
+
+```shell
+npm install --legacy-peer-deps
+```
+
+### Development server
+
+```shell
+npm run dev
+```
+
+Open http://localhost:5173/ in your browser. Vite serves the Vue app with hot reload.
+
+### Production build
+
+```shell
+npm run build
+```
+
+Output is written to `web/scalc-vue/dist/`. To preview the built files locally:
+
+```shell
+npm run preview
+```
+
+### Other npm scripts
+
+- `npm run test:unit` — Vitest unit tests (calculation engines and Vue components)
+- `npm run lint` — ESLint and oxlint
+- `npm run format` — Prettier on `src/`
+
+## Distribution builds
+
+For static hosting (GitHub Pages, Apache, nginx), deploy the contents of `web/scalc-vue/dist/` after `npm run build`. The build copies the legacy `source/` tree and `index.css` into `dist/` so any remaining iframe-based tools still work until the Vue migration is complete.
+
+The legacy vanilla app at the repo root is unchanged: you can still run `python3 -m http.server` from the repository root and open http://127.0.0.1:8000/ to use the original site. Use the Vue dev server or a `dist/` deployment when you want the new UI.
 
 
 # Installing and using the 2026 Vue version for desktop
