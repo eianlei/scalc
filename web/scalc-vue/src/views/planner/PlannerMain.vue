@@ -1,9 +1,12 @@
 <script setup>
-import { toRefs } from 'vue'
+import { ref, toRefs } from 'vue'
 import { useRouter } from 'vue-router'
 import { usePlanner } from '@/composables/usePlanner.js'
+import PlannerHelpPanel from '@/components/planner/PlannerHelpPanel.vue'
 import ProfileCanvas from '@/components/planner/ProfileCanvas.vue'
 import { plannerBottomGases, plannerGfPresets } from '@/lib/gases.js'
+
+const showHelp = ref(false)
 
 const planner = usePlanner()
 const {
@@ -42,7 +45,8 @@ const router = useRouter()
 </script>
 
 <template>
-  <div id="main">
+  <div class="planner-split" :class="{ 'planner-split--help': showHelp }">
+    <div id="main" class="planner-split-main">
     <h1>Dive Planner Prototype (not suitable for real dives)</h1>
     <p>
       This form calculates a dive plan for a simple profile using the
@@ -50,7 +54,7 @@ const router = useRouter()
         >Bühlmann algorithm</a
       >
       ZHL-16C with configurable
-      <a href="https://gue.com/blog/gradient-factors-in-a-post-deep-stops-world/" target="_blank"
+      <a href="https://diverite.com/gradient-factors/" target="_blank"
         >gradient factors</a
       >.
     </p>
@@ -217,6 +221,14 @@ const router = useRouter()
       >
         table
       </button>
+      <button
+        type="button"
+        class="planner-action-btn"
+        title="Show planner help documentation"
+        @click="showHelp = true"
+      >
+        HELP
+      </button>
     </div>
     <h3>Dive profile plan</h3>
     <ProfileCanvas />
@@ -232,5 +244,7 @@ const router = useRouter()
         aria-label="Planner text output"
       ></textarea>
     </div>
+    </div>
+    <PlannerHelpPanel v-if="showHelp" @close="showHelp = false" />
   </div>
 </template>
