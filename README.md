@@ -19,7 +19,8 @@ The calculation tools include:
 # scalc at scalc.ianleiman.com
 There is a working sample of the tool running at: https://scalc.ianleiman.com/
 
-This sample may not be as up to date as the github.io instance that syncs directly from this repo: https://eianlei.github.io/scalc/index.html
+This sample may not be as up to date as the github.io instance that syncs directly from this repo: 
+https://eianlei.github.io/scalc/index.html
 
 # Installing and using the 2026 Vue version for web
 
@@ -79,7 +80,7 @@ npm run preview
 
 ## Distribution builds
 
-For static hosting (GitHub Pages, Apache, nginx), deploy the contents of `web/scalc-vue/dist/` after `npm run build`. The build copies the legacy `source/` tree and `index.css` into `dist/` so any remaining iframe-based tools still work until the Vue migration is complete.
+For static hosting (GitHub Pages, Apache, nginx), deploy the contents of `web/scalc-vue/dist/` after `npm run build`. The build output is the Vue SPA only (no legacy `source/` tree).
 
 The legacy vanilla app at the repo root is unchanged: you can still run `python3 -m http.server` from the repository root and open http://127.0.0.1:8000/ to use the original site. Use the Vue dev server or a `dist/` deployment when you want the new UI.
 
@@ -195,6 +196,7 @@ Use this application at your own risk, the author provides no guarantees about t
 - 2021-11-21 big cleaning up & refactoring of very messy code in planner 
 - 2021-11-23 implemented Van Der Waals gas law calculation to blender
 - 2026-10-06 removed jQuery with vanilla Javascipt DOM API
+- 2026-10-08 Vue 3 based new version available
 
 ## todo short term:
 - some cleanup, proper structuring and commentting to the sources
